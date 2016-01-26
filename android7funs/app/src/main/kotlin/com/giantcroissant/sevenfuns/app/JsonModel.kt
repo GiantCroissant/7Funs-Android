@@ -130,6 +130,54 @@ object JsonModel {
             val commentsCount: Int,
             val user: User)
 
+    data class MessageCreate(
+            val title: String,
+            val description: String)
+
+    data class MessageCreateResult(
+            @SerializedName("user_id")
+            val userId: Int,
+            val title: String,
+            val description: String,
+            @SerializedName("created_at")
+            val createdAt: String,
+            @SerializedName("updated_at")
+            val updatedAt: String,
+            val id: String)
+
+    data class MessageCommentCreate(
+            val messageId: Int,
+            val comment: String)
+
+    data class MessageCommentCreateResult(
+            val comment: String,
+            @SerializedName("commentable_id")
+            val commentableId: String,
+            @SerializedName("commentable_type")
+            val commentableType: String,
+            @SerializedName("user_id")
+            val userId: Int,
+            val role: String,
+            @SerializedName("created_at")
+            val createdAt: String,
+            val id: Int)
+
+    data class PaginationDetail(
+            val currentPage: Int,
+            val base: String,
+            val next: Int,
+            val isFirstPage: Boolean,
+            val isLastPage: Boolean,
+            val prev: Int,
+            val total: Int,
+            val limit: Int)
+
+    data class MessageQuery(
+            val collections: List<Message>,
+            @SerializedName("pagination")
+            val paginationDetail: PaginationDetail
+    )
+
     //
     data class RegisterUser(
             val email: String,
@@ -153,6 +201,14 @@ object JsonModel {
             val success: Boolean,
             val info: String,
             val data: RegisterResultData)
+
+    data class Login(
+            val email: String,
+            val password: String)
+
+    data class LoginFb(
+            @SerializedName("access_token")
+            val accessToken: String)
 
     data class LoginResult(val token: String)
 
