@@ -25,6 +25,8 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+
+        multiDexEnabled true
     }
 
     compileOptions {
@@ -55,6 +57,13 @@ dependencies {
     compile "com.squareup.retrofit2:converter-gson:2.0.0-beta3"
     compile "com.squareup.retrofit2:adapter-rxjava:2.0.0-beta3"
 
+    // Realm
+    compile "io.realm:realm-android:0.87.3"
+
     // Kotlin
     compile "org.jetbrains.kotlin:kotlin-stdlib:1.0.0-beta-4589"
+
+    // Misc.
+    //compile "joda-time:joda-time:2.9.1"
+    compile "net.danlew:android.joda:2.9.1"
 }
