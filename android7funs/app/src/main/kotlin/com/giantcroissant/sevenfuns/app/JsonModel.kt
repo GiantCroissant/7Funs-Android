@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName
  */
 object JsonModel {
     //
-    data class Recipes(
+    data class RecipesJsonModel(
             val id: Int,
             val image: String?,
             @SerializedName("chef_name")

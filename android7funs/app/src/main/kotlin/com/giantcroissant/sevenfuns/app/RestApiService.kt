@@ -11,13 +11,13 @@ interface RestApiService {
     fun getRecipes(
             @Query("page")
             page: Int
-    ): Observable<List<JsonModel.Recipes>>
+    ): Observable<List<JsonModel.RecipesJsonModel>>
 
     @GET("/api/recipes/{id}")
     fun getRecipesById(
             @Path("id")
             id: Int
-    ): Observable<JsonModel.Recipes>
+    ): Observable<JsonModel.RecipesJsonModel>
 
     @GET("/api/recipes/overview")
     fun getRecipesOverview(): Observable<List<JsonModel.Overview>>
@@ -26,7 +26,7 @@ interface RestApiService {
     fun getRecipesByIdList(
             @Query("ids[]")
             ids: List<Int>
-    ): Observable<List<JsonModel.Recipes>>
+    ): Observable<List<JsonModel.RecipesJsonModel>>
 
     @POST("/api/recipes/{id}/switch_favorite")
     fun addRemoveFavorite(
