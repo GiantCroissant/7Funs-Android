@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+                android:id="@+id/navigationItemRecipesSection"
+                android:checked="true"
+                android:title="@string/navigation_item_recipes_section" />
+        <item
+                android:id="@+id/navigationItemInstructorSection"
+                android:checked="true"
+                android:title="@string/navigation_item_instructor_section" />
+        <item
+                android:id="@+id/navigationItemQASection"
+                android:checked="true"
+                android:title="@string/navigation_item_qa_section" />
+        <item
+                android:id="@+id/navigationItemSponsorSection"
+                android:checked="true"
+                android:title="@string/navigation_item_sponsor_section" />
+    </group>
+
+</menu>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/recipesSectionOverviewCardView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        card_view:cardCornerRadius="4dp"
+        android:layout_margin="5dp">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent">
+
+        <ImageView
+                android:id="@+id/sponsorSectionOverviewCardViewImage"
+                android:layout_width="match_parent"
+                android:layout_height="128dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="8dip"
+                android:duplicateParentState="true"/>
+
+        <TextView
+                android:id="@+id/sponsorSectionOverviewCardViewTitle"
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:text="contact detail"
+                android:gravity="center_vertical"
+                android:textColor="@android:color/black"
+                android:textSize="17dp"/>
+
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp">
+
+            <Button
+                    android:theme="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="V"
+                    android:id="@+id/sponsorSectionOverviewCardViewExpand"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

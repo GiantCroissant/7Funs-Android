@@ -3,4 +3,12 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <string name="drawer_header_title">Blender</string>
+
+    <string name="navigation_item_recipes_section">Recipes</string>
+    <string name="navigation_item_instructor_section">Instructors</string>
+    <string name="navigation_item_qa_section">Q and A</string>
+    <string name="navigation_item_sponsor_section">Sponsors</string>
+
 </resources>

@@ -2,6 +2,8 @@ package com.giantcroissant.sevenfuns.app
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.design.widget.NavigationView
+import android.support.v4.widget.DrawerLayout
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -21,7 +23,10 @@ import kotlin.properties.Delegates
 import com.giantcroissant.sevenfuns.app.DbModel.Recipes
 import com.giantcroissant.sevenfuns.app.DbModel.RecipesOverview
 
+import kotlinx.android.synthetic.main.activity_main.*
+
 // adb pull /data/data/com.giantcroissant.sevenfuns.app/files/default.realm
+// adb shell rm -r /data/data/com.giantcroissant.sevenfuns.app/files
 class MainActivity : AppCompatActivity() {
 
     val retrofit = Retrofit
@@ -35,6 +40,8 @@ class MainActivity : AppCompatActivity() {
 
     private var config: RealmConfiguration by Delegates.notNull()
 
+    //private var drawerLayout: DrawerLayout by Delegates.notNull()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -42,11 +49,44 @@ class MainActivity : AppCompatActivity() {
         config = RealmConfiguration.Builder(this).build()
         //Realm.deleteRealm(config)
 
+        //hello.text = "Hello! You are so cool."
+
         System.out.println("MainActivity onCreate")
+
+//        drawerLayout =
+//        drawerLayout = findViewById(R.id.drawer_layout) as? DrawerLayout
+//        val navigationView = findViewById(R.id.navigation_view) as? NavigationView
+        navigationView?.let {
+            it.setNavigationItemSelectedListener { mi ->
+                mi.setChecked(true)
+                drawerLayout?.closeDrawers()
+
+                when (mi.itemId) {
+                    R.id.navigationItemRecipesSection -> {
+                        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, RecipesSectionFragment.newInstance()).commit()
+                    }
+                    R.id.navigationItemInstructorSection -> {
+                        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, InstructorSectionFragment.newInstance()).commit()
+                    }
+                    R.id.navigationItemQASection -> {
+                        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, QASectionFragment.newInstance()).commit()
+                    }
+                    R.id.navigationItemSponsorSection -> {
+                        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, SponsorSectionFragment.newInstance()).commit()
+                    }
+                }
+
+                true
+            }
+
+            it.setCheckedItem(R.id.navigationItemRecipesSection)
+            it.menu.performIdentifierAction(R.id.navigationItemRecipesSection, 0)
+        }
+
         //retrieveRecipesOverview()
 
         //prepareRecipesFetchingSetup()
-        retrieveRemoteRecipes(5)
+        //retrieveRemoteRecipes(5)
 
         //retrieveRemoteRecipesTest(4)
 
