@@ -1,6 +1,7 @@
 package com.giantcroissant.sevenfuns.app
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
@@ -9,6 +10,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.cardview_instructor_section_overview.view.*
@@ -121,6 +123,16 @@ class InstructorSectionOverviewFragment : Fragment() {
             val r = instructorList[i]
 
             viewHolder.view?.instructorSectionOverviewCardViewTitle?.text = r.name
+            val imagePath = "file:///android_asset/instructors/" + r.image + ".png"
+
+            Glide
+                    .with(activity?.applicationContext)
+                    //.placeholder(R.drawable.ic_recipes_stub_image)
+                    //                .load(items[i].imageUrl)
+                    .load(Uri.parse(imagePath))
+                    //.transform(CircleTransform(c))
+                    .into(viewHolder.view?.instructorSectionOverviewCardViewImage)
+
 
             viewHolder.view?.instructorSectionOverviewCardViewExpand?.setOnClickListener { x ->
 //                (activity as? AppCompatActivity)?.let {
