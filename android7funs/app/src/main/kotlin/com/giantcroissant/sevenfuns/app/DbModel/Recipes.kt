@@ -1,5 +1,6 @@
 package com.giantcroissant.sevenfuns.app.DbModel
 
+import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 //import io.realm.annotations.RealmClass
@@ -17,7 +18,6 @@ public open class Recipes(
         public open var description: String = "",
         public open var ingredient: String = "",
         public open var seasoning: String = "",
-        //val methods: RealmList<MethodDesc>,
-        public open var reminder: String = "") : RealmObject()
-{
+        public open var methods: RealmList<MethodDesc> = RealmList(),
+        public open var reminder: String = "") : RealmObject() {
 }

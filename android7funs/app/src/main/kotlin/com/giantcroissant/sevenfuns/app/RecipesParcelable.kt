@@ -6,7 +6,7 @@ import android.os.Parcelable
 /**
  * Created by apprentice on 2/1/16.
  */
-data class RecipesParcelable(val id: Int, val title: String) : Parcelable {
+data class RecipesParcelable(val id: Int, val title: String, val ingredient: String, val seasoning: String, val methods: List<String>, val reminder: String) : Parcelable {
     companion object {
         @JvmField final val CREATOR: Parcelable.Creator<RecipesParcelable> = object : Parcelable.Creator<RecipesParcelable> {
             override fun createFromParcel(parcelIn: Parcel): RecipesParcelable {
@@ -21,7 +21,18 @@ data class RecipesParcelable(val id: Int, val title: String) : Parcelable {
 
     constructor(parcelIn: Parcel) : this(
             parcelIn.readInt(),
-            parcelIn.readString())
+            parcelIn.readString(),
+            parcelIn.readString(),
+            parcelIn.readString(),
+            parcelIn.createStringArrayList(),
+            parcelIn.readString())  {
+//        id = parcelIn.readInt()
+//        title = parcelIn.readString()
+//        ingredient = parcelIn.readString()
+//        seasoning = parcelIn.readString()
+//        parcelIn.readStringList(methods)
+//        reminder = parcelIn.readString()
+    }
 
     override fun describeContents() : Int {
         return 0
@@ -30,5 +41,9 @@ data class RecipesParcelable(val id: Int, val title: String) : Parcelable {
     override fun writeToParcel(dest: Parcel?, flags: Int) {
         dest?.writeInt(id)
         dest?.writeString(title)
+        dest?.writeString(ingredient)
+        dest?.writeString(seasoning)
+        dest?.writeStringList(methods)
+        dest?.writeString(reminder)
     }
 }

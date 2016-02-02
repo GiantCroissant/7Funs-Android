@@ -6,6 +6,6 @@ import io.realm.RealmObject
 /**
  * Created by apprentice on 1/27/16.
  */
-//public open class MethodDesc() : RealmObject() {
-//    public open var desc: String = ""
-//}
+public open class MethodDesc(
+        public open var desc: String = "") : RealmObject() {
+}

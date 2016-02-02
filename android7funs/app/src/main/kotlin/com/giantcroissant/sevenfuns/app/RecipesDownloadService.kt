@@ -2,10 +2,12 @@ package com.giantcroissant.sevenfuns.app
 
 import android.app.IntentService
 import android.content.Intent
+import com.giantcroissant.sevenfuns.app.DbModel.MethodDesc
 import com.giantcroissant.sevenfuns.app.DbModel.Recipes
 import com.giantcroissant.sevenfuns.app.DbModel.RecipesOverview
 import io.realm.Realm
 import io.realm.RealmConfiguration
+import io.realm.RealmList
 import retrofit2.GsonConverterFactory
 import retrofit2.Retrofit
 import retrofit2.RxJavaCallAdapterFactory
@@ -56,7 +58,9 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
                 .flatMap { x -> restApiService.getRecipesByIdList(x) }
                 .flatMap { x -> Observable.from(x) }
                 .flatMap { x ->
-                    val r = Recipes(x.id.toString(), "", x.updatedAt, x.chefName, x.title, x.description, x.ingredient, x.seasoning, x.reminder)
+                    val rList = RealmList<MethodDesc>()
+                    x.method.forEach { m -> rList.add(MethodDesc(m)) }
+                    val r = Recipes(x.id.toString(), "", x.updatedAt, x.chefName, x.title, x.description, x.ingredient, x.seasoning, rList, x.reminder)
                     Observable.just(r)
                 }
                 .buffer(30)

@@ -144,8 +144,9 @@ class RecipesSectionOverviewFragment : Fragment() {
 
             viewHolder.view?.recipesSectionOverviewCardViewDetail?.setOnClickListener { x ->
                 (activity as? AppCompatActivity)?.let {
+                    val descList = r.methods.map { md -> md.desc }
                     val intent = Intent(x.context, RecipesDetailActivity::class.java)
-                    intent?.putExtra("recipes", RecipesParcelable(r.id.toInt(), r.title))
+                    intent?.putExtra("recipes", RecipesParcelable(r.id.toInt(), r.title, r.ingredient, r.seasoning, descList, r.reminder))
 
                     x.context.startActivity(intent)
                 }

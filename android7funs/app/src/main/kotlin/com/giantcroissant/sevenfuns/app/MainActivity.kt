@@ -4,6 +4,7 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.NavigationView
+import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.util.Log
 import android.view.Menu
@@ -58,6 +59,9 @@ class MainActivity : AppCompatActivity() {
         //hello.text = "Hello! You are so cool."
 
         System.out.println("MainActivity onCreate")
+
+        supportActionBar.setHomeAsUpIndicator(R.drawable.ic_menu)
+        supportActionBar.setDisplayHomeAsUpEnabled(true)
 
 //        drawerLayout =
 //        drawerLayout = findViewById(R.id.drawer_layout) as? DrawerLayout
@@ -115,13 +119,20 @@ class MainActivity : AppCompatActivity() {
         val id = item.itemId
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true
+//        if (id == R.id.action_settings) {
+//            return true
+//        }
+
+        when(id) {
+            android.R.id.home -> drawerLayout?.openDrawer(GravityCompat.START)
         }
 
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+    }
 //    //
 //    fun retrieveRecipesOverview() {
 //        System.out.println("MainActivity retrieveRecipesOverview")
