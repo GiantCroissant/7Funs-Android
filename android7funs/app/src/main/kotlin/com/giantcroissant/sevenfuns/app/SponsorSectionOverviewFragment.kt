@@ -8,8 +8,17 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.cardview_sponsor_section_overview.view.*
+import rx.Observable
+import rx.Subscriber
+import rx.schedulers.Schedulers
+import java.io.BufferedReader
+import java.io.InputStreamReader
 import kotlin.properties.Delegates
+import com.github.salomonbrys.kotson.fromJson
+import kotlinx.android.synthetic.main.fragment_sponsor_section_overview.view.*
+import rx.android.schedulers.AndroidSchedulers
 
 /**
  * Created by apprentice on 2/1/16.
@@ -29,27 +38,55 @@ class SponsorSectionOverviewFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater?.inflate(R.layout.fragment_sponsor_section_overview, container, false) as? RecyclerView
+        val view = inflater?.inflate(R.layout.fragment_sponsor_section_overview, container, false)
 
-        //        (activity as? AppCompatActivity)?.let {
-        //            view?.layoutManager
-        //        }
-        view?.let {
-            it.layoutManager = LinearLayoutManager(it.context)
-            it.adapter = RecyclerAdapter(
-                    (activity as? AppCompatActivity),
-                    listOf(
-                            JsonModel.RecipesJsonModel(1, "", "", "", "Beef", "", "", listOf("", ""), "", 0, "", "", 0, 0, 0),
-                            JsonModel.RecipesJsonModel(2, "", "", "", "Soup", "", "", listOf("", ""), "", 3, "", "", 0, 0, 0),
-                            JsonModel.RecipesJsonModel(3, "", "", "", "Cake", "", "", listOf("", ""), "", 6, "", "", 0, 0, 0)
-                    )
-            )
+        (activity as? AppCompatActivity)?.let {
+            val sponsorData = Observable.create(object : Observable.OnSubscribe<String> {
+                override fun call(t: Subscriber<in String>?) {
+                    try {
+                        val inputStream = it.assets.open("sponsor-data.json")
+                        val inputStreamReader = InputStreamReader(inputStream)
+                        val sb = StringBuilder()
+                        val br = BufferedReader(inputStreamReader)
+                        var read = br.readLine()
+                        while(read != null) {
+                            sb.append(read)
+                            read = br.readLine()
+                        }
+                        t?.onNext(sb.toString())
+                        t?.onCompleted()
+                    } catch(e: Exception) {
+                        t?.onError(e)
+                    }
+                }
+            })
+
+            sponsorData
+                    //.observeOn(Schedulers.io())
+                    .map { dataString -> Gson().fromJson<JsonModel.SponsorCollectionJsonObject>(dataString) }
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .subscribe(object : Subscriber<JsonModel.SponsorCollectionJsonObject>() {
+                        override fun onNext(x: JsonModel.SponsorCollectionJsonObject) {
+                            view?.let { v ->
+                                v.sponsorSectionOverview.layoutManager = LinearLayoutManager(v.context)
+                                v.sponsorSectionOverview.adapter = RecyclerAdapter((activity as? AppCompatActivity), x.sponsors)
+                            }
+                        }
+
+                        override fun onError(e: Throwable?) {
+                            System.out.println(e?.message)
+                        }
+
+                        override fun onCompleted() {
+
+                        }
+                    })
         }
 
         return view
     }
 
-    public class RecyclerAdapter(val activity: AppCompatActivity?, val sponsorList: List<JsonModel.RecipesJsonModel>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+    public class RecyclerAdapter(val activity: AppCompatActivity?, val sponsorList: List<JsonModel.SponsorJsonObject>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
         public class ViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
             public var view: View by Delegates.notNull()
 
@@ -67,7 +104,7 @@ class SponsorSectionOverviewFragment : Fragment() {
         override fun onBindViewHolder(viewHolder: ViewHolder, i: Int) {
             val r = sponsorList[i]
 
-            viewHolder.view?.sponsorSectionOverviewCardViewTitle?.text = r.title
+            viewHolder.view?.sponsorSectionOverviewCardViewTitle?.text = r.name
 
             viewHolder.view?.sponsorSectionOverviewCardViewExpand?.setOnClickListener { x ->
                 //                (activity as? AppCompatActivity)?.let {

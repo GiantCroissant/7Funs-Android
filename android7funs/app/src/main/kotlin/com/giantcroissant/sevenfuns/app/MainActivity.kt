@@ -47,9 +47,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        val recipesSetupServiceIntent = Intent(this, RecipesSetupService::class.java)
+        val recipesSetupServiceIntent = Intent(this, RecipesSetupService::class.java)
         val recipesDownloadServiceIntent = Intent(this, RecipesDownloadService::class.java)
-//        startService(recipesSetupServiceIntent)
+        startService(recipesSetupServiceIntent)
         startService(recipesDownloadServiceIntent)
 
 //        config = RealmConfiguration.Builder(this).build()

@@ -1,0 +1,60 @@
+{
+  "instructors": [
+    {
+      "name": "李梅仙老師",
+      "image": "teacher_01",
+      "profileImage": "teacher_s01",
+      "experience": "廚藝經驗30多年，擅長江浙菜",
+      "currentTitle": "現任女青年會烹飪教學老師",
+      "description": "著有『麵食五大類』、『家常宴客菜』、『台灣小吃』、『香港點心』等書"
+    },
+    {
+      "name": "程安琪老師",
+      "image": "teacher_02",
+      "profileImage": "teacher_s02",
+      "experience": "擁有30餘年的烹飪教學經驗",
+      "currentTitle": "現任yammy cook的烹飪講師",
+      "description": "著有『美味台菜』、『培梅家常菜』、『滷ㄧ滷&變ㄧ變』、『超人氣中式輕食』等40多本食譜書"
+    },
+    {
+      "name": "蔡季芳老師",
+      "image": "teacher_03",
+      "profileImage": "teacher_s03",
+      "experience": "廚藝經驗10餘年，擅長各地小吃",
+      "currentTitle": "",
+      "description": "著有《十分鐘上菜》、《阿芳的小吃》、《阿芳的私房菜》、《糕與粿》、《阿芳的3杯麵粉72變》等書"
+    },
+    {
+      "name": "駱進漢師傅",
+      "image": "teacher_04",
+      "profileImage": "teacher_s04",
+      "experience": "廚藝經驗20餘年，擅長川菜、台菜、上海菜、創意台菜",
+      "currentTitle": "現任駱師傅醬味川客菜當家主廚",
+      "description": "曾獲中華美食展國際廚藝競賽冠軍"
+    },
+    {
+      "name": "李耀堂師傅",
+      "image": "teacher_05",
+      "profileImage": "teacher_s05",
+      "experience": "廚藝經驗20餘年，擅長創意料理、素食料理",
+      "currentTitle": "現任新天地餐飲集團廚藝顧問",
+      "description": "曾獲國際烹飪美食大賽個人展示菜金牌"
+    },
+    {
+      "name": "林秋香老師",
+      "image": "teacher_06",
+      "profileImage": "teacher_s06",
+      "experience": "廚藝經驗20餘年，擅長藥膳養生料理",
+      "currentTitle": "",
+      "description": "著有『青春活力餐』、『每人藥膳茶飲』、『粉紅氣色每人餐』等15本食譜"
+    },
+    {
+      "name": "溫國智師傅",
+      "image": "teacher_07",
+      "profileImage": "teacher_s07",
+      "experience": "廚藝經驗10餘年, 擅長台菜、川菜、創意料理",
+      "currentTitle": "現任叁合院台灣風格飲食廚藝總監",
+      "description": "曾獲中華美食展國際廚藝競賽冠軍"
+    }
+  ]
+}

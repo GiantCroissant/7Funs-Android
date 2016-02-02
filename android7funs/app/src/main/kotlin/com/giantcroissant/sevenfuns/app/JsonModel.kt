@@ -254,4 +254,23 @@ object JsonModel {
             @SerializedName("updated_at")
             val updatedAt: String,
             val subCategories: List<SubCategory>)
+
+
+    data class InstructorJsonObject(
+            val name: String,
+            val image: String,
+            val profileImage: String,
+            val experience: String,
+            val currentTitle: String,
+            val description: String)
+
+    data class InstructorCollectionJsonObject(
+            val instructors: List<InstructorJsonObject>)
+
+    data class SponsorJsonObject(
+            val name: String,
+            val urlLink: String)
+
+    data class SponsorCollectionJsonObject(
+            val sponsors: List<SponsorJsonObject>)
 }

@@ -20,6 +20,7 @@ import kotlin.properties.Delegates
 import kotlinx.android.synthetic.main.fragment_recipes_section_overview.view.*
 
 import com.giantcroissant.sevenfuns.app.DbModel.Recipes
+import io.realm.Sort
 //import kotlinx.android.synthetic.main.fragment_qa_section_overview.view.*
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
@@ -44,6 +45,8 @@ class RecipesSectionOverviewFragment : Fragment() {
 
     private var config: RealmConfiguration by Delegates.notNull()
 
+    private var refreshCount: Int = 0
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //System.out.println("RecipesSectionOverviewFragment - onCreateView");
 
@@ -55,19 +58,25 @@ class RecipesSectionOverviewFragment : Fragment() {
                     config = RealmConfiguration.Builder(it.applicationContext).build()
                     val realm = Realm.getInstance(config)
                     val a = it
-                    realm.where(Recipes::class.java).findAllAsync().asObservable()
+//                    val query = realm.where(Recipes::class.java).findAllAsync()
+//                    query.sort("id")
+                    val query = realm.where(Recipes::class.java).findAllSortedAsync("id", Sort.DESCENDING)
+                    query.asObservable()
 //                            .observeOn(AndroidSchedulers.mainThread())
 //                            .observeOn(Schedulers.io())
                             .filter { x -> x.isLoaded }
                             .flatMap { xs -> Observable.from(xs) }
-                            .buffer(500)
+                            //.skip(30 * refreshCount)
+                            .take(30 * refreshCount + 30)
+                            .buffer(30 * refreshCount + 30)
                             .subscribeOn(AndroidSchedulers.mainThread())
                             .subscribe { x ->
+                                refreshCount = refreshCount + 1
                                 view?.recipesSectionOverview?.let {
-                                    //it.layoutManager = LinearLayoutManager(it.context)
-                                    //it.adapter = RecyclerAdapter((activity as? AppCompatActivity), x)
-                                    (it.adapter as? RecyclerAdapter)?.clearAll()
-                                    (it.adapter as? RecyclerAdapter)?.addAll(x)
+                                    it.layoutManager = LinearLayoutManager(it.context)
+                                    it.adapter = RecyclerAdapter((activity as? AppCompatActivity), x)
+                                    //(it.adapter as? RecyclerAdapter)?.clearAll()
+                                    //(it.adapter as? RecyclerAdapter)?.addAll(x)
                                 }
                             }
                 }
@@ -82,7 +91,9 @@ class RecipesSectionOverviewFragment : Fragment() {
             config = RealmConfiguration.Builder(it.applicationContext).build()
             val realm = Realm.getInstance(config)
 
-            realm.where(Recipes::class.java).findAllAsync().asObservable()
+            val query = realm.where(Recipes::class.java).findAllSortedAsync("id", Sort.DESCENDING)
+//            query.sort("id")
+            query.asObservable()
 //                    .observeOn(AndroidSchedulers.mainThread())
 //                    .observeOn(Schedulers.io())
                     .filter { x -> x.isLoaded }
@@ -111,7 +122,7 @@ class RecipesSectionOverviewFragment : Fragment() {
         return view
     }
 
-    public class RecyclerAdapter(val activity: AppCompatActivity?, val recipesList: MutableList<Recipes>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+    public class RecyclerAdapter(val activity: AppCompatActivity?, val recipesList: List<Recipes>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
         public class ViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
             public var view: View by Delegates.notNull()
 
@@ -143,14 +154,18 @@ class RecipesSectionOverviewFragment : Fragment() {
 
         override fun getItemCount() : Int { return recipesList.size }
 
-        public fun clearAll() {
-            recipesList.clear()
-            notifyDataSetChanged()
-        }
+//        public fun clearAll() {
+//            recipesList.clear()
+//            notifyDataSetChanged()
+//        }
+//
+//        public fun addAll(contents: List<Recipes>) {
+//            recipesList.addAll(contents)
+//            notifyDataSetChanged()
+//        }
 
-        public fun addAll(contents: List<Recipes>) {
-            recipesList.addAll(contents)
-            notifyDataSetChanged()
-        }
+//        public fun appendAfter(contents: List<Recipes>) {
+//            recipesList.add
+//        }
     }
 }

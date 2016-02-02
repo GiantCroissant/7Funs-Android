@@ -89,4 +89,6 @@ dependencies {
     // Misc.
     //compile "joda-time:joda-time:2.9.1"
     compile "net.danlew:android.joda:2.9.1"
+
+    compile "com.github.salomonbrys.kotson:kotson:1.7.0"
 }
