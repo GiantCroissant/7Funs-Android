@@ -11,10 +11,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import io.realm.Realm
+import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.cardview_recipes_section_overview.view.*
 import kotlin.properties.Delegates
 
 import kotlinx.android.synthetic.main.fragment_recipes_section_overview.*
+
+import com.giantcroissant.sevenfuns.app.DbModel.Recipes
+import rx.Observable
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 
 /**
  * Created by apprentice on 2/1/16.
@@ -33,29 +40,42 @@ class RecipesSectionOverviewFragment : Fragment() {
         }
     }
 
+    private var config: RealmConfiguration by Delegates.notNull()
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        System.out.println("RecipesSectionOverviewFragment - onCreateView");
+        //System.out.println("RecipesSectionOverviewFragment - onCreateView");
         val view = inflater?.inflate(R.layout.fragment_recipes_section_overview, container, false) as? RecyclerView
 
-//        (activity as? AppCompatActivity)?.let {
-//            view?.layoutManager
-//        }
-        view?.let {
-            it.layoutManager = LinearLayoutManager(it.context)
-            it.adapter = RecyclerAdapter(
-                    (activity as? AppCompatActivity),
-                    listOf(
-                            JsonModel.RecipesJsonModel(1, "", "", "", "Beef", "", "", listOf("", ""), "", 0, "", "", 0, 0, 0),
-                            JsonModel.RecipesJsonModel(2, "", "", "", "Soup", "", "", listOf("", ""), "", 3, "", "", 0, 0, 0),
-                            JsonModel.RecipesJsonModel(3, "", "", "", "Cake", "", "", listOf("", ""), "", 6, "", "", 0, 0, 0)
-                    )
-            )
+        (activity as? AppCompatActivity)?.let {
+            config = RealmConfiguration.Builder(it.applicationContext).build()
+            val realm = Realm.getInstance(config)
+
+            realm.where(Recipes::class.java).findAllAsync().asObservable()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .filter { x -> x.isLoaded }
+                    .flatMap { xs -> Observable.from(xs) }
+                    .buffer(30)
+                    .subscribe { x ->
+                        view?.let {
+                            it.layoutManager = LinearLayoutManager(it.context)
+                            it.adapter = RecyclerAdapter(
+                                    (activity as? AppCompatActivity),
+                                    x
+//                                    listOf(
+//                                            JsonModel.RecipesJsonModel(1, "", "", "", "Beef", "", "", listOf("", ""), "", 0, "", "", 0, 0, 0),
+//                                            JsonModel.RecipesJsonModel(2, "", "", "", "Soup", "", "", listOf("", ""), "", 3, "", "", 0, 0, 0),
+//                                            JsonModel.RecipesJsonModel(3, "", "", "", "Cake", "", "", listOf("", ""), "", 6, "", "", 0, 0, 0)
+//                                    )
+                            )
+                        }
+                    }
+
         }
 
         return view
     }
 
-    public class RecyclerAdapter(val activity: AppCompatActivity?, val recipesList: List<JsonModel.RecipesJsonModel>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+    public class RecyclerAdapter(val activity: AppCompatActivity?, val recipesList: List<Recipes>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
         public class ViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
             public var view: View by Delegates.notNull()
 
@@ -78,7 +98,7 @@ class RecipesSectionOverviewFragment : Fragment() {
             viewHolder.view?.recipesSectionOverviewCardViewDetail?.setOnClickListener { x ->
                 (activity as? AppCompatActivity)?.let {
                     val intent = Intent(x.context, RecipesDetailActivity::class.java)
-                    intent?.putExtra("recipes", RecipesParcelable(r.id, r.title))
+                    intent?.putExtra("recipes", RecipesParcelable(r.id.toInt(), r.title))
 
                     x.context.startActivity(intent)
                 }

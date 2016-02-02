@@ -25,6 +25,19 @@
             <meta-data android:name="android.support.PARENT_ACTIVITY"
                        android:value=".MainActivity" />
         </activity>
+
+        <service
+                android:name="com.giantcroissant.sevenfuns.app.RecipesSetupService"
+                android:enabled="true" >
+            <!-- intent-filter>
+                <action android:name="com.giantcroissant.sevenfuns.app.RecipesSetupService" />
+            </intent-filter -->
+        </service>
+
+        <service
+                android:name="com.giantcroissant.sevenfuns.app.RecipesDownloadService"
+                android:enabled="true" >
+        </service>
     </application>
 
 </manifest>
