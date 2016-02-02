@@ -3,6 +3,7 @@ package com.giantcroissant.sevenfuns.app
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -16,9 +17,10 @@ import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.cardview_recipes_section_overview.view.*
 import kotlin.properties.Delegates
 
-import kotlinx.android.synthetic.main.fragment_recipes_section_overview.*
+import kotlinx.android.synthetic.main.fragment_recipes_section_overview.view.*
 
 import com.giantcroissant.sevenfuns.app.DbModel.Recipes
+//import kotlinx.android.synthetic.main.fragment_qa_section_overview.view.*
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -44,19 +46,53 @@ class RecipesSectionOverviewFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //System.out.println("RecipesSectionOverviewFragment - onCreateView");
-        val view = inflater?.inflate(R.layout.fragment_recipes_section_overview, container, false) as? RecyclerView
 
+        val view = inflater?.inflate(R.layout.fragment_recipes_section_overview, container, false)
+        view?.recipesSectionSwipeContainer?.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
+            override fun onRefresh() {
+                System.out.println("it is freshing")
+                (activity as? AppCompatActivity)?.let {
+                    config = RealmConfiguration.Builder(it.applicationContext).build()
+                    val realm = Realm.getInstance(config)
+                    val a = it
+                    realm.where(Recipes::class.java).findAllAsync().asObservable()
+//                            .observeOn(AndroidSchedulers.mainThread())
+//                            .observeOn(Schedulers.io())
+                            .filter { x -> x.isLoaded }
+                            .flatMap { xs -> Observable.from(xs) }
+                            .buffer(500)
+                            .subscribeOn(AndroidSchedulers.mainThread())
+                            .subscribe { x ->
+                                view?.recipesSectionOverview?.let {
+                                    //it.layoutManager = LinearLayoutManager(it.context)
+                                    //it.adapter = RecyclerAdapter((activity as? AppCompatActivity), x)
+                                    (it.adapter as? RecyclerAdapter)?.clearAll()
+                                    (it.adapter as? RecyclerAdapter)?.addAll(x)
+                                }
+                            }
+                }
+
+                view?.recipesSectionSwipeContainer?.isRefreshing = false
+            }
+        })
+
+//        val view = inflater?.inflate(R.layout.fragment_recipes_section_overview, container, false) as? RecyclerView
+//
         (activity as? AppCompatActivity)?.let {
             config = RealmConfiguration.Builder(it.applicationContext).build()
             val realm = Realm.getInstance(config)
 
             realm.where(Recipes::class.java).findAllAsync().asObservable()
-                    .observeOn(AndroidSchedulers.mainThread())
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .observeOn(Schedulers.io())
                     .filter { x -> x.isLoaded }
                     .flatMap { xs -> Observable.from(xs) }
                     .buffer(30)
+                    .subscribeOn(AndroidSchedulers.mainThread())
                     .subscribe { x ->
-                        view?.let {
+                        //System.out.println("Subscribe to show onto ui")
+                        view?.recipesSectionOverview?.let {
+                            //System.out.println("swipe ui is found")
                             it.layoutManager = LinearLayoutManager(it.context)
                             it.adapter = RecyclerAdapter(
                                     (activity as? AppCompatActivity),
@@ -75,7 +111,7 @@ class RecipesSectionOverviewFragment : Fragment() {
         return view
     }
 
-    public class RecyclerAdapter(val activity: AppCompatActivity?, val recipesList: List<Recipes>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+    public class RecyclerAdapter(val activity: AppCompatActivity?, val recipesList: MutableList<Recipes>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
         public class ViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
             public var view: View by Delegates.notNull()
 
@@ -106,5 +142,15 @@ class RecipesSectionOverviewFragment : Fragment() {
         }
 
         override fun getItemCount() : Int { return recipesList.size }
+
+        public fun clearAll() {
+            recipesList.clear()
+            notifyDataSetChanged()
+        }
+
+        public fun addAll(contents: List<Recipes>) {
+            recipesList.addAll(contents)
+            notifyDataSetChanged()
+        }
     }
 }
