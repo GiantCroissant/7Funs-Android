@@ -34,6 +34,12 @@
                        android:value=".MainActivity" />
         </activity>
 
+        <activity android:name=".QADetailActivity"
+                  android:parentActivityName=".MainActivity">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                       android:value=".MainActivity" />
+        </activity>
+
         <service
                 android:name="com.giantcroissant.sevenfuns.app.RecipesSetupService"
                 android:enabled="true" >

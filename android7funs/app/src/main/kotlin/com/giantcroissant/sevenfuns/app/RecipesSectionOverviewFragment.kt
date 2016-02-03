@@ -156,14 +156,14 @@ class RecipesSectionOverviewFragment : Fragment() {
         override fun getItemCount() : Int { return recipesList.size }
 
 //        public fun clearAll() {
-//            recipesList.clear()
-//            notifyDataSetChanged()
-//        }
-//
-//        public fun addAll(contents: List<Recipes>) {
-//            recipesList.addAll(contents)
-//            notifyDataSetChanged()
-//        }
+        //            recipesList.clear()
+        //            notifyDataSetChanged()
+        //        }
+        //
+        //        public fun addAll(contents: List<Recipes>) {
+        //            recipesList.addAll(contents)
+        //            notifyDataSetChanged()
+        //        }
 
 //        public fun appendAfter(contents: List<Recipes>) {
 //            recipesList.add

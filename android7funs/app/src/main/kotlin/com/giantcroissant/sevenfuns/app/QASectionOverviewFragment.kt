@@ -1,14 +1,15 @@
 package com.giantcroissant.sevenfuns.app
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.AdapterView
 import kotlinx.android.synthetic.main.fragment_qa_section_overview.view.*
 import kotlinx.android.synthetic.main.listview_qa_section_overview.view.*
 import retrofit2.GsonConverterFactory
@@ -106,12 +107,61 @@ class QASectionOverviewFragment : Fragment() {
                             view?.let { v ->
                                 v.qaSectionOverview.layoutManager = LinearLayoutManager(v.context)
                                 v.qaSectionOverview.adapter = RecyclerAdapter((activity as? AppCompatActivity), x.toArrayList())
+
+                                v.qaSectionOverview.addOnItemTouchListener(
+                                        RecyclerItemClickListener(v.qaSectionOverview.context, object : RecyclerItemClickListener.OnItemClickListener {
+                                            override fun onItemClick(v: View, position: Int) {
+
+                                                System.out.println(position)
+
+                                                val intent = Intent(v.context, QADetailActivity::class.java)
+                                                intent?.putExtra("message", MessageParcelable(1))
+                                                v.context.startActivity(intent)
+                                            }
+                                        }))
                             }
                         }
                     })
         }
 
         return view
+    }
+
+    public class RecyclerItemClickListener(val c: Context, val l: OnItemClickListener) : RecyclerView.OnItemTouchListener {
+        public interface OnItemClickListener {
+            fun onItemClick(view: View, position: Int)
+        }
+
+        var listener: OnItemClickListener by Delegates.notNull()
+        var gestureDetector: GestureDetector by Delegates.notNull()
+
+        init {
+            listener = l
+            gestureDetector = GestureDetector(c, object : GestureDetector.SimpleOnGestureListener() {
+                override fun onSingleTapUp(e: MotionEvent) : Boolean {
+                    return true
+                }
+            })
+        }
+
+        override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+
+        }
+
+        override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent) : Boolean {
+            val childView = rv.qaSectionOverview.findChildViewUnder(e.x, e.y)
+            val callClicked = (childView != null) && (listener != null) && gestureDetector.onTouchEvent(e)
+
+            if (callClicked) {
+                listener.onItemClick(childView, rv.getChildAdapterPosition(childView))
+            }
+
+            return false
+        }
+
+        override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
+
+        }
     }
 
     public class RecyclerAdapter(val activity: AppCompatActivity?, val messageList: MutableList<JsonModel.MessageJsonObject>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
@@ -133,6 +183,7 @@ class QASectionOverviewFragment : Fragment() {
             val r = messageList[i]
 
             viewHolder.view?.qaSectionOverviewTitle?.text = r.title
+            viewHolder.view?.qaSectionOverviewDescription?.text = r.description
 //
 //            viewHolder.view?.instructorSectionOverviewCardViewExpand?.setOnClickListener { x ->
 //                //                (activity as? AppCompatActivity)?.let {

@@ -82,8 +82,8 @@ object JsonModel {
             val id: Int,
             val name: String,
             @SerializedName("fb_id")
-            val fbId: String,
-            val image: String
+            val fbId: String?,
+            val image: String?
     )
 
     data class MessageWithCommentJsonObject(
