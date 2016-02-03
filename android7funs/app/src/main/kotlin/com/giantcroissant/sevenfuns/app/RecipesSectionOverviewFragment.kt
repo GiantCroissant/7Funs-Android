@@ -51,6 +51,11 @@ class RecipesSectionOverviewFragment : Fragment() {
         //System.out.println("RecipesSectionOverviewFragment - onCreateView");
 
         val view = inflater?.inflate(R.layout.fragment_recipes_section_overview, container, false)
+
+        view?.recipesSectionOverview?.let {
+            it.layoutManager = LinearLayoutManager(it.context)
+        }
+
         view?.recipesSectionSwipeContainer?.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
             override fun onRefresh() {
                 System.out.println("it is freshing")
@@ -73,7 +78,7 @@ class RecipesSectionOverviewFragment : Fragment() {
                             .subscribe { x ->
                                 refreshCount = refreshCount + 1
                                 view?.recipesSectionOverview?.let {
-                                    it.layoutManager = LinearLayoutManager(it.context)
+//                                    it.layoutManager = LinearLayoutManager(it.context)
                                     it.adapter = RecyclerAdapter((activity as? AppCompatActivity), x)
                                     //(it.adapter as? RecyclerAdapter)?.clearAll()
                                     //(it.adapter as? RecyclerAdapter)?.addAll(x)
@@ -104,7 +109,7 @@ class RecipesSectionOverviewFragment : Fragment() {
                         //System.out.println("Subscribe to show onto ui")
                         view?.recipesSectionOverview?.let {
                             //System.out.println("swipe ui is found")
-                            it.layoutManager = LinearLayoutManager(it.context)
+                            //it.layoutManager = LinearLayoutManager(it.context)
                             it.adapter = RecyclerAdapter(
                                     (activity as? AppCompatActivity),
                                     x

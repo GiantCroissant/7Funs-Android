@@ -1,5 +1,6 @@
 package com.giantcroissant.sevenfuns.app
 
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
@@ -8,6 +9,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.cardview_sponsor_section_overview.view.*
 import rx.Observable
@@ -105,6 +107,15 @@ class SponsorSectionOverviewFragment : Fragment() {
             val r = sponsorList[i]
 
             viewHolder.view?.sponsorSectionOverviewCardViewTitle?.text = r.name
+            val imagePath = "file:///android_asset/sponsors/" + r.image + ".png"
+
+            Glide
+                    .with(activity?.applicationContext)
+                    //.placeholder(R.drawable.ic_recipes_stub_image)
+                    //                .load(items[i].imageUrl)
+                    .load(Uri.parse(imagePath))
+            //.transform(CircleTransform(c))
+                    .into(viewHolder.view?.sponsorSectionOverviewCardViewImage)
 
             viewHolder.view?.sponsorSectionOverviewCardViewExpand?.setOnClickListener { x ->
                 //                (activity as? AppCompatActivity)?.let {

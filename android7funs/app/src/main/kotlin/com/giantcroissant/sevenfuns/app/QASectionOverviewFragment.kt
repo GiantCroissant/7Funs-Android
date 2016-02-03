@@ -56,6 +56,11 @@ class QASectionOverviewFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.fragment_qa_section_overview, container, false)
 
+        // Avoid java.lang.NullPointerException: Attempt to invoke virtual method 'boolean android.support.v7.widget.RecyclerView$LayoutManager.canScrollVertically()' on a null object reference
+        view?.let { v ->
+            v.qaSectionOverview.layoutManager = LinearLayoutManager(v.context)
+        }
+
         view?.qaSectionSwipeContainer?.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
             override fun onRefresh() {
                 (activity as? AppCompatActivity)?.let {
@@ -105,7 +110,7 @@ class QASectionOverviewFragment : Fragment() {
                         }
                         override fun onNext(x: List<JsonModel.MessageJsonObject>) {
                             view?.let { v ->
-                                v.qaSectionOverview.layoutManager = LinearLayoutManager(v.context)
+//                                v.qaSectionOverview.layoutManager = LinearLayoutManager(v.context)
                                 v.qaSectionOverview.adapter = RecyclerAdapter((activity as? AppCompatActivity), x.toArrayList())
 
                                 v.qaSectionOverview.addOnItemTouchListener(

@@ -270,6 +270,7 @@ object JsonModel {
 
     data class SponsorJsonObject(
             val name: String,
+            val image: String,
             val urlLink: String)
 
     data class SponsorCollectionJsonObject(
