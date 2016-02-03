@@ -61,7 +61,7 @@ interface RestApiService {
     fun getSpecificMessageComment(
             @Path("id")
             id: Int
-    ): Observable<JsonModel.MessageWithCommentJsonObject>
+    ): Observable<List<JsonModel.MessageWithCommentJsonObject>>
 
     @POST("/api/messages")
     fun createMessage(
