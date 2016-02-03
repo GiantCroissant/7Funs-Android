@@ -46,25 +46,28 @@ interface RestApiService {
 
     //
     @GET("/api/messages")
-    fun getMessageQuery(): Observable<JsonModel.MessageQuery>
+    fun getMessageQuery(
+            @Query("page")
+            page: Int
+    ): Observable<JsonModel.MessageQueryJsonObject>
 
     @GET("/api/messages/{id}")
     fun getMessageById(
             @Path("id")
             id: Int
-    ): Observable<JsonModel.MessageSpecific>
+    ): Observable<JsonModel.MessageSpecificJsonObject>
 
     @GET("/api/messages/{id}")
     fun getSpecificMessageComment(
             @Path("id")
             id: Int
-    ): Observable<JsonModel.MessageWithComment>
+    ): Observable<JsonModel.MessageWithCommentJsonObject>
 
     @POST("/api/messages")
     fun createMessage(
             @Body
             messageCreate: JsonModel.MessageCreate
-    ): Observable<JsonModel.MessageCreateResult>
+    ): Observable<JsonModel.MessageCreateResultJsonObject>
 
     @POST("/api/messages/{id}/comments")
     fun createMessageComment(
@@ -72,7 +75,7 @@ interface RestApiService {
             id: Int,
             @Body
             messageCommentCreate: JsonModel.MessageCommentCreate
-    ): Observable<JsonModel.MessageCommentCreateResult>
+    ): Observable<JsonModel.MessageCommentCreateResultJsonObject>
 
     @GET("/api/recipe_videos")
     fun getVideos(
@@ -93,13 +96,13 @@ interface RestApiService {
     fun login(
             @Body
             loginData: JsonModel.Login
-    ): Observable<JsonModel.LoginResult>
+    ): Observable<JsonModel.LoginResultJsonObject>
 
     @POST("/api/auth/facebook/token")
     fun loginViaFbId(
             @Body
             loginData: JsonModel.LoginFb
-    ): Observable<JsonModel.LoginResult>
+    ): Observable<JsonModel.LoginResultJsonObject>
 
     @POST("/api/signup")
     fun register(

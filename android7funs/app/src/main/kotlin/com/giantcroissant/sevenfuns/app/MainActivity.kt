@@ -48,10 +48,35 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val recipesSetupServiceIntent = Intent(this, RecipesSetupService::class.java)
-        val recipesDownloadServiceIntent = Intent(this, RecipesDownloadService::class.java)
-        startService(recipesSetupServiceIntent)
-        startService(recipesDownloadServiceIntent)
+//        val retrofit = Retrofit
+//                .Builder()
+//                .baseUrl("https://www.7funs.com")
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+//                .build()
+//
+//        val restApiService = retrofit.create(RestApiService::class.java)
+//
+//        restApiService.getRecipesOverview().subscribe(object : Subscriber<List<JsonModel.Overview>>() {
+//            override fun onCompleted() {}
+//            override fun onError(e: Throwable?) {
+//                System.out.println("something is wrong")
+//                System.out.println(e?.message)
+//            }
+//            override fun onNext(rs: List<JsonModel.Overview>) {
+//            }
+//        })
+//        restApiService.getMessageById(48).subscribe { x ->
+//            System.out.println(x.toString())
+//        }
+//        restApiService.getMessageQuery().subscribe { x ->
+//            System.out.println(x)
+//        }
+
+//        val recipesSetupServiceIntent = Intent(this, RecipesSetupService::class.java)
+//        val recipesDownloadServiceIntent = Intent(this, RecipesDownloadService::class.java)
+//        startService(recipesSetupServiceIntent)
+//        startService(recipesDownloadServiceIntent)
 
 //        config = RealmConfiguration.Builder(this).build()
         //Realm.deleteRealm(config)
@@ -94,6 +119,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         //retrieveRecipesOverview()
+        //retrieveMessageQuery()
 
         //prepareRecipesFetchingSetup()
         //retrieveRemoteRecipes(5)
@@ -133,6 +159,7 @@ class MainActivity : AppCompatActivity() {
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
     }
+
 //    //
 //    fun retrieveRecipesOverview() {
 //        System.out.println("MainActivity retrieveRecipesOverview")
@@ -146,6 +173,22 @@ class MainActivity : AppCompatActivity() {
 //                        System.out.println(e?.message)
 //                    }
 //                    override fun onNext(overviews: List<JsonModel.Overview>) {
+//                        System.out.println(overviews.toString())
+//                    }
+//                })
+//    }
+//
+//    fun retrieveMessageQuery() {
+//        restApiService
+//                .getMessageQuery()
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(Schedulers.io())
+//                .subscribe(object : Subscriber<JsonModel.MessageQueryJsonObject>() {
+//                    override fun onCompleted() {}
+//                    override fun onError(e: Throwable?) {
+//                        System.out.println(e?.message)
+//                    }
+//                    override fun onNext(overviews: JsonModel.MessageQueryJsonObject) {
 //                        System.out.println(overviews.toString())
 //                    }
 //                })

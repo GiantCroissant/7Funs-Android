@@ -4,6 +4,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
+    <string name="facebook_app_id">665096563622904</string>
+
     <string name="drawer_header_title">料理美食王</string>
 
     <string name="navigation_item_recipes_section">Recipes</string>

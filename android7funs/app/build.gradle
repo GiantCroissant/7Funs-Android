@@ -37,7 +37,7 @@ android {
     }
 
     dexOptions {
-        incremental false
+        incremental true
     }
 
     sourceSets {
@@ -94,5 +94,7 @@ dependencies {
     compile "net.danlew:android.joda:2.9.1"
 
     compile "com.github.salomonbrys.kotson:kotson:1.7.0"
+
+    compile "com.facebook.android:facebook-android-sdk:4.9.0"
 
 }

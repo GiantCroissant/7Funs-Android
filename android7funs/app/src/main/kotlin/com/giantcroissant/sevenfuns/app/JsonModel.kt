@@ -78,7 +78,7 @@ object JsonModel {
             val videoData: VideoData)
 
     //
-    data class User(
+    data class UserJsonObject(
             val id: Int,
             val name: String,
             @SerializedName("fb_id")
@@ -86,7 +86,7 @@ object JsonModel {
             val image: String
     )
 
-    data class MessageWithComment(
+    data class MessageWithCommentJsonObject(
             val id: Int,
             val title: String,
             val comment: String,
@@ -102,39 +102,39 @@ object JsonModel {
             @SerializedName("updated_at")
             val updatedAt: String)
 
-    data class MessageSpecific(
+    data class MessageSpecificJsonObject(
             val id: Int,
             @SerializedName("user_id")
             val userId: Int,
-            val title: String?,
-            val description: String?,
+            val title: String,
+            val description: String,
             @SerializedName("created_at")
             val createdAt: String,
             @SerializedName("updated_at")
             val updatedAt: String,
             @SerializedName("comments_count")
-            val commentsCount: Int,
-            val comments: List<MessageWithComment>)
+            val commentsCount: Int)//,
+            //val comments: List<MessageWithCommentJsonObject>)
 
-    data class Message(
+    data class MessageJsonObject(
             val id: Int,
             @SerializedName("user_id")
             val userId: Int,
-            val title: String?,
-            val description: String?,
+            val title: String,
+            val description: String,
             @SerializedName("created_at")
             val createdAt: String,
             @SerializedName("updated_at")
             val updatedAt: String,
             @SerializedName("comments_count")
             val commentsCount: Int,
-            val user: User)
+            val user: UserJsonObject)
 
     data class MessageCreate(
             val title: String,
             val description: String)
 
-    data class MessageCreateResult(
+    data class MessageCreateResultJsonObject(
             @SerializedName("user_id")
             val userId: Int,
             val title: String,
@@ -149,7 +149,7 @@ object JsonModel {
             val messageId: Int,
             val comment: String)
 
-    data class MessageCommentCreateResult(
+    data class MessageCommentCreateResultJsonObject(
             val comment: String,
             @SerializedName("commentable_id")
             val commentableId: String,
@@ -162,20 +162,21 @@ object JsonModel {
             val createdAt: String,
             val id: Int)
 
-    data class PaginationDetail(
+    data class PaginationDetailJsonObject(
+            val items: List<Int>,
             val currentPage: Int,
             val base: String,
-            val next: Int,
             val isFirstPage: Boolean,
             val isLastPage: Boolean,
+            val next: Int,
             val prev: Int,
             val total: Int,
             val limit: Int)
 
-    data class MessageQuery(
-            val collections: List<Message>,
+    data class MessageQueryJsonObject(
+            val collection: List<MessageJsonObject>,
             @SerializedName("pagination")
-            val paginationDetail: PaginationDetail
+            val paginationDetail: PaginationDetailJsonObject
     )
 
     //
@@ -210,7 +211,7 @@ object JsonModel {
             @SerializedName("access_token")
             val accessToken: String)
 
-    data class LoginResult(val token: String)
+    data class LoginResultJsonObject(val token: String)
 
     //
     data class MyFavoriteRecipesResult(val id: Int)
