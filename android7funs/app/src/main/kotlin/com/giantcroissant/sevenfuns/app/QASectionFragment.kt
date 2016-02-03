@@ -23,6 +23,7 @@ class QASectionFragment : Fragment() {
             return fragment
         }
     }
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.fragment_qa_section, container, false)
 

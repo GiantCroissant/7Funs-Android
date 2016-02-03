@@ -26,6 +26,7 @@ import com.giantcroissant.sevenfuns.app.DbModel.Recipes
 import com.giantcroissant.sevenfuns.app.DbModel.RecipesOverview
 
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.toolbar.*
 
 // adb pull /data/data/com.giantcroissant.sevenfuns.app/files/default.realm
 // adb shell rm -r /data/data/com.giantcroissant.sevenfuns.app/files
@@ -85,6 +86,7 @@ class MainActivity : AppCompatActivity() {
 
         System.out.println("MainActivity onCreate")
 
+        setSupportActionBar(toolbar)
         supportActionBar.setHomeAsUpIndicator(R.drawable.ic_menu)
         supportActionBar.setDisplayHomeAsUpEnabled(true)
 
@@ -99,6 +101,9 @@ class MainActivity : AppCompatActivity() {
                 when (mi.itemId) {
                     R.id.navigationItemRecipesSection -> {
                         supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, RecipesSectionFragment.newInstance()).commit()
+                    }
+                    R.id.navigationItemPersonalSection -> {
+                        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, PersonalSectionFragment.newInstance()).commit()
                     }
                     R.id.navigationItemInstructorSection -> {
                         supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, InstructorSectionFragment.newInstance()).commit()
