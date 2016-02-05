@@ -20,6 +20,7 @@ import kotlin.properties.Delegates
 import kotlinx.android.synthetic.main.fragment_recipes_section_overview.view.*
 
 import com.giantcroissant.sevenfuns.app.DbModel.Recipes
+import com.google.android.youtube.player.internal.v
 import io.realm.Sort
 //import kotlinx.android.synthetic.main.fragment_qa_section_overview.view.*
 import rx.Observable
@@ -51,10 +52,10 @@ class RecipesSectionOverviewFragment : Fragment() {
         //System.out.println("RecipesSectionOverviewFragment - onCreateView");
 
         val view = inflater?.inflate(R.layout.fragment_recipes_section_overview, container, false)
-
-        view?.recipesSectionOverview?.let {
-            it.layoutManager = LinearLayoutManager(it.context)
-        }
+            view?.recipesSectionOverview?.let {
+                it.layoutManager = LinearLayoutManager(it.context)
+                it.adapter = RecyclerAdapter((activity as? AppCompatActivity), listOf<Recipes>())
+            }
 
         view?.recipesSectionSwipeContainer?.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
             override fun onRefresh() {
@@ -148,6 +149,9 @@ class RecipesSectionOverviewFragment : Fragment() {
             viewHolder.view?.recipesSectionOverviewCardViewTitle?.text = r.title
 
             viewHolder.view?.recipesSectionOverviewCardViewDetail?.setOnClickListener { x ->
+
+//                activity.startActivity()
+
                 (activity as? AppCompatActivity)?.let {
                     val descList = r.methods.map { md -> md.desc }
                     val intent = Intent(x.context, RecipesDetailActivity::class.java)
