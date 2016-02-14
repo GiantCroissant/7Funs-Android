@@ -1,5 +1,6 @@
 package com.giantcroissant.sevenfuns.app
 
+import okhttp3.Response
 import retrofit2.http.*
 import rx.Observable
 
@@ -109,4 +110,8 @@ interface RestApiService {
             @Body
             loginData: JsonModel.Register
     ): Observable<JsonModel.RegisterResult>
+
+    @GET("/recipe/image/")
+    @Streaming
+    fun downloadRecipesImage(): Observable<Response>
 }
