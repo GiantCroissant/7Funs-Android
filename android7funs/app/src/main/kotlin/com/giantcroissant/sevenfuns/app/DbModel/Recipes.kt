@@ -10,15 +10,15 @@ import io.realm.annotations.PrimaryKey
  * Created by apprentice on 1/27/16.
  */
 open class Recipes(
-        @PrimaryKey
-        open var id: String = "",
-        open var image: String = "",
-        open var updatedAt: String = "",
-        open var chefName: String = "",
-        open var title: String = "",
-        open var description: String = "",
-        open var ingredient: String = "",
-        open var seasoning: String = "",
-        open var methods: RealmList<MethodDesc> = RealmList(),
-        open var reminder: String = "") : RealmObject() {
+    @PrimaryKey
+    open var id: Int = 0,
+    open var image: String = "",
+    open var updatedAt: String = "",
+    open var chefName: String = "",
+    open var title: String = "",
+    open var description: String = "",
+    open var ingredient: String = "",
+    open var seasoning: String = "",
+    open var methods: RealmList<MethodDesc> = RealmList(),
+    open var reminder: String = "") : RealmObject() {
 }

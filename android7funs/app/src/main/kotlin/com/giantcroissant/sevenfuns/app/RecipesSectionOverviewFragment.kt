@@ -1,9 +1,9 @@
 package com.giantcroissant.sevenfuns.app
 
+//import kotlinx.android.synthetic.main.fragment_qa_section_overview.view.*
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -11,23 +11,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.giantcroissant.sevenfuns.app.DbModel.Recipes
 import io.realm.Realm
 import io.realm.RealmConfiguration
-import kotlinx.android.synthetic.main.cardview_recipes_section_overview.view.*
-import kotlin.properties.Delegates
-
-import kotlinx.android.synthetic.main.fragment_recipes_section_overview.view.*
-
-import com.giantcroissant.sevenfuns.app.DbModel.Recipes
-import com.google.android.youtube.player.internal.v
 import io.realm.Sort
-//import kotlinx.android.synthetic.main.fragment_qa_section_overview.view.*
+import kotlinx.android.synthetic.main.cardview_recipes_section_overview.view.*
+import kotlinx.android.synthetic.main.fragment_recipes_section_overview.view.*
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import kotlin.properties.Delegates
 
 /**
  * Created by apprentice on 2/1/16.
