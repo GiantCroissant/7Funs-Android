@@ -1,90 +1,21 @@
 package com.giantcroissant.sevenfuns.app
 
+
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
-import android.util.Log
+import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import io.realm.Realm
-import io.realm.RealmConfiguration
-import io.realm.RealmResults
-//import io.realm.processor.DefaultModuleGenerator
-import retrofit2.GsonConverterFactory
-import retrofit2.Retrofit
-import retrofit2.RxJavaCallAdapterFactory
-import rx.Observable
-import rx.Subscriber
-import rx.schedulers.Schedulers
-import org.joda.time.DateTime
-import kotlin.properties.Delegates
-
-import com.giantcroissant.sevenfuns.app.DbModel.Recipes
-import com.giantcroissant.sevenfuns.app.DbModel.RecipesOverview
-
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.*
 
-// adb pull /data/data/com.giantcroissant.sevenfuns.app/files/default.realm
-// adb shell rm -r /data/data/com.giantcroissant.sevenfuns.app/files
+
 class MainActivity : AppCompatActivity() {
-
-    //    val retrofit = Retrofit
-    //            .Builder()
-    //            .baseUrl("https://www.7funs.com")
-    //            .addConverterFactory(GsonConverterFactory.create())
-    //            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-    //            .build()
-    //
-    //    val restApiService = retrofit.create(RestApiService::class.java)
-
-    //    private var config: RealmConfiguration by Delegates.notNull()
-
-    //private var drawerLayout: DrawerLayout by Delegates.notNull()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        //        val retrofit = Retrofit
-        //                .Builder()
-        //                .baseUrl("https://www.7funs.com")
-        //                .addConverterFactory(GsonConverterFactory.create())
-        //                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-        //                .build()
-        //
-        //        val restApiService = retrofit.create(RestApiService::class.java)
-        //
-        //        restApiService.getRecipesOverview().subscribe(object : Subscriber<List<JsonModel.Overview>>() {
-        //            override fun onCompleted() {}
-        //            override fun onError(e: Throwable?) {
-        //                System.out.println("something is wrong")
-        //                System.out.println(e?.message)
-        //            }
-        //            override fun onNext(rs: List<JsonModel.Overview>) {
-        //            }
-        //        })
-        //        restApiService.getMessageById(48).subscribe { x ->
-        //            System.out.println(x.toString())
-        //        }
-        //        restApiService.getMessageQuery().subscribe { x ->
-        //            System.out.println(x)
-        //        }
-
-        //        val recipesSetupServiceIntent = Intent(this, RecipesSetupService::class.java)
-        //        val recipesDownloadServiceIntent = Intent(this, RecipesDownloadService::class.java)
-        //        startService(recipesSetupServiceIntent)
-        //        startService(recipesDownloadServiceIntent)
-
-        //        config = RealmConfiguration.Builder(this).build()
-        //Realm.deleteRealm(config)
-
-        //hello.text = "Hello! You are so cool."
-
-        System.out.println("MainActivity onCreate")
 
         val recipesSetupServiceIntent = Intent(this, RecipesSetupService::class.java)
         val recipesDownloadServiceIntent = Intent(this, RecipesDownloadService::class.java)
@@ -92,18 +23,15 @@ class MainActivity : AppCompatActivity() {
         startService(recipesDownloadServiceIntent)
 
         setSupportActionBar(toolbar)
-        supportActionBar.setHomeAsUpIndicator(R.drawable.ic_menu)
-        supportActionBar.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        //        drawerLayout =
-        //        drawerLayout = findViewById(R.id.drawer_layout) as? DrawerLayout
-        //        val navigationView = findViewById(R.id.navigation_view) as? NavigationView
         navigationView?.let {
-            it.setNavigationItemSelectedListener { mi ->
-                mi.setChecked(true)
+            it.setNavigationItemSelectedListener {
+                it.isChecked = true
                 drawerLayout?.closeDrawers()
 
-                when (mi.itemId) {
+                when (it.itemId) {
                     R.id.navigationItemRecipesSection -> {
                         supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, RecipesSectionFragment.newInstance()).commit()
                     }
