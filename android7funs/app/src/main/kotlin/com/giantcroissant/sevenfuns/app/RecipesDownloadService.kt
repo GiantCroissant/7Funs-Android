@@ -47,7 +47,18 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
                 .flatMap { x ->
                     val rList = RealmList<MethodDesc>()
                     x.method.forEach { m -> rList.add(MethodDesc(m)) }
-                    val r = Recipes(x.id.toString(), "", x.updatedAt, x.chefName, x.title, x.description, x.ingredient, x.seasoning, rList, x.reminder)
+                    val r = Recipes(
+                            x.id.toString(),
+                            x.image ?: "",
+                            x.updatedAt,
+                            x.chefName,
+                            x.title,
+                            x.description,
+                            x.ingredient,
+                            x.seasoning,
+                            rList,
+                            x.reminder
+                    )
                     Observable.just(r)
                 }
                 .buffer(30)

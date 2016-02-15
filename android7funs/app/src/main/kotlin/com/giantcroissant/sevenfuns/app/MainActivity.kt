@@ -33,19 +33,34 @@ class MainActivity : AppCompatActivity() {
 
                 when (it.itemId) {
                     R.id.navigationItemRecipesSection -> {
-                        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, RecipesSectionFragment.newInstance()).commit()
+                        supportFragmentManager
+                                .beginTransaction()
+                                .replace(R.id.fragmentContainer, RecipesSectionFragment.newInstance())
+                                .commit()
                     }
                     R.id.navigationItemPersonalSection -> {
-                        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, PersonalSectionFragment.newInstance()).commit()
+                        supportFragmentManager
+                                .beginTransaction()
+                                .replace(R.id.fragmentContainer, PersonalSectionFragment.newInstance())
+                                .commit()
                     }
                     R.id.navigationItemInstructorSection -> {
-                        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, InstructorSectionFragment.newInstance()).commit()
+                        supportFragmentManager
+                                .beginTransaction()
+                                .replace(R.id.fragmentContainer, InstructorSectionFragment.newInstance())
+                                .commit()
                     }
                     R.id.navigationItemQASection -> {
-                        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, QASectionFragment.newInstance()).commit()
+                        supportFragmentManager
+                                .beginTransaction()
+                                .replace(R.id.fragmentContainer, QASectionFragment.newInstance())
+                                .commit()
                     }
                     R.id.navigationItemSponsorSection -> {
-                        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, SponsorSectionFragment.newInstance()).commit()
+                        supportFragmentManager
+                                .beginTransaction()
+                                .replace(R.id.fragmentContainer, SponsorSectionFragment.newInstance())
+                                .commit()
                     }
                 }
 
@@ -55,19 +70,6 @@ class MainActivity : AppCompatActivity() {
             it.setCheckedItem(R.id.navigationItemRecipesSection)
             it.menu.performIdentifierAction(R.id.navigationItemRecipesSection, 0)
         }
-
-        //retrieveRecipesOverview()
-        //retrieveMessageQuery()
-
-        //prepareRecipesFetchingSetup()
-        //retrieveRemoteRecipes(5)
-
-        //retrieveRemoteRecipesTest(4)
-
-        //Log.d("", realm.path)
-        //val localDataStream = realm.where(Recipes::class.java)
-        //.isNotNull("id").findAllAsync()//.asObservable()
-        //                .filter { rs -> rs.isLoaded }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

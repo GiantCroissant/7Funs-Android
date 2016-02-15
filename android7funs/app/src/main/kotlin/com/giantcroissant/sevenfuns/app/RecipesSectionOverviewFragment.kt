@@ -7,11 +7,13 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.cardview_recipes_section_overview.view.*
@@ -31,8 +33,8 @@ import rx.schedulers.Schedulers
  * Created by apprentice on 2/1/16.
  */
 class RecipesSectionOverviewFragment : Fragment() {
-    public companion object {
-        public fun newInstance(): RecipesSectionOverviewFragment {
+    companion object {
+        fun newInstance(): RecipesSectionOverviewFragment {
             val fragment = RecipesSectionOverviewFragment().apply {
                 val args = Bundle().apply {
                 }
@@ -52,119 +54,115 @@ class RecipesSectionOverviewFragment : Fragment() {
         //System.out.println("RecipesSectionOverviewFragment - onCreateView");
 
         val view = inflater?.inflate(R.layout.fragment_recipes_section_overview, container, false)
-            view?.recipesSectionOverview?.let {
-                it.layoutManager = LinearLayoutManager(it.context)
-                it.adapter = RecyclerAdapter((activity as? AppCompatActivity), listOf<Recipes>())
-            }
+        view?.recipesSectionOverview?.let {
+            it.layoutManager = LinearLayoutManager(it.context)
+            it.adapter = RecyclerAdapter((activity as? AppCompatActivity), listOf<Recipes>())
+        }
 
-        view?.recipesSectionSwipeContainer?.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
-            override fun onRefresh() {
-                System.out.println("it is freshing")
-                (activity as? AppCompatActivity)?.let {
-                    config = RealmConfiguration.Builder(it.applicationContext).build()
-                    val realm = Realm.getInstance(config)
-                    val a = it
-//                    val query = realm.where(Recipes::class.java).findAllAsync()
-//                    query.sort("id")
-                    val query = realm.where(Recipes::class.java).findAllSortedAsync("id", Sort.DESCENDING)
-                    query.asObservable()
-//                            .observeOn(AndroidSchedulers.mainThread())
-//                            .observeOn(Schedulers.io())
-                            .filter { x -> x.isLoaded }
-                            .flatMap { xs -> Observable.from(xs) }
-                            //.skip(30 * refreshCount)
-                            .take(30 * refreshCount + 30)
-                            .buffer(30 * refreshCount + 30)
-                            .subscribeOn(AndroidSchedulers.mainThread())
-                            .subscribe { x ->
-                                refreshCount = refreshCount + 1
-                                view?.recipesSectionOverview?.let {
-//                                    it.layoutManager = LinearLayoutManager(it.context)
-                                    it.adapter = RecyclerAdapter((activity as? AppCompatActivity), x)
-                                    //(it.adapter as? RecyclerAdapter)?.clearAll()
-                                    //(it.adapter as? RecyclerAdapter)?.addAll(x)
-                                }
+        view?.recipesSectionSwipeContainer?.setOnRefreshListener({
+
+            (activity as? AppCompatActivity)?.let {
+                config = RealmConfiguration.Builder(it.applicationContext).build()
+                val realm = Realm.getInstance(config)
+                val a = it
+                //                    val query = realm.where(Recipes::class.java).findAllAsync()
+                //                    query.sort("id")
+                val query = realm.where(Recipes::class.java).findAllSortedAsync("id", Sort.DESCENDING)
+                query.asObservable()
+                        //                            .observeOn(AndroidSchedulers.mainThread())
+                        //                            .observeOn(Schedulers.io())
+                        .filter { x -> x.isLoaded }
+                        .flatMap { xs -> Observable.from(xs) }
+                        //.skip(30 * refreshCount)
+                        .take(30 * refreshCount + 30)
+                        .buffer(30 * refreshCount + 30)
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .subscribe { x ->
+                            refreshCount += 1
+                            view.recipesSectionOverview?.let {
+                                //                                    it.layoutManager = LinearLayoutManager(it.context)
+                                it.adapter = RecyclerAdapter((activity as? AppCompatActivity), x)
+                                //(it.adapter as? RecyclerAdapter)?.clearAll()
+                                //(it.adapter as? RecyclerAdapter)?.addAll(x)
                             }
-                }
-
-                view?.recipesSectionSwipeContainer?.isRefreshing = false
+                        }
             }
+
+            view.recipesSectionSwipeContainer?.isRefreshing = false
         })
 
-//        val view = inflater?.inflate(R.layout.fragment_recipes_section_overview, container, false) as? RecyclerView
-//
         (activity as? AppCompatActivity)?.let {
             config = RealmConfiguration.Builder(it.applicationContext).build()
             val realm = Realm.getInstance(config)
 
             val query = realm.where(Recipes::class.java).findAllSortedAsync("id", Sort.DESCENDING)
-//            query.sort("id")
+            //            query.sort("id")
             query.asObservable()
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .observeOn(Schedulers.io())
                     .filter { x -> x.isLoaded }
                     .flatMap { xs -> Observable.from(xs) }
                     .buffer(30)
                     .subscribeOn(AndroidSchedulers.mainThread())
                     .subscribe { x ->
-                        //System.out.println("Subscribe to show onto ui")
                         view?.recipesSectionOverview?.let {
-                            //System.out.println("swipe ui is found")
-                            //it.layoutManager = LinearLayoutManager(it.context)
-                            it.adapter = RecyclerAdapter(
-                                    (activity as? AppCompatActivity),
-                                    x
-//                                    listOf(
-//                                            JsonModel.RecipesJsonModel(1, "", "", "", "Beef", "", "", listOf("", ""), "", 0, "", "", 0, 0, 0),
-//                                            JsonModel.RecipesJsonModel(2, "", "", "", "Soup", "", "", listOf("", ""), "", 3, "", "", 0, 0, 0),
-//                                            JsonModel.RecipesJsonModel(3, "", "", "", "Cake", "", "", listOf("", ""), "", 6, "", "", 0, 0, 0)
-//                                    )
-                            )
+                            it.adapter = RecyclerAdapter((activity as? AppCompatActivity), x)
                         }
                     }
-
         }
 
         return view
     }
 
-    public class RecyclerAdapter(val activity: AppCompatActivity?, val recipesList: List<Recipes>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
-        public class ViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
-            public var view: View by Delegates.notNull()
+    class RecyclerAdapter(val activity: AppCompatActivity?, val recipesList: List<Recipes>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+        class ViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
+            var view: View by Delegates.notNull()
 
             init {
                 view = v
             }
         }
 
-        override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int) : ViewHolder {
+        override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
+
+
             val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.cardview_recipes_section_overview, viewGroup, false)
+
 
             return ViewHolder(view)
         }
 
         override fun onBindViewHolder(viewHolder: ViewHolder, i: Int) {
             val r = recipesList[i]
+            val baseUrl = "https://commondatastorage.googleapis.com/funs7-1/uploads/recipe/image/"
 
-            viewHolder.view?.recipesSectionOverviewCardViewTitle?.text = r.title
+            val imageUrl = baseUrl + r.id + "/" + r.image
+            Log.d("TEST", "imageUrl = $imageUrl")
 
-            viewHolder.view?.recipesSectionOverviewCardViewDetail?.setOnClickListener { x ->
+            Glide.with(activity?.applicationContext)
+                    .load(imageUrl)
+                    .centerCrop()
+                    .into(viewHolder.view.recipesSectionOverviewCardViewImage)
 
-//                activity.startActivity()
+            viewHolder.view.recipesSectionOverviewCardViewTitle?.text = r.title
+
+            viewHolder.view.recipesSectionOverviewCardViewDetail?.setOnClickListener { x ->
+
+                //                activity.startActivity()
 
                 (activity as? AppCompatActivity)?.let {
                     val descList = r.methods.map { md -> md.desc }
                     val intent = Intent(x.context, RecipesDetailActivity::class.java)
-                    intent?.putExtra("recipes", RecipesParcelable(r.id.toInt(), r.title, r.ingredient, r.seasoning, descList, r.reminder))
+                    intent.putExtra("recipes", RecipesParcelable(r.id.toInt(), r.title, r.ingredient, r.seasoning, descList, r.reminder))
 
                     x.context.startActivity(intent)
                 }
             }
         }
 
-        override fun getItemCount() : Int { return recipesList.size }
+        override fun getItemCount(): Int {
+            return recipesList.size
+        }
 
-//        public fun clearAll() {
+        //        public fun clearAll() {
         //            recipesList.clear()
         //            notifyDataSetChanged()
         //        }
@@ -174,8 +172,8 @@ class RecipesSectionOverviewFragment : Fragment() {
         //            notifyDataSetChanged()
         //        }
 
-//        public fun appendAfter(contents: List<Recipes>) {
-//            recipesList.add
-//        }
+        //        public fun appendAfter(contents: List<Recipes>) {
+        //            recipesList.add
+        //        }
     }
 }
