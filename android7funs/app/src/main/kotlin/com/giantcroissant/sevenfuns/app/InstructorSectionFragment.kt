@@ -11,8 +11,9 @@ import android.view.ViewGroup
  * Created by apprentice on 2/1/16.
  */
 class InstructorSectionFragment : Fragment() {
-    public companion object {
-        public fun newInstance(): InstructorSectionFragment {
+
+    companion object {
+        fun newInstance(): InstructorSectionFragment {
             val fragment = InstructorSectionFragment().apply {
                 val args = Bundle().apply {
                 }
@@ -23,15 +24,18 @@ class InstructorSectionFragment : Fragment() {
             return fragment
         }
     }
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.fragment_instructor_section, container, false)
-
         return view
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         (activity as? AppCompatActivity)?.let {
-            it.supportFragmentManager.beginTransaction().replace(R.id.instructorSectionFragmentContainer, InstructorSectionOverviewFragment.newInstance()).commit()
+            it.supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.instructorSectionFragmentContainer, InstructorSectionOverviewFragment.newInstance())
+                .commit()
         }
     }
 }

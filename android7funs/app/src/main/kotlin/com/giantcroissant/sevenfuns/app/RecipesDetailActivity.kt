@@ -2,12 +2,6 @@ package com.giantcroissant.sevenfuns.app
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.google.android.youtube.player.YouTubeInitializationResult
-import com.google.android.youtube.player.YouTubePlayer
-import com.google.android.youtube.player.YouTubePlayerSupportFragment
-import kotlinx.android.synthetic.main.activity_recipes_detail.*
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.cardview_recipes_detail.view.*
 import kotlinx.android.synthetic.main.toolbar.*
 
 /**
@@ -19,8 +13,8 @@ class RecipesDetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_recipes_detail)
 
         setSupportActionBar(toolbar)
-        supportActionBar.setHomeAsUpIndicator(R.drawable.ic_menu)
-        supportActionBar.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 //        val recipesParcelable = intent.getParcelableExtra<RecipesParcelable>("recipes")
 //

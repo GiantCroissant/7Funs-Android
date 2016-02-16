@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.listview_qa_detail_item.view.*
 //import kotlinx.android.synthetic.main.fragment_qa_section_overview.view.*
 import kotlinx.android.synthetic.main.toolbar.*
 import rx.Observable
-import kotlin.properties.Delegates
+//import kotlin.properties.Delegates
 
 /**
  * Created by apprentice on 2/2/16.
@@ -63,8 +63,8 @@ class QADetailActivity : AppCompatActivity() {
 
         //
         setSupportActionBar(toolbar)
-        supportActionBar.setHomeAsUpIndicator(R.drawable.ic_back)
-        supportActionBar.setDisplayHomeAsUpEnabled(false)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         drawerLayout?.setOnClickListener { x ->
             this.onBackPressed()
@@ -104,7 +104,7 @@ class QADetailActivity : AppCompatActivity() {
                     }
                     override fun onNext(x: List<JsonModel.MessageWithCommentJsonObject>) {
                         System.out.println(x)
-                        qaDetailMessageList.adapter = RecyclerAdapter((this as? AppCompatActivity), x.toArrayList())
+                        qaDetailMessageList.adapter = RecyclerAdapter((this as? AppCompatActivity), x.toMutableList())
 //                        view?.let { v ->
 //                            //v.qaSectionOverview.layoutManager = LinearLayoutManager(v.context)
 //                            //v.qaSectionOverview.adapter = RecyclerAdapter((activity as? AppCompatActivity), x)
@@ -116,7 +116,8 @@ class QADetailActivity : AppCompatActivity() {
 
     public class RecyclerAdapter(val activity: AppCompatActivity?, val messageList: MutableList<JsonModel.MessageWithCommentJsonObject>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
         public class ViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
-            public var view: View by Delegates.notNull()
+            //public var view: View by Delegates.notNull()
+            public var view: View
 
             init {
                 view = v

@@ -13,19 +13,19 @@ import retrofit2.Retrofit
 import retrofit2.RxJavaCallAdapterFactory
 import rx.Observable
 import rx.Subscriber
-import rx.schedulers.Schedulers
 import kotlin.properties.Delegates
 
 /**
  * Created by apprentice on 2/1/16.
  */
-public class RecipesSetupService : IntentService("RecipesSetupService") {
+class RecipesSetupService : IntentService("RecipesSetupService") {
+
     val retrofit = Retrofit
-            .Builder()
-            .baseUrl("https://www.7funs.com")
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-            .build()
+        .Builder()
+        .baseUrl("https://www.7funs.com")
+        .addConverterFactory(GsonConverterFactory.create())
+        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+        .build()
 
     val restApiService = retrofit.create(RestApiService::class.java)
 
@@ -43,49 +43,55 @@ public class RecipesSetupService : IntentService("RecipesSetupService") {
     fun prepareRecipesFetchingSetup() {
         // This returns a pair of need-to-update-list and need-to-remove-list according to the rule
         updateRemovePair()
-                // Make everything in background thread
-                //.observeOn(Schedulers.io())
-                //.subscribeOn(Schedulers.io())
-                // Just map it to what realm db knows
-                .map { pair ->
-//                    val realm = Realm.getInstance(config)
-
-                    val needToUpdateRecipesOverviews = pair.first.map { intermediateOverview -> RecipesOverview(intermediateOverview.id, intermediateOverview.updatedAt) }
-                    val query = realm.where(Recipes::class.java)
-                    val accQuery = pair.second.fold(query, { acc, intermediateOverview -> acc.equalTo("id", intermediateOverview.id).or() })
-                    val needToRemovedRecipes = accQuery.findAll()
-                    Pair(needToUpdateRecipesOverviews, needToRemovedRecipes)
+            .map { pair ->
+                val needToUpdateRecipesOverviews = pair.first.map { intermediateOverview ->
+                    RecipesOverview(intermediateOverview.id, intermediateOverview.updatedAt)
                 }
-                .subscribe(object : Subscriber<Pair<List<RecipesOverview>, RealmResults<Recipes>>>() {
-                    override fun onCompleted() {}
-                    override fun onError(e: Throwable?) {
-                        System.out.println(e?.message)
-                    }
-                    override fun onNext(pair: Pair<List<RecipesOverview>, RealmResults<Recipes>>) {
-//                        val realm = Realm.getInstance(config)
-                        // New or update for the first list, delete all for the second
-                        realm.beginTransaction()
-
-                        // Update or create for Recipes Overview
-                        pair.first.forEach { ro -> realm.copyToRealmOrUpdate(ro) }
-                        // Clear Recipes
-                        pair.second.clear()
-
-                        realm.commitTransaction()
-                    }
+                val query = realm.where(Recipes::class.java)
+                val accQuery = pair.second.fold(query, { acc, intermediateOverview ->
+                    acc.equalTo("id", intermediateOverview.id).or()
                 })
+                val needToRemovedRecipes = accQuery.findAll()
+                Pair(needToUpdateRecipesOverviews, needToRemovedRecipes)
+            }
+            .subscribe(object : Subscriber<Pair<List<RecipesOverview>, RealmResults<Recipes>>>() {
+                override fun onCompleted() {
+                }
+
+                override fun onError(e: Throwable?) {
+                    System.out.println(e?.message)
+                }
+
+                override fun onNext(pair: Pair<List<RecipesOverview>, RealmResults<Recipes>>) {
+                    //                        val realm = Realm.getInstance(config)
+                    // New or update for the first list, delete all for the second
+                    realm.beginTransaction()
+
+                    // Update or create for Recipes Overview
+                    pair.first.forEach { ro -> realm.copyToRealmOrUpdate(ro) }
+                    // Clear Recipes
+                    pair.second.clear()
+
+                    realm.commitTransaction()
+                }
+            })
     }
 
     fun updateRemovePair(): Observable<Pair<List<MiscModel.IntermediateOverview>, List<MiscModel.IntermediateOverview>>> {
-//        val realm = Realm.getInstance(config)
+        //        val realm = Realm.getInstance(config)
 
         //
         val remoteDataStream = restApiService.getRecipesOverview()
-                .flatMap { jos -> Observable.from(jos) }
-                .flatMap { jo ->
-                    Observable.just(MiscModel.IntermediateOverview(
-                            jo.id.toString(), jo.updatedAt, MiscModel.LocationType.Remote, MiscModel.OverviewActionResultType.None))
-                }
+            .flatMap { jos -> Observable.from(jos) }
+            .flatMap { jo ->
+                Observable.just(
+                    MiscModel.IntermediateOverview(
+                        jo.id,
+                        jo.updatedAt,
+                        MiscModel.LocationType.Remote,
+                        MiscModel.OverviewActionResultType.None)
+                )
+            }
 
 
         //System.out.println("query realm for recipes")
@@ -99,12 +105,16 @@ public class RecipesSetupService : IntentService("RecipesSetupService") {
             //System.out.println("define local stream")
 
             val localDataStream = query.asObservable()
-                    .filter { rs -> rs.isLoaded }
-                    .flatMap { rs -> Observable.from(rs) }
-                    .flatMap { r ->
-                        Observable.just(MiscModel.IntermediateOverview(
-                                r.id, r.updatedAt, MiscModel.LocationType.Local, MiscModel.OverviewActionResultType.None))
-                    }
+                .filter { rs -> rs.isLoaded }
+                .flatMap { rs -> Observable.from(rs) }
+                .flatMap { r ->
+                    Observable.just(MiscModel.IntermediateOverview(
+                        r.id as Int,
+                        r.updatedAt,
+                        MiscModel.LocationType.Local,
+                        MiscModel.OverviewActionResultType.None)
+                    )
+                }
 
             //localDataStream.concatWith(remoteDataStream)
 
@@ -120,7 +130,7 @@ public class RecipesSetupService : IntentService("RecipesSetupService") {
         val initialPair = Pair(listOf<MiscModel.IntermediateOverview>(), listOf<MiscModel.IntermediateOverview>())
         val categorizeToPairList: (accPair: Pair<List<MiscModel.IntermediateOverview>, List<MiscModel.IntermediateOverview>>, intermediateOverview: MiscModel.IntermediateOverview) -> Pair<List<MiscModel.IntermediateOverview>, List<MiscModel.IntermediateOverview>> = { accPair, intermediateOverview ->
             val (needToUpdateList, needToRemoveList) = accPair
-            val sameIdInList = needToUpdateList.find { item -> item.id == intermediateOverview.id  }
+            val sameIdInList = needToUpdateList.find { item -> item.id == intermediateOverview.id }
 
             // aro should have one action of None, Update, or Remove
             val aro: MiscModel.IntermediateOverview = if (sameIdInList == null) {
@@ -133,7 +143,7 @@ public class RecipesSetupService : IntentService("RecipesSetupService") {
                 } else {
                     // Although in this case, this should never be hit, the type of action, None
                     // is still required later
-                    MiscModel.IntermediateOverview(intermediateOverview.id, intermediateOverview.updatedAt, intermediateOverview.locationType,MiscModel.OverviewActionResultType.None)
+                    MiscModel.IntermediateOverview(intermediateOverview.id, intermediateOverview.updatedAt, intermediateOverview.locationType, MiscModel.OverviewActionResultType.None)
                 }
             } else {
                 // Both found, need to compare which one is the latest
