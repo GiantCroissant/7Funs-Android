@@ -117,10 +117,14 @@ class QASectionOverviewFragment : Fragment() {
                                         RecyclerItemClickListener(v.qaSectionOverview.context, object : RecyclerItemClickListener.OnItemClickListener {
                                             override fun onItemClick(v: View, position: Int) {
 
-                                                System.out.println(position)
+                                                System.out.println("Selected recipes id: " + v.id.toString())
+
+                                                val id = x[position].id
+
+                                                //v.id
 
                                                 val intent = Intent(v.context, QADetailActivity::class.java)
-                                                intent?.putExtra("message", MessageParcelable(1))
+                                                intent?.putExtra("message", MessageParcelable(id))
                                                 v.context.startActivity(intent)
                                             }
                                         }))

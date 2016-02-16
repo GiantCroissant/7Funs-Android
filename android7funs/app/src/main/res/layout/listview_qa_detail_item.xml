@@ -4,4 +4,19 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
+    <TextView
+            android:id="@+id/qaSectionDetailTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Title"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+    <TextView
+            android:id="@+id/qaSectionDetailComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Comment"
+            android:textSize="16sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
 </LinearLayout>

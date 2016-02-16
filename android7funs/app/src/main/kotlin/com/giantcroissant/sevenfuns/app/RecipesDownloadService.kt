@@ -60,9 +60,14 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
         val localDataStream = query.asObservable()
                 .filter { rs -> rs.isLoaded }
                 .flatMap { rs -> Observable.from(rs) }
+                //.delay(1, TimeUnit.SECONDS)
                 .flatMap { r -> Observable.just(MiscModel.IntermediateOverview(r.id, r.updatedAt, MiscModel.LocationType.Local, MiscModel.OverviewActionResultType.None)) }
-
+                //.delay(30, TimeUnit.SECONDS)
+                //.window(10, TimeUnit.SECONDS, 30)
+                .take(30)
                 .buffer(30)
+                //.buffer(10, TimeUnit.SECONDS, 30)
+                //.delay(2, TimeUnit.MINUTES)
                 .map { x -> x.map { intermediateOverview -> intermediateOverview.id.toInt() } }
                 .flatMap { x -> restApiService.getRecipesByIdList(x) }
                 //.subscribeOn( Schedulers.newThread() )

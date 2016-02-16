@@ -58,7 +58,7 @@ interface RestApiService {
             id: Int
     ): Observable<JsonModel.MessageSpecificJsonObject>
 
-    @GET("/api/messages/{id}")
+    @GET("/api/messages/{id}/comments")
     fun getSpecificMessageComment(
             @Path("id")
             id: Int
