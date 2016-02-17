@@ -37,13 +37,20 @@ interface RestApiService {
 
     //
     @GET("/api/categories")
-    fun getCategories(): Observable<List<JsonModel.Category>>
+    fun getCategories(): Observable<List<JsonModel.CategoryJsonObject>>
 
     @GET("/api/categories/{id}")
     fun getCategoryById(
             @Path("id")
             id: Int
-    ): Observable<JsonModel.Category>
+    ): Observable<JsonModel.CategoryJsonObject>
+
+    //
+    @GET("/api/tags/{id}")
+    fun getTagById(
+            @Path("id")
+            id: Int
+    ): Observable<JsonModel.TagJsonObject>
 
     //
     @GET("/api/messages")
