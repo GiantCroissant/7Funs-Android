@@ -1,6 +1,7 @@
 package com.giantcroissant.sevenfuns.app
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v4.widget.DrawerLayout
@@ -72,9 +73,19 @@ class QADetailActivity : AppCompatActivity() {
 
         //qaDetailMessageList
         qaDetailAddFab.setOnClickListener { x ->
-            System.out.println("hello")
-            val intent = Intent(this, LoginActivity::class.java)
-            this.startActivity(intent)
+            //System.out.println("hello")
+
+            val sp: SharedPreferences = getSharedPreferences("DATA", 0)
+            val token = sp.getString("token", "")
+            if (token.isEmpty()) {
+                System.out.println("No cached token")
+
+                val intent = Intent(this, LoginActivity::class.java)
+                this.startActivity(intent)
+            } else {
+                System.out.println("Have cached token")
+
+            }
         }
 
         //

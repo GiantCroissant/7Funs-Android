@@ -2,7 +2,7 @@
   "instructors": [
     {
       "name": "李梅仙老師",
-      "image": "teacher_01",
+      "image": "teacher_s01",
       "profileImage": "teacher_s01",
       "experience": "廚藝經驗30多年，擅長江浙菜",
       "currentTitle": "現任女青年會烹飪教學老師",
@@ -10,7 +10,7 @@
     },
     {
       "name": "程安琪老師",
-      "image": "teacher_02",
+      "image": "teacher_s02",
       "profileImage": "teacher_s02",
       "experience": "擁有30餘年的烹飪教學經驗",
       "currentTitle": "現任yammy cook的烹飪講師",
@@ -18,7 +18,7 @@
     },
     {
       "name": "蔡季芳老師",
-      "image": "teacher_03",
+      "image": "teacher_s03",
       "profileImage": "teacher_s03",
       "experience": "廚藝經驗10餘年，擅長各地小吃",
       "currentTitle": "",
@@ -26,7 +26,7 @@
     },
     {
       "name": "駱進漢師傅",
-      "image": "teacher_04",
+      "image": "teacher_s04",
       "profileImage": "teacher_s04",
       "experience": "廚藝經驗20餘年，擅長川菜、台菜、上海菜、創意台菜",
       "currentTitle": "現任駱師傅醬味川客菜當家主廚",
@@ -34,7 +34,7 @@
     },
     {
       "name": "李耀堂師傅",
-      "image": "teacher_05",
+      "image": "teacher_s05",
       "profileImage": "teacher_s05",
       "experience": "廚藝經驗20餘年，擅長創意料理、素食料理",
       "currentTitle": "現任新天地餐飲集團廚藝顧問",
@@ -42,7 +42,7 @@
     },
     {
       "name": "林秋香老師",
-      "image": "teacher_06",
+      "image": "teacher_s06",
       "profileImage": "teacher_s06",
       "experience": "廚藝經驗20餘年，擅長藥膳養生料理",
       "currentTitle": "",
@@ -50,7 +50,7 @@
     },
     {
       "name": "溫國智師傅",
-      "image": "teacher_07",
+      "image": "teacher_s07",
       "profileImage": "teacher_s07",
       "experience": "廚藝經驗10餘年, 擅長台菜、川菜、創意料理",
       "currentTitle": "現任叁合院台灣風格飲食廚藝總監",
