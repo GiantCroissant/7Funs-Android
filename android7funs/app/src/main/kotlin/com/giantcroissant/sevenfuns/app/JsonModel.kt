@@ -242,8 +242,7 @@ object JsonModel {
         @SerializedName("created_at")
         val createdAt: String,
         @SerializedName("updated_at")
-        val updatedAt: String,
-        val tags: List<TagJsonObject>)
+        val updatedAt: String)
 
     data class CategoryJsonObject(
         val id: String,
