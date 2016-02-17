@@ -10,31 +10,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.cardview_sponsor_section_overview.view.*
+import kotlinx.android.synthetic.main.fragment_sponsor_section_overview.view.*
 import rx.Observable
 import rx.Subscriber
-import rx.schedulers.Schedulers
+import rx.android.schedulers.AndroidSchedulers
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import kotlin.properties.Delegates
-import com.github.salomonbrys.kotson.fromJson
-import kotlinx.android.synthetic.main.fragment_sponsor_section_overview.view.*
-import rx.android.schedulers.AndroidSchedulers
 
 /**
  * Created by apprentice on 2/1/16.
  */
 class SponsorSectionOverviewFragment : Fragment() {
-    public companion object {
-        public fun newInstance(): SponsorSectionOverviewFragment {
+
+    companion object {
+        fun newInstance(): SponsorSectionOverviewFragment {
             val fragment = SponsorSectionOverviewFragment().apply {
                 val args = Bundle().apply {
                 }
-
                 arguments = args
             }
-
             return fragment
         }
     }
@@ -43,81 +41,75 @@ class SponsorSectionOverviewFragment : Fragment() {
         val view = inflater?.inflate(R.layout.fragment_sponsor_section_overview, container, false)
 
         (activity as? AppCompatActivity)?.let {
-            val sponsorData = Observable.create(object : Observable.OnSubscribe<String> {
-                override fun call(t: Subscriber<in String>?) {
-                    try {
-                        val inputStream = it.assets.open("sponsor-data.json")
-                        val inputStreamReader = InputStreamReader(inputStream)
-                        val sb = StringBuilder()
-                        val br = BufferedReader(inputStreamReader)
-                        var read = br.readLine()
-                        while(read != null) {
-                            sb.append(read)
-                            read = br.readLine()
-                        }
-                        t?.onNext(sb.toString())
-                        t?.onCompleted()
-                    } catch(e: Exception) {
-                        t?.onError(e)
+            val sponsorData = Observable.create(Observable.OnSubscribe<kotlin.String> { t ->
+                try {
+                    val inputStream = it.assets.open("sponsor-data.json")
+                    val inputStreamReader = InputStreamReader(inputStream)
+                    val sb = StringBuilder()
+                    val br = BufferedReader(inputStreamReader)
+                    var read = br.readLine()
+                    while (read != null) {
+                        sb.append(read)
+                        read = br.readLine()
                     }
+                    t?.onNext(sb.toString())
+                    t?.onCompleted()
+                } catch(e: Exception) {
+                    t?.onError(e)
                 }
             })
 
             sponsorData
-                    //.observeOn(Schedulers.io())
-                    .map { dataString -> Gson().fromJson<JsonModel.SponsorCollectionJsonObject>(dataString) }
-                    .subscribeOn(AndroidSchedulers.mainThread())
-                    .subscribe(object : Subscriber<JsonModel.SponsorCollectionJsonObject>() {
-                        override fun onNext(x: JsonModel.SponsorCollectionJsonObject) {
-                            view?.let { v ->
-                                v.sponsorSectionOverview.layoutManager = LinearLayoutManager(v.context)
-                                v.sponsorSectionOverview.adapter = RecyclerAdapter((activity as? AppCompatActivity), x.sponsors)
-                            }
+                //.observeOn(Schedulers.io())
+                .map { dataString -> Gson().fromJson<JsonModel.SponsorCollectionJsonObject>(dataString) }
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : Subscriber<JsonModel.SponsorCollectionJsonObject>() {
+                    override fun onNext(x: JsonModel.SponsorCollectionJsonObject) {
+                        view?.let { v ->
+                            v.sponsorSectionOverview.layoutManager = LinearLayoutManager(v.context)
+                            v.sponsorSectionOverview.adapter = RecyclerAdapter((activity as? AppCompatActivity), x.sponsors)
                         }
+                    }
 
-                        override fun onError(e: Throwable?) {
-                            System.out.println(e?.message)
-                        }
+                    override fun onError(e: Throwable?) {
+                        System.out.println(e?.message)
+                    }
 
-                        override fun onCompleted() {
-
-                        }
-                    })
+                    override fun onCompleted() {
+                    }
+                })
         }
-
         return view
     }
 
-    public class RecyclerAdapter(val activity: AppCompatActivity?, val sponsorList: List<JsonModel.SponsorJsonObject>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
-        public class ViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
-            public var view: View by Delegates.notNull()
-
+    class RecyclerAdapter(val activity: AppCompatActivity?, val sponsorList: List<JsonModel.SponsorJsonObject>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+        class ViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
+            var view: View by Delegates.notNull()
             init {
                 view = v
             }
         }
 
-        override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int) : ViewHolder {
+        override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
             val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.cardview_sponsor_section_overview, viewGroup, false)
-
             return ViewHolder(view)
         }
 
         override fun onBindViewHolder(viewHolder: ViewHolder, i: Int) {
             val r = sponsorList[i]
 
-            viewHolder.view?.sponsorSectionOverviewCardViewTitle?.text = r.name
+            viewHolder.view.sponsorSectionOverviewCardViewTitle?.text = r.name
             val imagePath = "file:///android_asset/sponsors/" + r.image + ".png"
 
             Glide
-                    .with(activity?.applicationContext)
-                    //.placeholder(R.drawable.ic_recipes_stub_image)
-                    //                .load(items[i].imageUrl)
-                    .load(Uri.parse(imagePath))
-            //.transform(CircleTransform(c))
-                    .into(viewHolder.view?.sponsorSectionOverviewCardViewImage)
+                .with(activity?.applicationContext)
+                //.placeholder(R.drawable.ic_recipes_stub_image)
+                //                .load(items[i].imageUrl)
+                .load(Uri.parse(imagePath))
+                //.transform(CircleTransform(c))
+                .into(viewHolder.view.sponsorSectionOverviewCardViewImage)
 
-            viewHolder.view?.sponsorSectionOverviewCardViewExpand?.setOnClickListener { x ->
+            viewHolder.view.sponsorSectionOverviewCardViewExpand?.setOnClickListener { x ->
                 //                (activity as? AppCompatActivity)?.let {
                 //                    val intent = Intent(x.context, RecipesDetailActivity::class.java)
                 //                    intent?.putExtra("recipes", RecipesParcelable(r.id, r.title))
@@ -127,7 +119,9 @@ class SponsorSectionOverviewFragment : Fragment() {
             }
         }
 
-        override fun getItemCount() : Int { return sponsorList.size }
+        override fun getItemCount(): Int {
+            return sponsorList.size
+        }
     }
 
 }

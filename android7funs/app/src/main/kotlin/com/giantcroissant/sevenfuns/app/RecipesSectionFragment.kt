@@ -33,9 +33,9 @@ class RecipesSectionFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         (activity as? AppCompatActivity)?.let {
             it.supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.recipesSectionFragmentContainer, RecipesSectionOverviewFragment.newInstance())
-                    .commit()
+                .beginTransaction()
+                .replace(R.id.recipesSectionFragmentContainer, RecipesSectionOverviewFragment.newInstance())
+                .commit()
         }
     }
 }

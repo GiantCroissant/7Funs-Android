@@ -38,11 +38,11 @@ class QASectionOverviewFragment : Fragment() {
     }
 
     val retrofit = Retrofit
-            .Builder()
-            .baseUrl("https://www.7funs.com")
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-            .build()
+        .Builder()
+        .baseUrl("https://www.7funs.com")
+        .addConverterFactory(GsonConverterFactory.create())
+        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+        .build()
 
     val restApiService = retrofit.create(RestApiService::class.java)
 
@@ -51,8 +51,6 @@ class QASectionOverviewFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.fragment_qa_section_overview, container, false)
-
-        // Avoid java.lang.NullPointerException: Attempt to invoke virtual method 'boolean android.support.v7.widget.RecyclerView$LayoutManager.canScrollVertically()' on a null object reference
         view?.let { v ->
             v.qaSectionOverview.layoutManager = LinearLayoutManager(v.context)
         }
@@ -62,39 +60,9 @@ class QASectionOverviewFragment : Fragment() {
                 currentPage += 1
                 val messageQuery = restApiService.getMessageQuery(currentPage)
                 messageQuery
-                        .flatMap { x -> Observable.just(x) }
-                        .map { x ->
-                            //x.collection
-                            x.collection.sortedByDescending { y -> DateTime(y.updatedAt) }
-                        }
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.io())
-                        .subscribe(object : Subscriber<List<JsonModel.MessageJsonObject>>() {
-                            override fun onCompleted() {
-                            }
-
-                            override fun onError(e: Throwable?) {
-                                System.out.println(e?.message)
-                            }
-
-                            override fun onNext(x: List<JsonModel.MessageJsonObject>) {
-                                view.let { v ->
-                                    //v.qaSectionOverview.layoutManager = LinearLayoutManager(v.context)
-                                    //v.qaSectionOverview.adapter = RecyclerAdapter((activity as? AppCompatActivity), x)
-                                    (v.qaSectionOverview.adapter as? RecyclerAdapter)?.addAll(x)
-                                }
-                            }
-                        })
-            }
-
-            view.qaSectionSwipeContainer?.isRefreshing = false
-        })
-
-        (activity as? AppCompatActivity)?.let {
-            currentPage += 1
-            val messageQuery = restApiService.getMessageQuery(currentPage)
-            messageQuery
+                    .flatMap { x -> Observable.just(x) }
                     .map { x ->
+                        //x.collection
                         x.collection.sortedByDescending { y -> DateTime(y.updatedAt) }
                     }
                     .observeOn(AndroidSchedulers.mainThread())
@@ -108,33 +76,65 @@ class QASectionOverviewFragment : Fragment() {
                         }
 
                         override fun onNext(x: List<JsonModel.MessageJsonObject>) {
-                            view?.let { v ->
-                                v.qaSectionOverview.adapter = RecyclerAdapter((activity as? AppCompatActivity), x.toCollection(arrayListOf<JsonModel.MessageJsonObject>()))
-
-                                v.qaSectionOverview.addOnItemTouchListener(
-                                        RecyclerItemClickListener(v.qaSectionOverview.context, object : RecyclerItemClickListener.OnItemClickListener {
-                                            override fun onItemClick(v: View, position: Int) {
-
-                                                System.out.println("Selected recipes id: " + v.id.toString())
-
-                                                val id = x[position].id
-
-                                                //v.id
-
-                                                val intent = Intent(v.context, QADetailActivity::class.java)
-                                                intent?.putExtra("message", MessageParcelable(id))
-                                                v.context.startActivity(intent)
-                                            }
-                                        }))
+                            view.let { v ->
+                                //v.qaSectionOverview.layoutManager = LinearLayoutManager(v.context)
+                                //v.qaSectionOverview.adapter = RecyclerAdapter((activity as? AppCompatActivity), x)
+                                (v.qaSectionOverview.adapter as? RecyclerAdapter)?.addAll(x)
                             }
                         }
                     })
+            }
+
+            view.qaSectionSwipeContainer?.isRefreshing = false
+        })
+
+        (activity as? AppCompatActivity)?.let {
+            currentPage += 1
+            val messageQuery = restApiService.getMessageQuery(currentPage)
+            messageQuery
+                .map { x ->
+                    x.collection.sortedByDescending { y -> DateTime(y.updatedAt) }
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(object : Subscriber<List<JsonModel.MessageJsonObject>>() {
+                    override fun onCompleted() {
+                    }
+
+                    override fun onError(e: Throwable?) {
+                        System.out.println(e?.message)
+                    }
+
+                    override fun onNext(x: List<JsonModel.MessageJsonObject>) {
+                        view?.let { v ->
+                            v.qaSectionOverview.adapter = RecyclerAdapter((activity as? AppCompatActivity), x.toCollection(arrayListOf<JsonModel.MessageJsonObject>()))
+
+                            v.qaSectionOverview.addOnItemTouchListener(
+                                RecyclerItemClickListener(v.qaSectionOverview.context, object : RecyclerItemClickListener.OnItemClickListener {
+                                    override fun onItemClick(v: View, position: Int) {
+
+                                        System.out.println("Selected recipes id: " + v.id.toString())
+
+                                        val id = x[position].id
+
+                                        //v.id
+
+                                        val intent = Intent(v.context, QADetailActivity::class.java)
+                                        intent?.putExtra("message", MessageParcelable(id))
+                                        v.context.startActivity(intent)
+                                    }
+                                }))
+                        }
+                    }
+                })
         }
 
         return view
     }
 
-    class RecyclerItemClickListener(val c: Context, val l: OnItemClickListener) : RecyclerView.OnItemTouchListener {
+    class RecyclerItemClickListener(val c: Context, val l: OnItemClickListener)
+    : RecyclerView.OnItemTouchListener {
+
         interface OnItemClickListener {
             fun onItemClick(view: View, position: Int)
         }
@@ -152,29 +152,26 @@ class QASectionOverviewFragment : Fragment() {
         }
 
         override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
-
         }
 
         override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
             val childView = rv.qaSectionOverview.findChildViewUnder(e.x, e.y)
             val callClicked = (childView != null) && (listener != null) && gestureDetector.onTouchEvent(e)
-
             if (callClicked) {
                 listener.onItemClick(childView, rv.getChildAdapterPosition(childView))
             }
-
             return false
         }
 
         override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
-
         }
     }
 
-    class RecyclerAdapter(val activity: AppCompatActivity?, val messageList: MutableList<JsonModel.MessageJsonObject>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+    class RecyclerAdapter(val activity: AppCompatActivity?, val messageList: MutableList<JsonModel.MessageJsonObject>)
+    : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+
         class ViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
             var view: View by Delegates.notNull()
-
             init {
                 view = v
             }
@@ -182,7 +179,6 @@ class QASectionOverviewFragment : Fragment() {
 
         override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
             val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.listview_qa_section_overview, viewGroup, false)
-
             return ViewHolder(view)
         }
 

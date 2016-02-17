@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.giantcroissant.sevenfuns.app.DbModel.Recipes
-import com.google.android.youtube.player.internal.i
 import io.realm.Realm
 import io.realm.Sort
 import kotlinx.android.synthetic.main.cardview_recipes_section_overview.view.*
@@ -94,11 +93,15 @@ class RecipesSectionOverviewFragment : Fragment() {
             viewHolder.view.recipesSectionOverviewCardViewDetail?.setOnClickListener {
                 val descList = recipe.methods.map { md -> md.desc }
                 val intent = Intent(this.activity, RecipesDetailActivity::class.java)
-                intent.putExtra("recipes", RecipesParcelable(recipe.id,
-                    recipe.title,
-                    recipe.ingredient,
-                    recipe.seasoning,
-                    descList, recipe.reminder)
+                intent.putExtra(
+                    "recipes",
+                    RecipesParcelable(
+                        recipe.id,
+                        recipe.title,
+                        recipe.ingredient,
+                        recipe.seasoning,
+                        descList, recipe.reminder
+                    )
                 )
                 this.activity?.startActivity(intent)
             }
