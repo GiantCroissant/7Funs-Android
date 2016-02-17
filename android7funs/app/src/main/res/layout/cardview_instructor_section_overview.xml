@@ -46,6 +46,33 @@
 
         </RelativeLayout>
 
+        <TextView
+                android:id="@+id/instructorSectionOverviewCardViewCurrentTitle"
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:text=""
+                android:gravity="center_vertical"
+                android:textColor="@android:color/black"
+                android:textSize="14dp"/>
+
+        <TextView
+                android:id="@+id/instructorSectionOverviewCardViewExperience"
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:text=""
+                android:gravity="center_vertical"
+                android:textColor="@android:color/black"
+                android:textSize="14dp"/>
+
+        <TextView
+                android:id="@+id/instructorSectionOverviewCardViewDescription"
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:text=""
+                android:gravity="center_vertical"
+                android:textColor="@android:color/black"
+                android:textSize="14dp"/>
+
     </LinearLayout>
 
 </android.support.v7.widget.CardView>

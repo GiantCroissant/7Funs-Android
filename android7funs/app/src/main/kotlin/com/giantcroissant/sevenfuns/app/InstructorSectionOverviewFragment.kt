@@ -85,6 +85,7 @@ class InstructorSectionOverviewFragment : Fragment() {
     class RecyclerAdapter(val activity: AppCompatActivity?, val instructorList: List<JsonModel.InstructorJsonObject>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
         class ViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
             var view: View by Delegates.notNull()
+            var clicked: Boolean = false
 
             init {
                 view = v
@@ -110,6 +111,20 @@ class InstructorSectionOverviewFragment : Fragment() {
                 .into(viewHolder.view.instructorSectionOverviewCardViewImage)
 
             viewHolder.view.instructorSectionOverviewCardViewExpand?.setOnClickListener { x ->
+                if (viewHolder.clicked) {
+                    viewHolder.view.instructorSectionOverviewCardViewCurrentTitle?.text = ""
+                    viewHolder.view.instructorSectionOverviewCardViewExperience?.text = ""
+                    viewHolder.view.instructorSectionOverviewCardViewDescription?.text = ""
+
+                    viewHolder.clicked = false
+
+                } else {
+                    viewHolder.view.instructorSectionOverviewCardViewCurrentTitle?.text = r.currentTitle
+                    viewHolder.view.instructorSectionOverviewCardViewExperience?.text = r.experience
+                    viewHolder.view.instructorSectionOverviewCardViewDescription?.text = r.description
+
+                    viewHolder.clicked = true
+                }
                 //                (activity as? AppCompatActivity)?.let {
                 //                    val intent = Intent(x.context, RecipesDetailActivity::class.java)
                 //                    intent?.putExtra("recipes", RecipesParcelable(r.id, r.title))

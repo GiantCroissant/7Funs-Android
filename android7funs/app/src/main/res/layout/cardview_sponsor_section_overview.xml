@@ -18,7 +18,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="128dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginRight="8dip"
+                android:layout_marginRight="8dp"
                 android:duplicateParentState="true"/>
 
         <TextView

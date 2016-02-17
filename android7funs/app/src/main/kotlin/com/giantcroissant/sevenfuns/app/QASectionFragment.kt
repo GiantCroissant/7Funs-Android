@@ -31,6 +31,7 @@ class QASectionFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+//        childFragmentManager.beginTransaction().replace(R.id.qaSectionFragmentContainer, QASectionOverviewFragment.newInstance()).commit()
         (activity as? AppCompatActivity)?.let {
             it.supportFragmentManager.beginTransaction().replace(R.id.qaSectionFragmentContainer, QASectionOverviewFragment.newInstance()).commit()
         }

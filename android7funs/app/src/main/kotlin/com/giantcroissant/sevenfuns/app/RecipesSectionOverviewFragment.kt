@@ -15,8 +15,13 @@ import io.realm.Realm
 import io.realm.Sort
 import kotlinx.android.synthetic.main.cardview_recipes_section_overview.view.*
 import kotlinx.android.synthetic.main.fragment_recipes_section_overview.view.*
+import retrofit2.GsonConverterFactory
+import retrofit2.Retrofit
+import retrofit2.RxJavaCallAdapterFactory
 import rx.Observable
+import rx.Subscriber
 import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 import kotlin.properties.Delegates
 
 class RecipesSectionOverviewFragment : Fragment() {
@@ -115,5 +120,45 @@ class RecipesSectionOverviewFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         realm.close()
+    }
+
+    // Get category and tag for search use?
+    fun fetchTags() {
+        val retrofit = Retrofit
+                .Builder()
+                .baseUrl("https://www.7funs.com")
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build()
+
+        val restApiService = retrofit.create(RestApiService::class.java)
+
+        val recipesByTag = restApiService.getCategories()
+                .observeOn(Schedulers.io())
+                .map { x ->
+                    x.flatMap { c ->
+                        val ids = c.subCategories.map { sc ->
+                            sc.id
+                        }
+                        ids
+                    }
+                }
+                .flatMap { x -> Observable.from(x) }
+                .flatMap { x -> Observable.just(x) }
+                .flatMap { x -> restApiService.getTagById(x) }
+                .map { x ->
+                    val recipesIds = x.taggings.map { t -> t.taggableId }
+                    MiscModel.RecipesByTag(x.id, recipesIds)
+                }
+
+        // Subscribe for further processing
+        recipesByTag.subscribe(object : Subscriber<MiscModel.RecipesByTag>() {
+            override fun onCompleted() {}
+            override fun onError(e: Throwable?) {
+                System.out.println(e?.message)
+            }
+            override fun onNext(recipesByTag: MiscModel.RecipesByTag) {
+            }
+        })
     }
 }
