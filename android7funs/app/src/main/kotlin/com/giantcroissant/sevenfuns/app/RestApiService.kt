@@ -103,7 +103,7 @@ interface RestApiService {
     @POST("/api/login")
     fun login(
             @Body
-            loginData: JsonModel.Login
+            loginData: JsonModel.LoginJsonObject
     ): Observable<JsonModel.LoginResultJsonObject>
 
     @POST("/api/auth/facebook/token")

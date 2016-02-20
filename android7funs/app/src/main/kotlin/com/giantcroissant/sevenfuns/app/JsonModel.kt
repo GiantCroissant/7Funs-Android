@@ -203,7 +203,7 @@ object JsonModel {
         val info: String,
         val data: RegisterResultData)
 
-    data class Login(
+    data class LoginJsonObject(
         val email: String,
         val password: String)
 

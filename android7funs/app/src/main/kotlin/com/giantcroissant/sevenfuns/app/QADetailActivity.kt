@@ -39,6 +39,10 @@ class QADetailActivity : AppCompatActivity() {
 
     val restApiService = retrofit.create(RestApiService::class.java)
 
+    companion object {
+        const val WRITTEN_COMMENT: Int = 0
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_qa_detail)
@@ -83,8 +87,11 @@ class QADetailActivity : AppCompatActivity() {
                 val intent = Intent(this, LoginActivity::class.java)
                 this.startActivity(intent)
             } else {
-                System.out.println("Have cached token")
+                System.out.println("Have cached token: " + token)
 
+                // Do something with token
+                val intent = Intent(applicationContext, QADetailNewCommentActivity::class.java)
+                startActivityForResult(intent, WRITTEN_COMMENT)
             }
         }
 
@@ -123,6 +130,21 @@ class QADetailActivity : AppCompatActivity() {
 //                        }
                     }
                 })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        when (requestCode) {
+            WRITTEN_COMMENT -> {
+                if (resultCode == RESULT_OK) {
+                    //this.finish()
+
+                    //data?.putExtra("message", MessageParcelable(id))
+                    val commentParcelable : CommentParcelable = data.extras.getParcelable("comment")
+
+//                    restApiService.createMessageComment()
+                }
+            }
+        }
     }
 
     public class RecyclerAdapter(val activity: AppCompatActivity?, val messageList: MutableList<JsonModel.MessageWithCommentJsonObject>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
