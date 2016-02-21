@@ -29,6 +29,8 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
     val restApiService = retrofit.create(RestApiService::class.java)
 
     override fun onHandleIntent(intent: Intent) {
+        fetchRecipes()
+
         val realm = Realm.getInstance(this)
         val ro = realm.where(RecipesOverview::class.java).findAllSorted("id", Sort.DESCENDING)
         val maxIndex = if (ro.size < maxDownloadAmount) ro.size else maxDownloadAmount
@@ -56,29 +58,21 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
                 var recipeIdList = recipes.map { it.id }
                 Observable.just(recipeIdList)
             }
-            .flatMap { recipeIdList ->
-
+            .subscribe { recipeIdList ->
                 val realm = Realm.getInstance(this)
                 realm.isAutoRefresh = false
                 realm.beginTransaction()
                 val overviewList = realm.where(RecipesOverview::class.java).findAll()
-
                 recipeIdList.forEach { recipeId ->
                     overviewList.filter { it.id == recipeId }.first()?.removeFromRealm()
                 }
                 realm.commitTransaction()
                 realm.close()
-
-                Observable.just(0)
             }
-            .subscribe({
+    }
 
-            }, { error ->
-                Log.e("TAG", "error = $error")
+    private fun fetchRecipes() {
 
-            }, {
-                Log.d("TAG", "complete")
-            })
     }
 }
 

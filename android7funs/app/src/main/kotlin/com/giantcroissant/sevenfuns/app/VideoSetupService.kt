@@ -34,13 +34,13 @@ class VideoSetupService : IntentService("VideoSetupService") {
             .subscribe { videoJsonList ->
                 val realm = Realm.getInstance(this)
                 realm.beginTransaction()
-                videoJsonList.forEach {
+                videoJsonList.forEach { videoJson ->
                     if (realm.where(VideoOverview::class.java)
-                        .equalTo("id", it.id)
-                        .equalTo("updatedAt", it.updatedAt)
+                        .equalTo("id", videoJson.id)
+                        .equalTo("updatedAt", videoJson.updatedAt)
                         .findFirst() == null) {
-
-                        realm.copyToRealmOrUpdate(it.toVideoOverview())
+                        Log.e(TAG, "new Video Overview !")
+                        realm.copyToRealmOrUpdate(videoJson.toVideoOverview())
                     }
                 }
                 realm.commitTransaction()
