@@ -113,7 +113,7 @@ interface RestApiService {
     @POST("/api/auth/facebook/token")
     fun loginViaFbId(
             @Body
-            loginData: JsonModel.LoginFb
+            loginData: JsonModel.LoginFbJsonObject
     ): Observable<JsonModel.LoginResultJsonObject>
 
     @POST("/api/signup")

@@ -4,6 +4,10 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginResult
 
 import kotlinx.android.synthetic.main.activity_login.*
 import retrofit2.GsonConverterFactory
@@ -52,6 +56,38 @@ class LoginActivity : AppCompatActivity() {
                         }
                     })
         }
+
+        val callbackManager = com.facebook.CallbackManager.Factory.create()
+        loginFbButton?.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+            override fun onSuccess(loginResult: LoginResult) {
+                val accessToken = loginResult.accessToken.token
+
+                restApiService.loginViaFbId(JsonModel.LoginFbJsonObject(accessToken))
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(object : Subscriber<JsonModel.LoginResultJsonObject>() {
+                        override fun onCompleted() {
+                        }
+
+                        override fun onError(e: Throwable?) {
+                            System.out.println(e?.message)
+                        }
+
+                        override fun onNext(x: JsonModel.LoginResultJsonObject) {
+                            val sp: SharedPreferences = getSharedPreferences("DATA", 0)
+                            sp.edit().putString("token", x.token).commit()
+                            finish()
+                        }
+                    })
+            }
+
+            override fun onCancel() {
+
+            }
+
+            override fun onError(e: FacebookException) {
+
+            }
+        })
 
 //        loginButton?.setOnClickListener { x ->
 //            val retrofit = Retrofit

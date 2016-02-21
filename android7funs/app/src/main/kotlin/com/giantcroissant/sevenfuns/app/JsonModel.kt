@@ -231,7 +231,7 @@ object JsonModel {
         val password: String
     )
 
-    data class LoginFb(
+    data class LoginFbJsonObject(
         @SerializedName("access_token")
         val accessToken: String
     )
