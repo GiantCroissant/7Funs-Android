@@ -99,6 +99,11 @@
         <service
             android:name="com.giantcroissant.sevenfuns.app.RecipesDownloadService"
             android:enabled="true"/>
+
+        <service
+            android:name="com.giantcroissant.sevenfuns.app.VideoDownloadService"
+            android:enabled="true"/>
+
     </application>
 
 </manifest>

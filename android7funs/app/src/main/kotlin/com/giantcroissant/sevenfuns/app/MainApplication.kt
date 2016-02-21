@@ -25,6 +25,9 @@ class MainApplication : Application() {
         Observable.interval(5, TimeUnit.SECONDS).subscribe {
             val downloadRecipes = Intent(this, RecipesDownloadService::class.java)
             startService(downloadRecipes)
+
+            val downloadVideos = Intent(this, VideoDownloadService::class.java)
+            startService(downloadVideos)
         }
     }
 
