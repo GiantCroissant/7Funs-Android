@@ -1,6 +1,5 @@
 package com.giantcroissant.sevenfuns.app
 
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -10,11 +9,13 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.balysv.materialripple.MaterialRippleLayout
 import com.bumptech.glide.Glide
 import com.github.salomonbrys.kotson.fromJson
+import com.google.android.youtube.player.internal.i
+import com.google.android.youtube.player.internal.v
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.cardview_sponsor_section_overview.view.*
+import kotlinx.android.synthetic.main.fragment_sponsor_section_overview.*
 import kotlinx.android.synthetic.main.fragment_sponsor_section_overview.view.*
 import rx.Observable
 import rx.Subscriber
@@ -67,9 +68,9 @@ class SponsorSectionOverviewFragment : Fragment() {
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : Subscriber<JsonModel.SponsorCollectionJsonObject>() {
                     override fun onNext(x: JsonModel.SponsorCollectionJsonObject) {
-                        view?.let { v ->
-                            v.sponsorSectionOverview.layoutManager = LinearLayoutManager(v.context)
-                            v.sponsorSectionOverview.adapter = RecyclerAdapter((activity as? AppCompatActivity), x.sponsors)
+                        view?.let {
+                            it.sponsorSectionOverview.layoutManager = LinearLayoutManager(it.context)
+                            it.sponsorSectionOverview.adapter = RecyclerAdapter(activity as AppCompatActivity, x.sponsors)
                         }
                     }
 
@@ -85,8 +86,9 @@ class SponsorSectionOverviewFragment : Fragment() {
     }
 
     class RecyclerAdapter(
-        val activity: AppCompatActivity?,
+        val activity: AppCompatActivity,
         val sponsorList: List<JsonModel.SponsorJsonObject>
+
     ) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 
         class ViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
@@ -96,32 +98,25 @@ class SponsorSectionOverviewFragment : Fragment() {
             }
         }
 
-        override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
-            val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.cardview_sponsor_section_overview, viewGroup, false)
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.cardview_sponsor_section_overview, parent, false)
             return ViewHolder(view)
         }
 
-        override fun onBindViewHolder(viewHolder: ViewHolder, i: Int) {
-            val r = sponsorList[i]
-
-
-
-            viewHolder.view.sponsorSectionOverviewCardViewTitle?.text = r.name
-            val imagePath = "file:///android_asset/sponsors/" + r.image + ".png"
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            val sponsor = sponsorList[position]
+            holder.view.sponsorSectionOverviewCardViewTitle?.text = sponsor.name
+            val imagePath = "file:///android_asset/sponsors/" + sponsor.image + ".png"
 
             Glide.with(activity?.applicationContext)
                 .load(Uri.parse(imagePath))
                 .centerCrop()
-                .into(viewHolder.view.sponsorSectionOverviewCardViewImage)
+                .into(holder.view.sponsorSectionOverviewCardViewImage)
 
-//            viewHolder.view.sponsorSectionOverviewCardViewExpand?.setOnClickListener { x ->
-                //                (activity as? AppCompatActivity)?.let {
-                //                    val intent = Intent(x.context, RecipesDetailActivity::class.java)
-                //                    intent?.putExtra("recipes", RecipesParcelable(r.id, r.title))
-                //
-                //                    x.context.startActivity(intent)
-                //                }
-//            }
+            holder.view.setOnClickListener {
+                SponsorActivity.navigate(activity, sponsor)
+            }
         }
 
         override fun getItemCount(): Int {
