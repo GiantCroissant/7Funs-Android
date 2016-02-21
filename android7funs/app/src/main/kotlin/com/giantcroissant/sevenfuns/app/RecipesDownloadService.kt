@@ -15,6 +15,8 @@ import retrofit2.RxJavaCallAdapterFactory
 import rx.Observable
 
 class RecipesDownloadService : IntentService("RecipesDownloadService") {
+    val TAG = RecipesDownloadService::class.java.name
+
     val maxDownloadAmount = 100
 
     val retrofit = Retrofit
@@ -34,6 +36,7 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
         realm.close()
 
         if (recipeIds.size <= 0) {
+            Log.e(TAG, "nothing to pull - recipe")
             return
         }
 

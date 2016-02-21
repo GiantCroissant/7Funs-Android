@@ -90,11 +90,11 @@
 
         <service
             android:name="com.giantcroissant.sevenfuns.app.RecipesSetupService"
-            android:enabled="true">
-            <!-- intent-filter>
-                <action android:name="com.giantcroissant.sevenfuns.app.RecipesSetupService" />
-            </intent-filter -->
-        </service>
+            android:enabled="true"/>
+
+        <service
+            android:name=".VideoSetupService"
+            android:enabled="true"/>
 
         <service
             android:name="com.giantcroissant.sevenfuns.app.RecipesDownloadService"

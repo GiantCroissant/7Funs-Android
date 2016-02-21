@@ -29,7 +29,14 @@ class RecipesSetupService : IntentService("RecipesSetupService") {
 
     val restApiService = retrofit.create(RestApiService::class.java)
 
+    private var config: RealmConfiguration by Delegates.notNull()
+    private var realm: Realm by Delegates.notNull()
+
     override fun onHandleIntent(intent: Intent) {
+        config = RealmConfiguration.Builder(this).build()
+        realm = Realm.getInstance(config)
+
+        System.out.println("RecipesSetupService - onHandleIntent")
         prepareRecipesFetchingSetup()
     }
 
@@ -40,14 +47,11 @@ class RecipesSetupService : IntentService("RecipesSetupService") {
                 val needToUpdateRecipesOverviews = pair.first.map { intermediateOverview ->
                     RecipesOverview(intermediateOverview.id, intermediateOverview.updatedAt)
                 }
-                val realm = Realm.getInstance(this)
                 val query = realm.where(Recipes::class.java)
                 val accQuery = pair.second.fold(query, { acc, intermediateOverview ->
                     acc.equalTo("id", intermediateOverview.id).or()
                 })
                 val needToRemovedRecipes = accQuery.findAll()
-
-                realm.close()
                 Pair(needToUpdateRecipesOverviews, needToRemovedRecipes)
             }
             .subscribe(object : Subscriber<Pair<List<RecipesOverview>, RealmResults<Recipes>>>() {
@@ -59,12 +63,16 @@ class RecipesSetupService : IntentService("RecipesSetupService") {
                 }
 
                 override fun onNext(pair: Pair<List<RecipesOverview>, RealmResults<Recipes>>) {
-                    val realm = Realm.getInstance(this@RecipesSetupService)
+                    //                        val realm = Realm.getInstance(config)
+                    // New or update for the first list, delete all for the second
                     realm.beginTransaction()
+
+                    // Update or create for Recipes Overview
                     pair.first.forEach { ro -> realm.copyToRealmOrUpdate(ro) }
+                    // Clear Recipes
                     pair.second.clear()
+
                     realm.commitTransaction()
-                    realm.close()
                 }
             })
     }
@@ -87,9 +95,7 @@ class RecipesSetupService : IntentService("RecipesSetupService") {
 
 
         //System.out.println("query realm for recipes")
-        val realm = Realm.getInstance(this)
         val query = realm.where(Recipes::class.java).findAll()
-
 
         val combinedStreams = if (query.count() == 0) {
             //System.out.println("use only remote stream")
@@ -175,7 +181,6 @@ class RecipesSetupService : IntentService("RecipesSetupService") {
             result
         }
 
-        realm.close()
         return combinedStreams.reduce(initialPair, categorizeToPairList)
     }
 }
