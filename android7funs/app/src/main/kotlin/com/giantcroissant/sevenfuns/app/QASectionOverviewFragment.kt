@@ -29,6 +29,8 @@ import kotlin.properties.Delegates
 class QASectionOverviewFragment : Fragment() {
 
     companion object {
+        const val WRITTEN_MESSAGE: Int = 0
+
         fun newInstance(): QASectionOverviewFragment {
             val fragment = QASectionOverviewFragment().apply {
                 val args = Bundle().apply {
@@ -104,7 +106,7 @@ class QASectionOverviewFragment : Fragment() {
 
                     // Do something with token
                     val intent = Intent(it.applicationContext, QADetailNewMessageActivity::class.java)
-                    startActivityForResult(intent, QADetailActivity.WRITTEN_MESSAGE)
+                    startActivityForResult(intent, QASectionOverviewFragment.WRITTEN_MESSAGE)
                 }
             }
 
@@ -149,6 +151,47 @@ class QASectionOverviewFragment : Fragment() {
         }
 
         return view
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        when (requestCode) {
+            WRITTEN_MESSAGE -> {
+                if (resultCode == AppCompatActivity.RESULT_OK) {
+                    val newMessageParcelable: NewMessageParcelable = data.extras.getParcelable("message")
+
+                    System.out.println(newMessageParcelable.title)
+                    System.out.println(newMessageParcelable.description)
+
+                    (activity as? AppCompatActivity)?.let {
+                        val sp: SharedPreferences =  it.getSharedPreferences("DATA", 0)
+                        val token = sp.getString("token", "")
+
+                        val combinedHeaderToken = "Bearer " + token
+
+                        restApiService.createMessage(combinedHeaderToken, JsonModel.MessageCreate(newMessageParcelable.title, newMessageParcelable.description))
+                            .subscribeOn(Schedulers.io())
+                            .subscribe(object : Subscriber<JsonModel.MessageCreateResultJsonObject>() {
+                                override fun onCompleted() {
+                                }
+
+                                override fun onError(e: Throwable?) {
+                                    System.out.println(e?.message)
+                                }
+
+                                override fun onNext(x: JsonModel.MessageCreateResultJsonObject) {
+//                                    view.let { v ->
+//                                        //v.qaSectionOverview.layoutManager = LinearLayoutManager(v.context)
+//                                        //v.qaSectionOverview.adapter = RecyclerAdapter((activity as? AppCompatActivity), x)
+//                                        (v.qaSectionOverview.adapter as? RecyclerAdapter)?.addAll(x)
+//                                    }
+                                }
+                            })
+
+                    }
+
+                }
+            }
+        }
     }
 
     class RecyclerItemClickListener(val c: Context, val l: OnItemClickListener)

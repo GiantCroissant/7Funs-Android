@@ -73,12 +73,16 @@ interface RestApiService {
 
     @POST("/api/messages")
     fun createMessage(
+            @Header("Authorization")
+            authorization: String,
             @Body
             messageCreate: JsonModel.MessageCreate
     ): Observable<JsonModel.MessageCreateResultJsonObject>
 
     @POST("/api/messages/{id}/comments")
     fun createMessageComment(
+            @Header("Authorization")
+            authorization: String,
             @Path("id")
             id: Int,
             @Body
