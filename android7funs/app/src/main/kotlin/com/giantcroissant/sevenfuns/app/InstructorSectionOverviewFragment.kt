@@ -1,5 +1,7 @@
 package com.giantcroissant.sevenfuns.app
 
+import android.graphics.drawable.Drawable
+import android.media.Image
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -11,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.github.salomonbrys.kotson.fromJson
+import com.google.android.youtube.player.internal.i
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.cardview_instructor_section_overview.view.*
 import kotlinx.android.synthetic.main.fragment_instructor_section_overview.view.*
@@ -98,39 +101,29 @@ class InstructorSectionOverviewFragment : Fragment() {
             return ViewHolder(view)
         }
 
-        override fun onBindViewHolder(viewHolder: ViewHolder, i: Int) {
-            val r = instructorList[i]
+        override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
+            val teacher = instructorList[position]
 
-            viewHolder.view.instructorSectionOverviewCardViewTitle?.text = r.name
-            val imagePath = "file:///android_asset/instructors/" + r.image + ".png"
+            viewHolder.view.teacher_name?.text = teacher.name
+            viewHolder.view.experience_text?.text = teacher.experience
+            viewHolder.view.description_text?.text = teacher.description
+            viewHolder.view.teacher_title?.text = teacher.currentTitle
+            viewHolder.view.teacher_title?.visibility = if (teacher.currentTitle.isEmpty()) View.GONE else View.VISIBLE
+            viewHolder.view.teacher_details_container.visibility = if (viewHolder.clicked) View.VISIBLE else View.GONE
 
+            val imagePath = "file:///android_asset/instructors/" + teacher.image + ".png"
             Glide.with(activity?.applicationContext)
                 .load(Uri.parse(imagePath))
                 .centerCrop()
                 .fitCenter()
-                .into(viewHolder.view.instructorSectionOverviewCardViewImage)
+                .into(viewHolder.view.teacher_image)
 
-            viewHolder.view.instructorSectionOverviewCardViewExpand?.setOnClickListener { x ->
-                if (viewHolder.clicked) {
-                    viewHolder.view.instructorSectionOverviewCardViewCurrentTitle?.text = ""
-                    viewHolder.view.instructorSectionOverviewCardViewExperience?.text = ""
-                    viewHolder.view.instructorSectionOverviewCardViewDescription?.text = ""
+            viewHolder.view.expand_button.setOnClickListener {
+                viewHolder.clicked = !viewHolder.clicked
 
-                    viewHolder.clicked = false
-
-                } else {
-                    viewHolder.view.instructorSectionOverviewCardViewCurrentTitle?.text = r.currentTitle
-                    viewHolder.view.instructorSectionOverviewCardViewExperience?.text = r.experience
-                    viewHolder.view.instructorSectionOverviewCardViewDescription?.text = r.description
-
-                    viewHolder.clicked = true
-                }
-                //                (activity as? AppCompatActivity)?.let {
-                //                    val intent = Intent(x.context, RecipesDetailActivity::class.java)
-                //                    intent?.putExtra("recipes", RecipesParcelable(r.id, r.title))
-                //
-                //                    x.context.startActivity(intent)
-                //                }
+                val src = if (viewHolder.clicked) R.drawable.ic_expand_less_black_24dp else R.drawable.ic_expand_more_black_24dp
+                viewHolder.view.expand_button.setImageResource(src)
+                viewHolder.view.teacher_details_container.visibility = if (viewHolder.clicked) View.VISIBLE else View.GONE
             }
         }
 

@@ -5,10 +5,16 @@
     <style name="BaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorControlHighlight">@color/accent_translucent</item>
+        <item name="colorControlHighlight">@color/control_hightlight</item>
         <item name="colorAccent">@color/accent</item>
         <item name="selectableItemBackground">@drawable/selectable_item_background</item>
         <item name="android:selectableItemBackground">@drawable/selectable_item_background</item>
+        <item name="colorButtonNormal">@android:color/transparent</item>
+        <item name="buttonTint">@color/accent</item>
+    </style>
+
+    <style name="NavigationDrawerStyle">
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="Widget.CardContent" parent="android:Widget">
@@ -22,10 +28,12 @@
     <color name="primary">#FF5722</color>
     <color name="primary_dark">#E64A19</color>
     <color name="accent">#00BCD4</color>
-    <color name="accent_translucent">#FAFAFA</color>
+    <color name="accent_translucent">#D1D6E7</color>
     <color name="accent_bright">#43a8a1</color>
+    <color name="control_hightlight">#fafafa</color>
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#727272</color>
+    <color name="secondary_text_dark">#424242</color>
     <color name="divider_color">#B6B6B6</color>
 
 </resources>
