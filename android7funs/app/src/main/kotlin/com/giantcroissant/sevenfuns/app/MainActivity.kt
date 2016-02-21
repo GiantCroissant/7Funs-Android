@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigationItemRecipesSection -> {
                     supportActionBar?.title = getString(navigation_item_recipes_section)
                     current_section = R.id.navigationItemRecipesSection
-                    fragment = RecipesSectionOverviewFragment.newInstance()
+                    fragment = RecipesSectionOverviewFragment()
                 }
                 R.id.navigationItemPersonalSection -> {
                     supportActionBar?.title = getString(navigation_item_personal_section)

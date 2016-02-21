@@ -19,7 +19,8 @@
             android:id="@+id/recipe_image"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:duplicateParentState="true"/>
+            android:duplicateParentState="true"
+            android:scaleType="centerCrop"/>
 
         <TextView
             android:id="@+id/recipe_title"
@@ -36,8 +37,8 @@
             android:id="@+id/recipe_hits_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
             android:text="XD"
             android:textSize="16sp"/>
 

@@ -28,17 +28,6 @@ import kotlin.properties.Delegates
 class RecipesSectionOverviewFragment : Fragment() {
     val TAG = RecipesSectionOverviewFragment::class.java.name
 
-    companion object {
-        fun newInstance(): RecipesSectionOverviewFragment {
-            val fragment = RecipesSectionOverviewFragment().apply {
-                val args = Bundle().apply {
-                }
-                arguments = args
-            }
-            return fragment
-        }
-    }
-
     private var realm: Realm by Delegates.notNull()
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -111,6 +100,7 @@ class RecipesSectionOverviewFragment : Fragment() {
 
             Glide.with(activity?.applicationContext)
                 .load(imageUrl)
+                .placeholder(R.drawable.food_default)
                 .centerCrop()
                 .into(viewHolder.view.recipe_image)
 
