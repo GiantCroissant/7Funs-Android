@@ -1,35 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="150dp"
-              android:background="?attr/colorPrimaryDark"
+              android:layout_height="wrap_content"
+              android:background="@color/primary_dark"
+              android:gravity="bottom"
+              android:orientation="vertical"
               android:padding="16dp"
-              android:theme="@style/ThemeOverlay.AppCompat.Dark"
-              android:gravity="bottom">
+              android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+    <ImageView
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/rounded_corners"/>
 
     <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/drawer_header_title"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/drawer_header_title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
 
     <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="每週一至週五 17:00"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="東風衛視：每週一至週五 下午五點"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
-    <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="一個美食教學的節目"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+    <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="一個美食教學的節目"-->
+        <!--android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>-->
 
-    <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="一個交流美食的園地"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+    <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="一個交流美食的園地"-->
+        <!--android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>-->
+
+    <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="一個增進廚藝的教室"-->
+        <!--android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>-->
+
+    <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="一個廣結食緣的好地方"-->
+        <!--android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>-->
 
 </LinearLayout>

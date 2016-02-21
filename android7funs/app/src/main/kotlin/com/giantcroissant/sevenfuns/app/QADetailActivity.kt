@@ -24,18 +24,20 @@ import kotlinx.android.synthetic.main.listview_qa_detail_item.view.*
 //import kotlinx.android.synthetic.main.fragment_qa_section_overview.view.*
 import kotlinx.android.synthetic.main.toolbar.*
 import rx.Observable
+
 //import kotlin.properties.Delegates
 
 /**
  * Created by apprentice on 2/2/16.
  */
 class QADetailActivity : AppCompatActivity() {
+
     val retrofit = Retrofit
-            .Builder()
-            .baseUrl("https://www.7funs.com")
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-            .build()
+        .Builder()
+        .baseUrl("https://www.7funs.com")
+        .addConverterFactory(GsonConverterFactory.create())
+        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+        .build()
 
     val restApiService = retrofit.create(RestApiService::class.java)
 
@@ -53,19 +55,19 @@ class QADetailActivity : AppCompatActivity() {
 
         val messageWithComment = restApiService.getSpecificMessageComment(messageParcelable.id)
         messageWithComment
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(object : Subscriber<List<JsonModel.MessageWithCommentJsonObject>>() {
-                    override fun onCompleted() {
-                    }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe(object : Subscriber<List<JsonModel.MessageWithCommentJsonObject>>() {
+                override fun onCompleted() {
+                }
 
-                    override fun onError(e: Throwable?) {
-                        System.out.println(e?.message)
-                    }
+                override fun onError(e: Throwable?) {
+                    System.out.println(e?.message)
+                }
 
-                    override fun onNext(x: List<JsonModel.MessageWithCommentJsonObject>) {
-                    }
-                })
+                override fun onNext(x: List<JsonModel.MessageWithCommentJsonObject>) {
+                }
+            })
 
         //
         setSupportActionBar(toolbar)
@@ -101,36 +103,39 @@ class QADetailActivity : AppCompatActivity() {
 
         //
         val retrofit = Retrofit
-                .Builder()
-                .baseUrl("https://www.7funs.com")
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build()
+            .Builder()
+            .baseUrl("https://www.7funs.com")
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+            .build()
 
         val restApiService = retrofit.create(RestApiService::class.java)
         val commentsResponse = restApiService.getSpecificMessageComment(messageParcelable.id)
         commentsResponse
-                .flatMap { x -> Observable.just(x) }
-                .map { x ->
-                    x.sortedByDescending { y -> DateTime(y.updatedAt) }
+            .flatMap { x -> Observable.just(x) }
+            .map { x ->
+                x.sortedByDescending { y -> DateTime(y.updatedAt) }
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe(object : Subscriber<List<JsonModel.MessageWithCommentJsonObject>>() {
+                override fun onCompleted() {
                 }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(object : Subscriber<List<JsonModel.MessageWithCommentJsonObject>>() {
-                    override fun onCompleted() {}
-                    override fun onError(e: Throwable?) {
-                        System.out.println(e?.message)
-                    }
-                    override fun onNext(x: List<JsonModel.MessageWithCommentJsonObject>) {
-                        System.out.println(x)
-                        qaDetailMessageList.adapter = RecyclerAdapter((this as? AppCompatActivity), x.toMutableList())
-//                        view?.let { v ->
-//                            //v.qaSectionOverview.layoutManager = LinearLayoutManager(v.context)
-//                            //v.qaSectionOverview.adapter = RecyclerAdapter((activity as? AppCompatActivity), x)
-//                            (v.qaSectionOverview.adapter as? QASectionOverviewFragment.RecyclerAdapter)?.addAll(x)
-//                        }
-                    }
-                })
+
+                override fun onError(e: Throwable?) {
+                    System.out.println(e?.message)
+                }
+
+                override fun onNext(x: List<JsonModel.MessageWithCommentJsonObject>) {
+                    System.out.println(x)
+                    qaDetailMessageList.adapter = RecyclerAdapter((this as? AppCompatActivity), x.toMutableList())
+                    //                        view?.let { v ->
+                    //                            //v.qaSectionOverview.layoutManager = LinearLayoutManager(v.context)
+                    //                            //v.qaSectionOverview.adapter = RecyclerAdapter((activity as? AppCompatActivity), x)
+                    //                            (v.qaSectionOverview.adapter as? QASectionOverviewFragment.RecyclerAdapter)?.addAll(x)
+                    //                        }
+                }
+            })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
@@ -157,17 +162,17 @@ class QADetailActivity : AppCompatActivity() {
         }
     }
 
-    public class RecyclerAdapter(val activity: AppCompatActivity?, val messageList: MutableList<JsonModel.MessageWithCommentJsonObject>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+    class RecyclerAdapter(val activity: AppCompatActivity?, val messageList: MutableList<JsonModel.MessageWithCommentJsonObject>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
         public class ViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
             //public var view: View by Delegates.notNull()
-            public var view: View
+            var view: View
 
             init {
                 view = v
             }
         }
 
-        override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int) : ViewHolder {
+        override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
             val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.listview_qa_detail_item, viewGroup, false)
 
             return ViewHolder(view)
@@ -176,8 +181,8 @@ class QADetailActivity : AppCompatActivity() {
         override fun onBindViewHolder(viewHolder: ViewHolder, i: Int) {
             val r = messageList[i]
 
-            viewHolder.view?.qaSectionDetailTitle?.text = r.title
-            viewHolder.view?.qaSectionDetailComment?.text = r.comment
+            viewHolder.view.qaSectionDetailTitle?.text = r.title
+            viewHolder.view.qaSectionDetailComment?.text = r.comment
             //
             //            viewHolder.view?.instructorSectionOverviewCardViewExpand?.setOnClickListener { x ->
             //                //                (activity as? AppCompatActivity)?.let {
@@ -189,14 +194,16 @@ class QADetailActivity : AppCompatActivity() {
             //            }
         }
 
-        override fun getItemCount() : Int { return messageList.size }
+        override fun getItemCount(): Int {
+            return messageList.size
+        }
 
-        public fun clearAll() {
+        fun clearAll() {
             messageList.clear()
             notifyDataSetChanged()
         }
 
-        public fun addAll(contents: List<JsonModel.MessageWithCommentJsonObject>) {
+        fun addAll(contents: List<JsonModel.MessageWithCommentJsonObject>) {
             messageList.addAll(contents)
             messageList.sortByDescending { y -> DateTime(y.updatedAt) }
             notifyDataSetChanged()

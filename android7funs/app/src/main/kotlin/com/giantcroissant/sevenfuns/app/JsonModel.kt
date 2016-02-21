@@ -1,5 +1,6 @@
 package com.giantcroissant.sevenfuns.app
 
+import android.nfc.Tag
 import com.google.gson.annotations.SerializedName
 
 /**
@@ -27,7 +28,8 @@ object JsonModel {
         val creatorId: Int,
         @SerializedName("updator_id")
         val updatorId: Int,
-        val collected: Int)
+        val collected: Int
+    )
 
     data class RecipesAddRemoveFavorite(
         val mark: String?,
@@ -41,13 +43,15 @@ object JsonModel {
         val markerType: String?,
         @SerializedName("created_at")
         val createdAt: String?,
-        val id: Int?)
+        val id: Int?
+    )
 
     //
     data class Overview(
         val id: Int,
         @SerializedName("updated_at")
-        val updatedAt: String)
+        val updatedAt: String
+    )
 
     //
     data class VideoData(
@@ -61,7 +65,8 @@ object JsonModel {
         @SerializedName("published_at")
         val publishedAt: String,
         @SerializedName("thumbnail_url")
-        val thumbnailUrl: String)
+        val thumbnailUrl: String
+    )
 
     data class Video(
         val id: Int,
@@ -75,7 +80,8 @@ object JsonModel {
         @SerializedName("updated_at")
         val updatedAt: String,
         @SerializedName("video_data")
-        val videoData: VideoData)
+        val videoData: VideoData
+    )
 
     //
     data class UserJsonObject(
@@ -100,7 +106,8 @@ object JsonModel {
         @SerializedName("created_at")
         val createdAt: String,
         @SerializedName("updated_at")
-        val updatedAt: String)
+        val updatedAt: String
+    )
 
     data class MessageSpecificJsonObject(
         val id: Int,
@@ -113,7 +120,8 @@ object JsonModel {
         @SerializedName("updated_at")
         val updatedAt: String,
         @SerializedName("comments_count")
-        val commentsCount: Int)//,
+        val commentsCount: Int
+    )//,
     //val comments: List<MessageWithCommentJsonObject>)
 
     data class MessageJsonObject(
@@ -128,11 +136,13 @@ object JsonModel {
         val updatedAt: String,
         @SerializedName("comments_count")
         val commentsCount: Int,
-        val user: UserJsonObject)
+        val user: UserJsonObject
+    )
 
     data class MessageCreate(
         val title: String,
-        val description: String)
+        val description: String
+    )
 
     data class MessageCreateResultJsonObject(
         @SerializedName("user_id")
@@ -143,11 +153,13 @@ object JsonModel {
         val createdAt: String,
         @SerializedName("updated_at")
         val updatedAt: String,
-        val id: String)
+        val id: String
+    )
 
     data class MessageCommentCreate(
         val messageId: Int,
-        val comment: String)
+        val comment: String
+    )
 
     data class MessageCommentCreateResultJsonObject(
         val comment: String,
@@ -160,7 +172,8 @@ object JsonModel {
         val role: String,
         @SerializedName("created_at")
         val createdAt: String,
-        val id: Int)
+        val id: Int
+    )
 
     data class PaginationDetailJsonObject(
         val items: List<Int>,
@@ -171,7 +184,8 @@ object JsonModel {
         val next: Int,
         val prev: Int,
         val total: Int,
-        val limit: Int)
+        val limit: Int
+    )
 
     data class MessageQueryJsonObject(
         val collection: List<MessageJsonObject>,
@@ -185,7 +199,8 @@ object JsonModel {
         val name: String,
         val password: String,
         @SerializedName("password_confirmation")
-        val passwordConfirmation: String)
+        val passwordConfirmation: String
+    )
 
     data class Register(val user: RegisterUser)
 
@@ -194,22 +209,26 @@ object JsonModel {
         val email: String,
         @SerializedName("created_at")
         val createdAt: String,
-        val name: String)
+        val name: String
+    )
 
     data class RegisterResultData(val user: RegisterResultDataUser)
 
     data class RegisterResult(
         val success: Boolean,
         val info: String,
-        val data: RegisterResultData)
+        val data: RegisterResultData
+    )
 
     data class LoginJsonObject(
         val email: String,
-        val password: String)
+        val password: String
+    )
 
     data class LoginFb(
         @SerializedName("access_token")
-        val accessToken: String)
+        val accessToken: String
+    )
 
     data class LoginResultJsonObject(val token: String)
 
@@ -223,7 +242,8 @@ object JsonModel {
         @SerializedName("taggable_type")
         val taggableType: Int,
         @SerializedName("taggable_id")
-        val taggableId: Int)
+        val taggableId: Int
+    )
 
     data class TagJsonObject(
         val id: Int,
@@ -262,16 +282,20 @@ object JsonModel {
         val profileImage: String,
         val experience: String,
         val currentTitle: String,
-        val description: String)
+        val description: String
+    )
 
     data class InstructorCollectionJsonObject(
-        val instructors: List<InstructorJsonObject>)
+        val instructors: List<InstructorJsonObject>
+    )
 
     data class SponsorJsonObject(
         val name: String,
         val image: String,
-        val urlLink: String)
+        val urlLink: String
+    )
 
     data class SponsorCollectionJsonObject(
-        val sponsors: List<SponsorJsonObject>)
+        val sponsors: List<SponsorJsonObject>
+    )
 }

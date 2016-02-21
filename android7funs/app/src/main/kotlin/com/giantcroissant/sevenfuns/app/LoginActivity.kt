@@ -113,7 +113,8 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQUEST_SIGNUP -> {
                 if (resultCode == RESULT_OK) {
@@ -122,4 +123,5 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
 }
