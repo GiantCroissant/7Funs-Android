@@ -56,4 +56,10 @@ class SponsorActivity : AppCompatActivity() {
         web_view.loadUrl(url)
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        Log.e(TAG, "onSupportNavigateUp")
+        finish()
+        return true
+    }
+
 }

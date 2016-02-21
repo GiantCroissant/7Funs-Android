@@ -12,11 +12,19 @@ import kotlinx.android.synthetic.main.toolbar.*
 
 class MainActivity : AppCompatActivity() {
     val TAG = MainActivity::class.java.name
+    val CURRENT_SECTION = "CURRENT_SECTION"
+    var current_section = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Log.e(TAG, "onCreate")
+        if (savedInstanceState != null) {
+            current_section = savedInstanceState.getInt(CURRENT_SECTION);
+            Log.e(TAG, "onCreate -> savedInstanceState != null : current_section = $current_section")
+
+        } else {
+            current_section = R.id.navigationItemRecipesSection
+        }
 
         setContentView(R.layout.activity_main)
 
@@ -31,6 +39,7 @@ class MainActivity : AppCompatActivity() {
 
                 when (it.itemId) {
                     R.id.navigationItemRecipesSection -> {
+                        current_section = R.id.navigationItemRecipesSection
                         supportActionBar?.title = resources.getString(R.string.navigation_item_recipes_section)
                         supportFragmentManager
                             .beginTransaction()
@@ -38,6 +47,7 @@ class MainActivity : AppCompatActivity() {
                             .commit()
                     }
                     R.id.navigationItemPersonalSection -> {
+                        current_section = R.id.navigationItemPersonalSection
                         supportActionBar?.title = resources.getString(R.string.navigation_item_personal_section)
                         supportFragmentManager
                             .beginTransaction()
@@ -45,6 +55,7 @@ class MainActivity : AppCompatActivity() {
                             .commit()
                     }
                     R.id.navigationItemInstructorSection -> {
+                        current_section = R.id.navigationItemInstructorSection
                         supportActionBar?.title = resources.getString(R.string.navigation_item_instructor_section)
                         supportFragmentManager
                             .beginTransaction()
@@ -52,6 +63,7 @@ class MainActivity : AppCompatActivity() {
                             .commit()
                     }
                     R.id.navigationItemQASection -> {
+                        current_section = R.id.navigationItemQASection
                         supportActionBar?.title = resources.getString(R.string.navigation_item_qa_section)
                         supportFragmentManager
                             .beginTransaction()
@@ -59,6 +71,7 @@ class MainActivity : AppCompatActivity() {
                             .commit()
                     }
                     R.id.navigationItemSponsorSection -> {
+                        current_section = R.id.navigationItemSponsorSection
                         supportActionBar?.title = resources.getString(R.string.navigation_item_sponsor_section)
                         supportFragmentManager
                             .beginTransaction()
@@ -70,8 +83,8 @@ class MainActivity : AppCompatActivity() {
                 true
             }
 
-            it.setCheckedItem(R.id.navigationItemRecipesSection)
-            it.menu.performIdentifierAction(R.id.navigationItemRecipesSection, 0)
+            it.setCheckedItem(current_section)
+            it.menu.performIdentifierAction(current_section, 0)
         }
     }
 
@@ -99,8 +112,26 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState)
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        Log.e(TAG, "onSaveInstanceState")
+
+        outState?.putInt(CURRENT_SECTION, current_section);
+
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        Log.e(TAG, "onRestoreInstanceState")
+
+        if (savedInstanceState != null) {
+            current_section = savedInstanceState.getInt(CURRENT_SECTION);
+            Log.e(TAG, "onRestoreInstanceState -> savedInstanceState != null : current_section = $current_section")
+
+        } else {
+            current_section = R.id.navigationItemRecipesSection
+        }
     }
 
 }
