@@ -16,6 +16,7 @@ import retrofit2.RxJavaCallAdapterFactory
 import rx.Observable
 
 class RecipesDownloadService : IntentService("RecipesDownloadService") {
+    val maxDownloadAmount = 100
 
     val retrofit = Retrofit
         .Builder()
@@ -27,65 +28,13 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
     val restApiService = retrofit.create(RestApiService::class.java)
 
     override fun onHandleIntent(intent: Intent) {
-//        val config = RealmConfiguration.Builder(this).build()
-//        val realm = Realm.getInstance(config)
-//        //realm.isAutoRefresh = false
-//
-//        System.out.println("RecipesDownloadService - onHandleIntent")
-//        //prepareRecipesFetchingSetup()
-//
-////        val remoteDataStream = restApiService.getRecipesByIdList()
-////                .flatMap { jos -> Observable.from(jos) }
-////                .flatMap { jo ->
-////                    Observable.just(MiscModel.IntermediateOverview(
-////                            jo.id.toString(), jo.updatedAt, MiscModel.LocationType.Remote, MiscModel.OverviewActionResultType.None))
-////                }
-//
-//        val query = realm.where(RecipesOverview::class.java).findAll()
-//        // Sort by id first
-//        query.sort("id")
-//        System.out.println("define local stream")
-//        val localDataStream = query.asObservable()
-//                .filter { rs -> rs.isLoaded }
-//                .flatMap { rs -> Observable.from(rs) }
-//                //.delay(1, TimeUnit.SECONDS)
-//                .flatMap { r -> Observable.just(MiscModel.IntermediateOverview(r.id, r.updatedAt, MiscModel.LocationType.Local, MiscModel.OverviewActionResultType.None)) }
-//                //.delay(30, TimeUnit.SECONDS)
-//                //.window(10, TimeUnit.SECONDS, 30)
-//                .take(30)
-//                .buffer(30)
-//                //.buffer(10, TimeUnit.SECONDS, 30)
-//                //.delay(2, TimeUnit.MINUTES)
-//                .map { x -> x.map { intermediateOverview -> intermediateOverview.id.toInt() } }
-//                .flatMap { x -> restApiService.getRecipesByIdList(x) }
-//                //.subscribeOn( Schedulers.newThread() )
-//                //.subscribeOn()
-//                //.observeOn( Schedulers.newThread() )
-////                .subscribeOn( Schedulers.from)
-//                .flatMap { x -> Observable.from(x) }
-//                .flatMap { x ->
-////                    Log.w("Thread", " Thread is " + Thread.currentThread())
-//
-//                    Log.w("Thread", "rest : " + Thread.currentThread().getName())
-//
-//                    val rList = RealmList<MethodDesc>()
-//                    x.method.forEach { m -> rList.add(MethodDesc(m)) }
-//                    val r = Recipes(x.id.toString(), "", x.updatedAt, x.chefName, x.title, x.description, x.ingredient, x.seasoning, rList, x.reminder)
-//                    Observable.just(r)
-//                }
-//                .buffer(30)
-//                //.delay(5, TimeUnit.SECONDS)
-
-        Log.d("Hello", "XDD")
-
         val realm = Realm.getInstance(this)
         val ro = realm.where(RecipesOverview::class.java).findAllSorted("id", Sort.DESCENDING)
-        val maxIndex = if (ro.size < 30) ro.size else 30;
+        val maxIndex = if (ro.size < maxDownloadAmount) ro.size else maxDownloadAmount
         val recipeIds = ro.subList(0, maxIndex).map { it.id }
         realm.close()
 
         if (recipeIds.size <= 0) {
-            Log.d("TAG", "nothing to pull !!")
             return
         }
 
@@ -145,7 +94,9 @@ fun JsonModel.RecipesJsonModel.toRecipe(): Recipes {
         this.ingredient,
         this.seasoning,
         methods,
-        this.reminder
+        this.reminder,
+        this.hits,
+        this.collected
     )
     return recipe
 }

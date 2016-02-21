@@ -1,12 +1,12 @@
 package com.giantcroissant.sevenfuns.app
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,8 +16,6 @@ import io.realm.Realm
 import io.realm.Sort
 import kotlinx.android.synthetic.main.cardview_recipes_section_overview.view.*
 import kotlinx.android.synthetic.main.fragment_recipes_section_overview.view.*
-import kotlinx.android.synthetic.main.activity_qa_detail_new_message.*
-import kotlinx.android.synthetic.main.fragment_qa_section_overview.*
 import retrofit2.GsonConverterFactory
 import retrofit2.Retrofit
 import retrofit2.RxJavaCallAdapterFactory
@@ -28,6 +26,7 @@ import rx.schedulers.Schedulers
 import kotlin.properties.Delegates
 
 class RecipesSectionOverviewFragment : Fragment() {
+    val TAG = RecipesSectionOverviewFragment::class.java.name
 
     companion object {
         fun newInstance(): RecipesSectionOverviewFragment {
@@ -42,39 +41,58 @@ class RecipesSectionOverviewFragment : Fragment() {
 
     private var realm: Realm by Delegates.notNull()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        realm = Realm.getInstance(this.context)
-    }
-
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.fragment_recipes_section_overview, container, false)
-        view?.recipesSectionOverview?.let {
+        view?.recipe_recycler_view?.let {
             it.layoutManager = LinearLayoutManager(it.context)
             it.adapter = RecyclerAdapter((activity as? AppCompatActivity), listOf<Recipes>())
         }
 
-        view?.recipesSectionSwipeContainer?.setOnRefreshListener {
-            view.recipesSectionSwipeContainer?.isRefreshing = false
+        view?.recipe_swipe_to_refresh?.setOnRefreshListener {
+            view.recipe_swipe_to_refresh?.isRefreshing = false
         }
-
-        val query = realm.where(Recipes::class.java).findAllSortedAsync("id", Sort.DESCENDING)
-        query.asObservable()
-            .filter { x -> x.isLoaded }
-            .flatMap { xs -> Observable.from(xs) }
-            .buffer(30)
-            .subscribeOn(AndroidSchedulers.mainThread())
-            .subscribe { x ->
-                view?.recipesSectionOverview?.adapter = RecyclerAdapter((activity as? AppCompatActivity), x)
-            }
         return view
     }
 
-    class RecyclerAdapter(val activity: AppCompatActivity?, val recipeList: List<Recipes>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+    override fun onResume() {
+        super.onResume()
+        Log.e(TAG, "onResume")
+
+        realm = Realm.getInstance(this.context)
+        val recipeAdapter = view?.recipe_recycler_view?.adapter as RecyclerAdapter
+        val results = realm.where(Recipes::class.java).findAllSortedAsync("id", Sort.DESCENDING)
+        results.addChangeListener {
+            Log.e(TAG, "results.size = ${results.size}")
+            recipeAdapter?.notifyDataSetChanged()
+        }
+
+        recipeAdapter?.updateList(results)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.e(TAG, "onPause")
+
+        val results = realm.where(Recipes::class.java).findAllSortedAsync("id", Sort.DESCENDING)
+        results.removeChangeListener {  }
+        realm.close()
+    }
+
+    class RecyclerAdapter(
+        val activity: AppCompatActivity?,
+        var recipeList: List<Recipes>)
+    : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+
+        val TAG = RecyclerAdapter::class.java.name
+
+        fun updateList(recipeList: List<Recipes>) {
+            Log.e(TAG, "update list ${recipeList.size}")
+            this.recipeList = recipeList
+            this.notifyDataSetChanged()
+        }
 
         class ViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
             var view: View by Delegates.notNull()
-
             init {
                 view = v
             }
@@ -94,11 +112,11 @@ class RecipesSectionOverviewFragment : Fragment() {
             Glide.with(activity?.applicationContext)
                 .load(imageUrl)
                 .centerCrop()
-                .into(viewHolder.view.recipesSectionOverviewCardViewImage)
+                .into(viewHolder.view.recipe_image)
 
             viewHolder.view.recipe_title?.text = recipe.title
-
-            viewHolder.view.recipesSectionOverviewCardViewDetail?.setOnClickListener {
+            viewHolder.view.recipe_hits_text?.text = "${recipe.collected} 人收藏，${recipe.hits} 人看過"
+            viewHolder.view.detail_button?.setOnClickListener {
                 val descList = recipe.methods.map { md -> md.desc }
                 val intent = Intent(this.activity, RecipesDetailActivity::class.java)
                 intent.putExtra(
@@ -120,46 +138,44 @@ class RecipesSectionOverviewFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        realm.close()
-    }
-
     // Get category and tag for search use?
     fun fetchTags() {
         val retrofit = Retrofit
-                .Builder()
-                .baseUrl("https://www.7funs.com")
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build()
+            .Builder()
+            .baseUrl("https://www.7funs.com")
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+            .build()
 
         val restApiService = retrofit.create(RestApiService::class.java)
 
         val recipesByTag = restApiService.getCategories()
-                .observeOn(Schedulers.io())
-                .map { x ->
-                    x.flatMap { c ->
-                        val ids = c.subCategories.map { sc ->
-                            sc.id
-                        }
-                        ids
+            .observeOn(Schedulers.io())
+            .map { x ->
+                x.flatMap { c ->
+                    val ids = c.subCategories.map { sc ->
+                        sc.id
                     }
+                    ids
                 }
-                .flatMap { x -> Observable.from(x) }
-                .flatMap { x -> Observable.just(x) }
-                .flatMap { x -> restApiService.getTagById(x) }
-                .map { x ->
-                    val recipesIds = x.taggings.map { t -> t.taggableId }
-                    MiscModel.RecipesByTag(x.id, recipesIds)
-                }
+            }
+            .flatMap { x -> Observable.from(x) }
+            .flatMap { x -> Observable.just(x) }
+            .flatMap { x -> restApiService.getTagById(x) }
+            .map { x ->
+                val recipesIds = x.taggings.map { t -> t.taggableId }
+                MiscModel.RecipesByTag(x.id, recipesIds)
+            }
 
         // Subscribe for further processing
         recipesByTag.subscribe(object : Subscriber<MiscModel.RecipesByTag>() {
-            override fun onCompleted() {}
+            override fun onCompleted() {
+            }
+
             override fun onError(e: Throwable?) {
                 System.out.println(e?.message)
             }
+
             override fun onNext(recipesByTag: MiscModel.RecipesByTag) {
             }
         })
