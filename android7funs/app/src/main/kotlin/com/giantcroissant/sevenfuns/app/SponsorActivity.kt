@@ -2,11 +2,11 @@ package com.giantcroissant.sevenfuns.app
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
-import android.view.Window
-import android.webkit.*
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_sponsor.*
 import kotlinx.android.synthetic.main.toolbar.*
@@ -15,8 +15,6 @@ import kotlinx.android.synthetic.main.toolbar.*
  * Created by ayo on 2/21/16.
  */
 class SponsorActivity : AppCompatActivity() {
-
-    val TAG = SponsorActivity::class.java.name
 
     companion object {
         fun navigate(activity: AppCompatActivity, sponsor: JsonModel.SponsorJsonObject) {
@@ -57,7 +55,6 @@ class SponsorActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        Log.e(TAG, "onSupportNavigateUp")
         finish()
         return true
     }
