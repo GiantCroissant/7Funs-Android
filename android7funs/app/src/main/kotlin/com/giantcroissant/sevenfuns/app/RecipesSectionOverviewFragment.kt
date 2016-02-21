@@ -21,7 +21,6 @@ import retrofit2.Retrofit
 import retrofit2.RxJavaCallAdapterFactory
 import rx.Observable
 import rx.Subscriber
-import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import kotlin.properties.Delegates
 
@@ -38,6 +37,8 @@ class RecipesSectionOverviewFragment : Fragment() {
         }
 
         view?.recipe_swipe_to_refresh?.setOnRefreshListener {
+            val recipeOverviews = Intent(activity, RecipesSetupService::class.java)
+            activity.startService(recipeOverviews)
             view.recipe_swipe_to_refresh?.isRefreshing = false
         }
         return view
@@ -116,7 +117,8 @@ class RecipesSectionOverviewFragment : Fragment() {
                         recipe.title,
                         recipe.ingredient,
                         recipe.seasoning,
-                        descList, recipe.reminder
+                        descList,
+                        recipe.reminder
                     )
                 )
                 this.activity?.startActivity(intent)

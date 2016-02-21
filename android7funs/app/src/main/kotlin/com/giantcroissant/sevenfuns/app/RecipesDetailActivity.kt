@@ -2,6 +2,7 @@ package com.giantcroissant.sevenfuns.app
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerSupportFragment
@@ -13,48 +14,52 @@ import kotlinx.android.synthetic.main.toolbar.*
  * Created by apprentice on 2/1/16.
  */
 class RecipesDetailActivity : AppCompatActivity() {
+    val TAG = RecipesDetailActivity::class.java.name
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recipes_detail)
 
         setSupportActionBar(toolbar)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val recipesParcelable = intent.getParcelableExtra<RecipesParcelable>("recipes")
+        val recipe = intent.getParcelableExtra<RecipesParcelable>("recipes")
+        supportActionBar?.title = recipe.title
 
-        //
-        supportActionBar?.title = recipesParcelable.title
+        val youtubeFragment = YouTubePlayerSupportFragment()
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.youtube_container, youtubeFragment)
+            .commit()
 
-        //
-        val ytpsf = YouTubePlayerSupportFragment()
-        ytpsf.initialize("AIzaSyAocAvXaWG5w8WszO2N8pvPewgga74QmtA", object : YouTubePlayer.OnInitializedListener {
-            override fun onInitializationSuccess(provider: YouTubePlayer.Provider, player: YouTubePlayer, wasRestored: Boolean) {
+        ingredientCardView?.recipesDetailTitle?.text = "Ingredient"
+        ingredientCardView?.recipesDetailContent?.text = recipe.ingredient
+
+        seasoningCardView?.recipesDetailTitle?.text = "Seasoning"
+        seasoningCardView?.recipesDetailContent?.text = recipe.seasoning
+
+        methodCardView?.recipesDetailTitle?.text = "Method"
+        val adjustedContent = recipe.methods.reduce { acc, s -> acc + s + "\n"  }
+        methodCardView?.recipesDetailContent?.text = adjustedContent
+
+        reminderCardView?.recipesDetailTitle?.text = "Reminder"
+        reminderCardView?.recipesDetailContent?.text = recipe.reminder
+
+        youtubeFragment.initialize("AIzaSyAocAvXaWG5w8WszO2N8pvPewgga74QmtA",
+            object : YouTubePlayer.OnInitializedListener {
+
+            override fun onInitializationSuccess(provider: YouTubePlayer.Provider,
+                                                 player: YouTubePlayer, wasRestored: Boolean) {
                 if (!wasRestored) {
                     player.cueVideo("Er1cDWIJ1z4");
                 }
             }
 
-            override fun onInitializationFailure(provider: YouTubePlayer.Provider, error: YouTubeInitializationResult) {
-                System.out.println(error.name)
+            override fun onInitializationFailure(provider: YouTubePlayer.Provider,
+                                                 error: YouTubeInitializationResult) {
+                Log.e(TAG, "$error")
             }
         })
-
-        supportFragmentManager.beginTransaction().replace(R.id.youtubePlayerFragmentContainer, ytpsf).commit()
-
-        //
-
-        ingredientCardView?.recipesDetailTitle?.text = "Ingredient"
-        ingredientCardView?.recipesDetailContent?.text = recipesParcelable.ingredient
-
-        seasoningCardView?.recipesDetailTitle?.text = "Seasoning"
-        seasoningCardView?.recipesDetailContent?.text = recipesParcelable.seasoning
-
-        methodCardView?.recipesDetailTitle?.text = "Method"
-        val adjustedContent = recipesParcelable.methods.reduce { acc, s -> acc + s + "\n"  }
-        methodCardView?.recipesDetailContent?.text = adjustedContent
-
-        reminderCardView?.recipesDetailTitle?.text = "Reminder"
-        reminderCardView?.recipesDetailContent?.text = recipesParcelable.reminder
     }
 }

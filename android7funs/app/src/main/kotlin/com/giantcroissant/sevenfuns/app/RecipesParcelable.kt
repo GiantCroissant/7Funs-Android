@@ -6,7 +6,15 @@ import android.os.Parcelable
 /**
  * Created by apprentice on 2/1/16.
  */
-data class RecipesParcelable(val id: Int, val title: String, val ingredient: String, val seasoning: String, val methods: List<String>, val reminder: String) : Parcelable {
+data class RecipesParcelable(
+    val id: Int,
+    val title: String,
+    val ingredient: String,
+    val seasoning: String,
+    val methods: List<String>,
+    val reminder: String
+) : Parcelable {
+
     companion object {
         @JvmField final val CREATOR: Parcelable.Creator<RecipesParcelable> = object : Parcelable.Creator<RecipesParcelable> {
             override fun createFromParcel(parcelIn: Parcel): RecipesParcelable {
@@ -20,21 +28,15 @@ data class RecipesParcelable(val id: Int, val title: String, val ingredient: Str
     }
 
     constructor(parcelIn: Parcel) : this(
-            parcelIn.readInt(),
-            parcelIn.readString(),
-            parcelIn.readString(),
-            parcelIn.readString(),
-            parcelIn.createStringArrayList(),
-            parcelIn.readString())  {
-//        id = parcelIn.readInt()
-//        title = parcelIn.readString()
-//        ingredient = parcelIn.readString()
-//        seasoning = parcelIn.readString()
-//        parcelIn.readStringList(methods)
-//        reminder = parcelIn.readString()
+        parcelIn.readInt(),
+        parcelIn.readString(),
+        parcelIn.readString(),
+        parcelIn.readString(),
+        parcelIn.createStringArrayList(),
+        parcelIn.readString()) {
     }
 
-    override fun describeContents() : Int {
+    override fun describeContents(): Int {
         return 0
     }
 
