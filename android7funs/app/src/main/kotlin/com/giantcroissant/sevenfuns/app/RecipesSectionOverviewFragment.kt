@@ -96,7 +96,7 @@ class RecipesSectionOverviewFragment : Fragment() {
                 .centerCrop()
                 .into(viewHolder.view.recipesSectionOverviewCardViewImage)
 
-            viewHolder.view.recipesSectionOverviewCardViewTitle?.text = recipe.title
+            viewHolder.view.recipe_title?.text = recipe.title
 
             viewHolder.view.recipesSectionOverviewCardViewDetail?.setOnClickListener {
                 val descList = recipe.methods.map { md -> md.desc }
