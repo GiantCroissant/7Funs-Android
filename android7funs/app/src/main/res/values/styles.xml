@@ -24,5 +24,8 @@
     <color name="accent">#00BCD4</color>
     <color name="accent_translucent">#FAFAFA</color>
     <color name="accent_bright">#43a8a1</color>
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#727272</color>
+    <color name="divider_color">#B6B6B6</color>
 
 </resources>

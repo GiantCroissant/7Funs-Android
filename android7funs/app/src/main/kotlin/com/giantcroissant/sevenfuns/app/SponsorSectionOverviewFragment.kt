@@ -1,5 +1,6 @@
 package com.giantcroissant.sevenfuns.app
 
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -9,6 +10,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.balysv.materialripple.MaterialRippleLayout
 import com.bumptech.glide.Glide
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
@@ -82,7 +84,11 @@ class SponsorSectionOverviewFragment : Fragment() {
         return view
     }
 
-    class RecyclerAdapter(val activity: AppCompatActivity?, val sponsorList: List<JsonModel.SponsorJsonObject>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+    class RecyclerAdapter(
+        val activity: AppCompatActivity?,
+        val sponsorList: List<JsonModel.SponsorJsonObject>
+    ) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+
         class ViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
             var view: View by Delegates.notNull()
             init {
@@ -98,25 +104,24 @@ class SponsorSectionOverviewFragment : Fragment() {
         override fun onBindViewHolder(viewHolder: ViewHolder, i: Int) {
             val r = sponsorList[i]
 
+
+
             viewHolder.view.sponsorSectionOverviewCardViewTitle?.text = r.name
             val imagePath = "file:///android_asset/sponsors/" + r.image + ".png"
 
-            Glide
-                .with(activity?.applicationContext)
-                //.placeholder(R.drawable.ic_recipes_stub_image)
-                //                .load(items[i].imageUrl)
+            Glide.with(activity?.applicationContext)
                 .load(Uri.parse(imagePath))
-                //.transform(CircleTransform(c))
+                .centerCrop()
                 .into(viewHolder.view.sponsorSectionOverviewCardViewImage)
 
-            viewHolder.view.sponsorSectionOverviewCardViewExpand?.setOnClickListener { x ->
+//            viewHolder.view.sponsorSectionOverviewCardViewExpand?.setOnClickListener { x ->
                 //                (activity as? AppCompatActivity)?.let {
                 //                    val intent = Intent(x.context, RecipesDetailActivity::class.java)
                 //                    intent?.putExtra("recipes", RecipesParcelable(r.id, r.title))
                 //
                 //                    x.context.startActivity(intent)
                 //                }
-            }
+//            }
         }
 
         override fun getItemCount(): Int {
