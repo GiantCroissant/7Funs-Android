@@ -48,6 +48,22 @@
         </activity>
 
         <activity
+                android:name=".QADetailNewMessageActivity"
+                android:parentActivityName=".MainActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".MainActivity" />
+        </activity>
+
+        <activity
+                android:name=".QADetailNewCommentActivity"
+                android:parentActivityName=".MainActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".MainActivity" />
+        </activity>
+
+        <activity
             android:name=".LoginActivity"
             android:parentActivityName=".MainActivity">
             <meta-data

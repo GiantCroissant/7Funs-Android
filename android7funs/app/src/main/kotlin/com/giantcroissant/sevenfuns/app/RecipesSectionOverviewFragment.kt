@@ -1,6 +1,7 @@
 package com.giantcroissant.sevenfuns.app
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
@@ -16,6 +17,8 @@ import io.realm.Realm
 import io.realm.Sort
 import kotlinx.android.synthetic.main.cardview_recipes_section_overview.view.*
 import kotlinx.android.synthetic.main.fragment_recipes_section_overview.view.*
+import kotlinx.android.synthetic.main.activity_qa_detail_new_message.*
+import kotlinx.android.synthetic.main.fragment_qa_section_overview.*
 import retrofit2.GsonConverterFactory
 import retrofit2.Retrofit
 import retrofit2.RxJavaCallAdapterFactory

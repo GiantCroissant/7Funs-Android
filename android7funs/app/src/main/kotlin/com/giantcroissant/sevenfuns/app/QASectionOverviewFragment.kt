@@ -2,12 +2,14 @@ package com.giantcroissant.sevenfuns.app
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.*
+import kotlinx.android.synthetic.main.fragment_qa_section_overview.*
 import kotlinx.android.synthetic.main.fragment_qa_section_overview.view.*
 import kotlinx.android.synthetic.main.listview_qa_section_overview.view.*
 import org.joda.time.DateTime
@@ -91,6 +93,23 @@ class QASectionOverviewFragment : Fragment() {
         })
 
         (activity as? AppCompatActivity)?.let {
+            view?.qaSectionOverviewAddFab?.setOnClickListener { x ->
+            val sp: SharedPreferences = it.getSharedPreferences("DATA", 0)
+            val token = sp.getString("token", "")
+                if (token.isEmpty()) {
+                    System.out.println("No cached token")
+
+                    val intent = Intent(it, LoginActivity::class.java)
+                    this.startActivity(intent)
+                } else {
+                    System.out.println("Have cached token: " + token)
+
+                    // Do something with token
+                    val intent = Intent(it.applicationContext, QADetailNewMessageActivity::class.java)
+                    startActivityForResult(intent, QADetailActivity.WRITTEN_MESSAGE)
+                }
+            }
+
             currentPage += 1
             val messageQuery = restApiService.getMessageQuery(currentPage)
             messageQuery

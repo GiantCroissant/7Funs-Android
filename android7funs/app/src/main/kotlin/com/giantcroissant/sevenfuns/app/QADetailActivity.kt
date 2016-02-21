@@ -40,7 +40,8 @@ class QADetailActivity : AppCompatActivity() {
     val restApiService = retrofit.create(RestApiService::class.java)
 
     companion object {
-        const val WRITTEN_COMMENT: Int = 0
+        const val WRITTEN_MESSAGE: Int = 0
+        const val WRITTEN_COMMENT: Int = 1
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -134,6 +135,14 @@ class QADetailActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
         when (requestCode) {
+            WRITTEN_MESSAGE -> {
+                if (resultCode == RESULT_OK) {
+                    val newMessageParcelable : NewMessageParcelable = data.extras.getParcelable("message")
+
+                    System.out.println(newMessageParcelable.message)
+                }
+            }
+
             WRITTEN_COMMENT -> {
                 if (resultCode == RESULT_OK) {
                     //this.finish()
@@ -141,6 +150,7 @@ class QADetailActivity : AppCompatActivity() {
                     //data?.putExtra("message", MessageParcelable(id))
                     val commentParcelable : CommentParcelable = data.extras.getParcelable("comment")
 
+                    System.out.println(commentParcelable.comment)
 //                    restApiService.createMessageComment()
                 }
             }
