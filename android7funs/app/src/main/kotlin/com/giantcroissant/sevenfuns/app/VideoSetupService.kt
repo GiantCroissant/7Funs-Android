@@ -2,18 +2,14 @@ package com.giantcroissant.sevenfuns.app
 
 import android.app.IntentService
 import android.content.Intent
-import android.util.Log
 import com.giantcroissant.sevenfuns.app.DbModel.VideoOverview
 import io.realm.Realm
 import retrofit2.GsonConverterFactory
 import retrofit2.Retrofit
 import retrofit2.RxJavaCallAdapterFactory
 
-/**
- * Created by ayo on 2/22/16.
- */
+
 class VideoSetupService : IntentService("VideoSetupService") {
-    val TAG = VideoSetupService::class.java.name
 
     val retrofit = Retrofit
         .Builder()
@@ -39,7 +35,6 @@ class VideoSetupService : IntentService("VideoSetupService") {
                         .equalTo("id", videoJson.id)
                         .equalTo("updatedAt", videoJson.updatedAt)
                         .findFirst() == null) {
-                        Log.e(TAG, "new Video Overview !")
                         realm.copyToRealmOrUpdate(videoJson.toVideoOverview())
                     }
                 }
