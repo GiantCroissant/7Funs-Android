@@ -119,8 +119,8 @@ interface RestApiService {
     @POST("/api/signup")
     fun register(
             @Body
-            loginData: JsonModel.Register
-    ): Observable<JsonModel.RegisterResult>
+            loginData: JsonModel.RegisterJsonObject
+    ): Observable<JsonModel.LoginResultJsonObject>
 
     @GET("/recipe/image/")
     @Streaming

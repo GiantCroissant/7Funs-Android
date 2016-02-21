@@ -194,15 +194,21 @@ object JsonModel {
     )
 
     //
-    data class RegisterUser(
+//    data class RegisterUserJsonObject(
+//        val email: String,
+//        val name: String,
+//        val password: String,
+//        @SerializedName("password_confirmation")
+//        val passwordConfirmation: String
+//    )
+
+//    data class RegisterJsonObject(val user: RegisterUserJsonObject)
+    data class RegisterJsonObject(
         val email: String,
         val name: String,
         val password: String,
         @SerializedName("password_confirmation")
-        val passwordConfirmation: String
-    )
-
-    data class Register(val user: RegisterUser)
+        val passwordConfirmation: String)
 
     data class RegisterResultDataUser(
         val id: Int,

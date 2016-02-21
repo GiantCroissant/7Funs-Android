@@ -1,5 +1,6 @@
 package com.giantcroissant.sevenfuns.app
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
@@ -15,6 +16,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Clean out cached token for testing
+        val sp: SharedPreferences =  getSharedPreferences("DATA", 0)
+        sp.edit().remove("token").commit()
+
+        //
         setSupportActionBar(toolbar)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
