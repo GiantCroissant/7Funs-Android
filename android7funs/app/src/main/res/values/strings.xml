@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SevenFuns</string>
+    <string name="app_name">7Funs</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -8,10 +8,10 @@
 
     <string name="drawer_header_title">料理美食王</string>
 
-    <string name="navigation_item_recipes_section">Recipes</string>
-    <string name="navigation_item_personal_section">Personal</string>
-    <string name="navigation_item_instructor_section">Instructors</string>
-    <string name="navigation_item_qa_section">Q and A</string>
-    <string name="navigation_item_sponsor_section">Sponsors</string>
+    <string name="navigation_item_recipes_section">食譜</string>
+    <string name="navigation_item_personal_section">我的收藏</string>
+    <string name="navigation_item_instructor_section">料理老師</string>
+    <string name="navigation_item_qa_section">美食問與答</string>
+    <string name="navigation_item_sponsor_section">吃飯好朋友</string>
 
 </resources>
