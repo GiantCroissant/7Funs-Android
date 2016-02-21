@@ -26,30 +26,35 @@ class MainActivity : AppCompatActivity() {
 
                 when (it.itemId) {
                     R.id.navigationItemRecipesSection -> {
+                        supportActionBar?.title = resources.getString(R.string.navigation_item_recipes_section)
                         supportFragmentManager
                             .beginTransaction()
                             .replace(R.id.fragmentContainer, RecipesSectionFragment.newInstance())
                             .commit()
                     }
                     R.id.navigationItemPersonalSection -> {
+                        supportActionBar?.title = resources.getString(R.string.navigation_item_personal_section)
                         supportFragmentManager
                             .beginTransaction()
                             .replace(R.id.fragmentContainer, PersonalSectionFragment.newInstance())
                             .commit()
                     }
                     R.id.navigationItemInstructorSection -> {
+                        supportActionBar?.title = resources.getString(R.string.navigation_item_instructor_section)
                         supportFragmentManager
                             .beginTransaction()
                             .replace(R.id.fragmentContainer, InstructorSectionFragment.newInstance())
                             .commit()
                     }
                     R.id.navigationItemQASection -> {
+                        supportActionBar?.title = resources.getString(R.string.navigation_item_qa_section)
                         supportFragmentManager
                             .beginTransaction()
                             .replace(R.id.fragmentContainer, QASectionFragment.newInstance())
                             .commit()
                     }
                     R.id.navigationItemSponsorSection -> {
+                        supportActionBar?.title = resources.getString(R.string.navigation_item_sponsor_section)
                         supportFragmentManager
                             .beginTransaction()
                             .replace(R.id.fragmentContainer, SponsorSectionFragment.newInstance())
