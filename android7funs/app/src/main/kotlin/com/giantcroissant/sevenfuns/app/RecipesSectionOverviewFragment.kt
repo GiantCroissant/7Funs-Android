@@ -128,7 +128,7 @@ class RecipesSectionOverviewFragment : Fragment() {
                 .centerCrop()
                 .dontAnimate()
                 .into(viewHolder.view.recipe_image)
-
+            
             viewHolder.view.recipe_title?.text = recipe.title
             viewHolder.view.recipe_hits_text?.text = "${recipe.collected} 人收藏，${recipe.hits} 人看過"
             viewHolder.view.detail_button?.setOnClickListener {
