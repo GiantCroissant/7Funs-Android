@@ -54,21 +54,21 @@ object JsonModel {
     )
 
     //
-    data class VideoData(
+    data class VideoDataJson(
         val title: String,
         val duration: Int,
         @SerializedName("like_count")
         val likeCount: Int,
         @SerializedName("view_count")
         val viewCount: Int,
-        val descritpion: String,
+        val description: String,
         @SerializedName("published_at")
         val publishedAt: String,
         @SerializedName("thumbnail_url")
         val thumbnailUrl: String
     )
 
-    data class Video(
+    data class VideoJson(
         val id: Int,
         @SerializedName("recipe_id")
         val recipeId: Int,
@@ -80,7 +80,7 @@ object JsonModel {
         @SerializedName("updated_at")
         val updatedAt: String,
         @SerializedName("video_data")
-        val videoData: VideoData
+        val videoData: VideoDataJson
     )
 
     //

@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:checkableBehavior="single">
         <item
-                android:id="@+id/navigationItemRecipesSection"
-                android:checked="true"
-                android:icon="@drawable/ic_restaurant_black_24dp"
-                android:title="@string/navigation_item_recipes_section" />
+            android:id="@+id/navigationItemRecipesSection"
+            android:checked="true"
+            android:icon="@drawable/ic_restaurant_black_24dp"
+            android:title="@string/navigation_item_recipes_section"/>
         <item
-                android:id="@+id/navigationItemPersonalSection"
-                android:checked="true"
-                android:icon="@drawable/ic_folder_open_black_24dp"
-                android:title="@string/navigation_item_personal_section" />
+            android:id="@+id/navigationItemPersonalSection"
+            android:checked="true"
+            android:icon="@drawable/ic_folder_open_black_24dp"
+            android:title="@string/navigation_item_personal_section"/>
         <item
-                android:id="@+id/navigationItemInstructorSection"
-                android:checked="true"
-                android:icon="@drawable/ic_school_black_24dp"
-                android:title="@string/navigation_item_instructor_section" />
+            android:id="@+id/navigationItemInstructorSection"
+            android:checked="true"
+            android:icon="@drawable/ic_school_black_24dp"
+            android:title="@string/navigation_item_instructor_section"/>
         <item
-                android:id="@+id/navigationItemQASection"
-                android:checked="true"
-                android:icon="@drawable/ic_live_help_black_24dp"
-                android:title="@string/navigation_item_qa_section" />
+            android:id="@+id/navigationItemQASection"
+            android:checked="true"
+            android:icon="@drawable/ic_live_help_black_24dp"
+            android:title="@string/navigation_item_qa_section"/>
         <item
-                android:id="@+id/navigationItemSponsorSection"
-                android:checked="true"
-                android:icon="@drawable/ic_store_black_24dp"
-                android:title="@string/navigation_item_sponsor_section" />
+            android:id="@+id/navigationItemSponsorSection"
+            android:checked="true"
+            android:icon="@drawable/ic_store_black_24dp"
+            android:title="@string/navigation_item_sponsor_section"/>
     </group>
 
 </menu>

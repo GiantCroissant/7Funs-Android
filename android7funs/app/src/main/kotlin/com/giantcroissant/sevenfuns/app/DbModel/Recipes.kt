@@ -20,5 +20,9 @@ open class Recipes(
     open var ingredient: String = "",
     open var seasoning: String = "",
     open var methods: RealmList<MethodDesc> = RealmList(),
-    open var reminder: String = "") : RealmObject() {
-}
+    open var reminder: String = "",
+    open var hits: Int = 0,
+    open var collected: Int = 0,
+    open var isCollectedd: Boolean = false
+
+) : RealmObject() {}

@@ -93,7 +93,7 @@ interface RestApiService {
     fun getVideos(
             @Query("page")
             page: Int
-    ): Observable<List<JsonModel.Video>>
+    ): Observable<List<JsonModel.VideoJson>>
 
     @GET("/api/recipe_videos/overview")
     fun getVideoOverviews(): Observable<List<JsonModel.Overview>>
@@ -102,7 +102,7 @@ interface RestApiService {
     fun getVideosByIdList(
             @Query("ids[]")
             ids: List<Int>
-    ): Observable<List<JsonModel.Video>>
+    ): Observable<List<JsonModel.VideoJson>>
 
     @POST("/api/login")
     fun login(

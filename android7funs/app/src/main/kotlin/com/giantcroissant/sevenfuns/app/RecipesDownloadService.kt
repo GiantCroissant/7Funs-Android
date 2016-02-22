@@ -7,15 +7,19 @@ import com.giantcroissant.sevenfuns.app.DbModel.MethodDesc
 import com.giantcroissant.sevenfuns.app.DbModel.Recipes
 import com.giantcroissant.sevenfuns.app.DbModel.RecipesOverview
 import io.realm.Realm
-import io.realm.RealmConfiguration
 import io.realm.RealmList
+import io.realm.RealmObject
 import io.realm.Sort
+import io.realm.annotations.PrimaryKey
 import retrofit2.GsonConverterFactory
 import retrofit2.Retrofit
 import retrofit2.RxJavaCallAdapterFactory
 import rx.Observable
 
 class RecipesDownloadService : IntentService("RecipesDownloadService") {
+    val TAG = RecipesDownloadService::class.java.name
+
+    val maxDownloadAmount = 100
 
     val retrofit = Retrofit
         .Builder()
@@ -27,109 +31,93 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
     val restApiService = retrofit.create(RestApiService::class.java)
 
     override fun onHandleIntent(intent: Intent) {
-//        val config = RealmConfiguration.Builder(this).build()
-//        val realm = Realm.getInstance(config)
-//        //realm.isAutoRefresh = false
-//
-//        System.out.println("RecipesDownloadService - onHandleIntent")
-//        //prepareRecipesFetchingSetup()
-//
-////        val remoteDataStream = restApiService.getRecipesByIdList()
-////                .flatMap { jos -> Observable.from(jos) }
-////                .flatMap { jo ->
-////                    Observable.just(MiscModel.IntermediateOverview(
-////                            jo.id.toString(), jo.updatedAt, MiscModel.LocationType.Remote, MiscModel.OverviewActionResultType.None))
-////                }
-//
-//        val query = realm.where(RecipesOverview::class.java).findAll()
-//        // Sort by id first
-//        query.sort("id")
-//        System.out.println("define local stream")
-//        val localDataStream = query.asObservable()
-//                .filter { rs -> rs.isLoaded }
-//                .flatMap { rs -> Observable.from(rs) }
-//                //.delay(1, TimeUnit.SECONDS)
-//                .flatMap { r -> Observable.just(MiscModel.IntermediateOverview(r.id, r.updatedAt, MiscModel.LocationType.Local, MiscModel.OverviewActionResultType.None)) }
-//                //.delay(30, TimeUnit.SECONDS)
-//                //.window(10, TimeUnit.SECONDS, 30)
-//                .take(30)
-//                .buffer(30)
-//                //.buffer(10, TimeUnit.SECONDS, 30)
-//                //.delay(2, TimeUnit.MINUTES)
-//                .map { x -> x.map { intermediateOverview -> intermediateOverview.id.toInt() } }
-//                .flatMap { x -> restApiService.getRecipesByIdList(x) }
-//                //.subscribeOn( Schedulers.newThread() )
-//                //.subscribeOn()
-//                //.observeOn( Schedulers.newThread() )
-////                .subscribeOn( Schedulers.from)
-//                .flatMap { x -> Observable.from(x) }
-//                .flatMap { x ->
-////                    Log.w("Thread", " Thread is " + Thread.currentThread())
-//
-//                    Log.w("Thread", "rest : " + Thread.currentThread().getName())
-//
-//                    val rList = RealmList<MethodDesc>()
-//                    x.method.forEach { m -> rList.add(MethodDesc(m)) }
-//                    val r = Recipes(x.id.toString(), "", x.updatedAt, x.chefName, x.title, x.description, x.ingredient, x.seasoning, rList, x.reminder)
-//                    Observable.just(r)
-//                }
-//                .buffer(30)
-//                //.delay(5, TimeUnit.SECONDS)
+        fetchRecipes()
+    }
 
-        Log.d("Hello", "XDD")
-
+    private fun fetchRecipes() {
         val realm = Realm.getInstance(this)
         val ro = realm.where(RecipesOverview::class.java).findAllSorted("id", Sort.DESCENDING)
-        val maxIndex = if (ro.size < 30) ro.size else 30;
+        val maxIndex = if (ro.size < maxDownloadAmount) ro.size else maxDownloadAmount
         val recipeIds = ro.subList(0, maxIndex).map { it.id }
         realm.close()
 
         if (recipeIds.size <= 0) {
-            Log.d("TAG", "nothing to pull !!")
+            Log.e(TAG, "nothing to pull - recipe")
             return
         }
 
-        restApiService
-            .getRecipesByIdList(recipeIds)
+        restApiService.getRecipesByIdList(recipeIds)
             .flatMap { jsonList ->
                 val recipes = jsonList.map { it.toRecipe() }
 
                 val realm = Realm.getInstance(this)
-                realm.isAutoRefresh = false
                 realm.beginTransaction()
-                arrayListOf(recipes).forEach { realm.copyToRealmOrUpdate(it) }
+                recipes.forEach { realm.copyToRealmOrUpdate(it) }
                 realm.commitTransaction()
                 realm.close()
 
-                // prepare to remove overviews
-                var recipeIdList = recipes.map { it.id }
-                Observable.just(recipeIdList)
+                var overviewIds = recipes.map { it.id }
+                Observable.just(overviewIds)
             }
-            .flatMap { recipeIdList ->
-
+            .subscribe { recipeIdList ->
                 val realm = Realm.getInstance(this)
-                realm.isAutoRefresh = false
                 realm.beginTransaction()
-                val overviewList = realm.where(RecipesOverview::class.java).findAll()
-
                 recipeIdList.forEach { recipeId ->
-                    overviewList.filter { it.id == recipeId }.first()?.removeFromRealm()
+                    realm.where(RecipesOverview::class.java)
+                        .equalTo("id", recipeId)
+                        .findFirst()?.removeFromRealm()
                 }
                 realm.commitTransaction()
                 realm.close()
-
-                Observable.just(0)
             }
-            .subscribe({
-
-            }, { error ->
-                Log.e("TAG", "error = $error")
-
-            }, {
-                Log.d("TAG", "complete")
-            })
     }
 }
+
+fun JsonModel.VideoJson.toVideo(): Video {
+        val data = if (videoData == null) VideoData() else VideoData(
+            videoData.title,
+            videoData.duration,
+            videoData.likeCount,
+            videoData.viewCount,
+            videoData.description,
+            videoData.publishedAt,
+            videoData.thumbnailUrl
+        )
+
+    return Video(
+        id,
+        recipeId,
+        youtubeVideoCode,
+        number,
+        createdAt,
+        updatedAt,
+        data
+    )
+}
+
+
+open class Video(
+    @PrimaryKey
+    open var id: Int = 0,
+    open var recipeId: Int = 0,
+    open var youtubeVideoCode: String = "",
+    open var number: Int = 0, // Type, 1, 2, 3
+    open var createdAt: String = "",
+    open var updatedAt: String = "",
+    open var videoData: VideoData? = null
+
+) : RealmObject() {}
+
+
+open class VideoData(
+    open var title: String = "",
+    open var duration: Int = 0,
+    open var likeCount: Int = 0,
+    open var viewCount: Int = 0,
+    open var description: String = "",
+    open var publishedAt: String = "",
+    open var thumbnailUrl: String = ""
+) : RealmObject() {}
 
 fun JsonModel.RecipesJsonModel.toRecipe(): Recipes {
     var methods = RealmList<MethodDesc>()
@@ -145,7 +133,9 @@ fun JsonModel.RecipesJsonModel.toRecipe(): Recipes {
         this.ingredient,
         this.seasoning,
         methods,
-        this.reminder
+        this.reminder,
+        this.hits,
+        this.collected
     )
     return recipe
 }

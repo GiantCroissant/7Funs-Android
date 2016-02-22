@@ -37,8 +37,8 @@
                 android:gravity="center_vertical"
                 android:text="name"
                 android:textColor="@color/primary_text"
-                android:textSize="20dp"
-                android:textStyle="bold"/>
+                android:textSize="24sp"
+                />
 
             <!--<RelativeLayout-->
             <!--android:layout_width="match_parent"-->

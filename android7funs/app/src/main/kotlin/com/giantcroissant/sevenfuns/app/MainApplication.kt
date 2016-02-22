@@ -19,12 +19,15 @@ class MainApplication : Application() {
         FacebookSdk.sdkInitialize(applicationContext)
         JodaTimeAndroid.init(this)
 
-        val recipeOverviews = Intent(this, RecipesSetupService::class.java)
-        startService(recipeOverviews)
+        startService(Intent(this, RecipesSetupService::class.java))
+        startService(Intent(this, VideoSetupService::class.java))
 
         Observable.interval(5, TimeUnit.SECONDS).subscribe {
             val downloadRecipes = Intent(this, RecipesDownloadService::class.java)
             startService(downloadRecipes)
+
+            val downloadVideos = Intent(this, VideoDownloadService::class.java)
+            startService(downloadVideos)
         }
     }
 
