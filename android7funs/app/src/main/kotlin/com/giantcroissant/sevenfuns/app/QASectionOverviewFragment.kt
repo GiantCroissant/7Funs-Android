@@ -57,6 +57,10 @@ class QASectionOverviewFragment : Fragment() {
         val view = inflater?.inflate(R.layout.fragment_qa_section_overview, container, false)
         view?.let { v ->
             v.qaSectionOverview.layoutManager = LinearLayoutManager(v.context)
+            (activity as? AppCompatActivity)?.let { a ->
+                val itemDecoration = DividerItemDecoration(a, DividerItemDecoration.VERTICAL_LIST)
+                v.qaSectionOverview.addItemDecoration(itemDecoration)
+            }
         }
 
         view?.qaSectionSwipeContainer?.setOnRefreshListener({

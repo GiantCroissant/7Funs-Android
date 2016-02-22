@@ -10,12 +10,14 @@ import com.facebook.FacebookException
 import com.facebook.login.LoginResult
 
 import kotlinx.android.synthetic.main.activity_login.*
+import org.jetbrains.annotations.NotNull
 import retrofit2.GsonConverterFactory
 import retrofit2.Retrofit
 import retrofit2.RxJavaCallAdapterFactory
 import rx.Subscriber
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import kotlin.properties.Delegates
 
 /**
  * Created by apprentice on 2/3/16.
@@ -32,6 +34,7 @@ class LoginActivity : AppCompatActivity() {
     val restApiService = retrofit.create(RestApiService::class.java)
 
     val REQUEST_SIGNUP: Int = 0
+    var callbackManager: CallbackManager by Delegates.notNull()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,11 +60,30 @@ class LoginActivity : AppCompatActivity() {
                     })
         }
 
-        val callbackManager = com.facebook.CallbackManager.Factory.create()
+        callbackManager = com.facebook.CallbackManager.Factory.create()
         loginFbButton?.setReadPermissions("public_profile email")
         loginFbButton?.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
             override fun onSuccess(loginResult: LoginResult) {
                 System.out.println("fb login ok")
+
+                val accessToken = loginResult.accessToken.token
+
+                restApiService.loginViaFbId(JsonModel.LoginFbJsonObject(accessToken))
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(object : Subscriber<JsonModel.LoginResultJsonObject>() {
+                        override fun onCompleted() {
+                        }
+
+                        override fun onError(e: Throwable?) {
+                            System.out.println(e?.message)
+                        }
+
+                        override fun onNext(x: JsonModel.LoginResultJsonObject) {
+                            val sp: SharedPreferences = getSharedPreferences("DATA", 0)
+                            sp.edit().putString("token", x.token).commit()
+                            finish()
+                        }
+                    })
             }
 
             override fun onCancel() {
@@ -170,8 +192,9 @@ class LoginActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        val callbackManager = com.facebook.CallbackManager.Factory.create()
+        //val callbackManager = com.facebook.CallbackManager.Factory.create()
         callbackManager.onActivityResult(requestCode, resultCode, data)
+        System.out.println("LoginActivity::onActivityResult")
         when (requestCode) {
             REQUEST_SIGNUP -> {
                 if (resultCode == RESULT_OK) {

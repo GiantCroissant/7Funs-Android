@@ -20,6 +20,7 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 
 import kotlinx.android.synthetic.main.activity_qa_detail.*
+import kotlinx.android.synthetic.main.fragment_qa_section_overview.view.*
 import kotlinx.android.synthetic.main.listview_qa_detail_item.view.*
 //import kotlinx.android.synthetic.main.fragment_qa_section_overview.view.*
 import kotlinx.android.synthetic.main.toolbar.*
@@ -103,6 +104,10 @@ class QADetailActivity : AppCompatActivity() {
 
         //
         qaDetailMessageList.layoutManager = LinearLayoutManager(baseContext)
+
+        val itemDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST)
+        qaDetailMessageList.addItemDecoration(itemDecoration)
+
 
         //
         val retrofit = Retrofit
