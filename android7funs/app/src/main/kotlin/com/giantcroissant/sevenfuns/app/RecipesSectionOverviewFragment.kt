@@ -124,7 +124,9 @@ class RecipesSectionOverviewFragment : Fragment() {
 
             Glide.with(activity?.applicationContext)
                 .load(imageUrl)
+                .placeholder(R.drawable.food_default)
                 .centerCrop()
+                .dontAnimate()
                 .into(viewHolder.view.recipe_image)
 
             viewHolder.view.recipe_title?.text = recipe.title
