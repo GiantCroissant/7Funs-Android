@@ -58,26 +58,10 @@ class LoginActivity : AppCompatActivity() {
         }
 
         val callbackManager = com.facebook.CallbackManager.Factory.create()
+        loginFbButton?.setReadPermissions("public_profile email")
         loginFbButton?.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
             override fun onSuccess(loginResult: LoginResult) {
-                val accessToken = loginResult.accessToken.token
-
-                restApiService.loginViaFbId(JsonModel.LoginFbJsonObject(accessToken))
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(object : Subscriber<JsonModel.LoginResultJsonObject>() {
-                        override fun onCompleted() {
-                        }
-
-                        override fun onError(e: Throwable?) {
-                            System.out.println(e?.message)
-                        }
-
-                        override fun onNext(x: JsonModel.LoginResultJsonObject) {
-                            val sp: SharedPreferences = getSharedPreferences("DATA", 0)
-                            sp.edit().putString("token", x.token).commit()
-                            finish()
-                        }
-                    })
+                System.out.println("fb login ok")
             }
 
             override fun onCancel() {
@@ -85,9 +69,43 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onError(e: FacebookException) {
-
+                System.out.println(e.cause.toString())
             }
         })
+
+
+//        loginFbButton?.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+//            override fun onSuccess(loginResult: LoginResult) {
+//                val accessToken = loginResult.accessToken.token
+//
+//                System.out.println("fb access token " + accessToken)
+//
+////                restApiService.loginViaFbId(JsonModel.LoginFbJsonObject(accessToken))
+////                    .subscribeOn(Schedulers.io())
+////                    .subscribe(object : Subscriber<JsonModel.LoginResultJsonObject>() {
+////                        override fun onCompleted() {
+////                        }
+////
+////                        override fun onError(e: Throwable?) {
+////                            System.out.println(e?.message)
+////                        }
+////
+////                        override fun onNext(x: JsonModel.LoginResultJsonObject) {
+////                            val sp: SharedPreferences = getSharedPreferences("DATA", 0)
+////                            sp.edit().putString("token", x.token).commit()
+////                            finish()
+////                        }
+////                    })
+//            }
+//
+//            override fun onCancel() {
+//
+//            }
+//
+//            override fun onError(e: FacebookException) {
+//                System.out.println(e.message)
+//            }
+//        })
 
 //        loginButton?.setOnClickListener { x ->
 //            val retrofit = Retrofit
@@ -151,6 +169,9 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
+        val callbackManager = com.facebook.CallbackManager.Factory.create()
+        callbackManager.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQUEST_SIGNUP -> {
                 if (resultCode == RESULT_OK) {
