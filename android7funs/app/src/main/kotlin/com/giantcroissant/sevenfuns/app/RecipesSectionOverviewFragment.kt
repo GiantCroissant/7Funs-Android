@@ -1,6 +1,7 @@
 package com.giantcroissant.sevenfuns.app
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
@@ -12,7 +13,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.giantcroissant.sevenfuns.app.DbModel.Recipes
+import com.google.gson.Gson
 import io.realm.Realm
+import io.realm.RealmResults
 import io.realm.Sort
 import kotlinx.android.synthetic.main.cardview_recipes_section_overview.view.*
 import kotlinx.android.synthetic.main.fragment_recipes_section_overview.view.*
@@ -27,7 +30,11 @@ import kotlin.properties.Delegates
 class RecipesSectionOverviewFragment : Fragment() {
     val TAG = RecipesSectionOverviewFragment::class.java.name
 
+
+
     private var realm: Realm by Delegates.notNull()
+
+
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.fragment_recipes_section_overview, container, false)
@@ -46,24 +53,40 @@ class RecipesSectionOverviewFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        Log.e(TAG, "onResume")
-
         realm = Realm.getInstance(this.context)
         val recipeAdapter = view?.recipe_recycler_view?.adapter as RecyclerAdapter
-        val results = realm.where(Recipes::class.java).findAllSortedAsync("id", Sort.DESCENDING)
+
+        var results: RealmResults<Recipes>
+        if (arguments.getString("type") == "collection") {
+            results = realm.where(Recipes::class.java)
+                .equalTo("isCollectedd", true)
+                .findAllSortedAsync("id", Sort.DESCENDING)
+
+        } else {
+            results = realm.where(Recipes::class.java)
+                .findAllSortedAsync("id", Sort.DESCENDING)
+        }
         results.addChangeListener {
             Log.e(TAG, "results.size = ${results.size}")
             recipeAdapter?.notifyDataSetChanged()
         }
-
         recipeAdapter?.updateList(results)
     }
 
     override fun onPause() {
         super.onPause()
-        Log.e(TAG, "onPause")
+        var results: RealmResults<Recipes>
 
-        val results = realm.where(Recipes::class.java).findAllSortedAsync("id", Sort.DESCENDING)
+        if (arguments.getString("type") == "collection") {
+            results = realm.where(Recipes::class.java)
+                .equalTo("isCollectedd", true)
+                .findAllSortedAsync("id", Sort.DESCENDING)
+
+        } else {
+            results = realm.where(Recipes::class.java).findAllSortedAsync("id", Sort.DESCENDING)
+        }
+
+
         results.removeChangeListener {  }
         realm.close()
     }
@@ -101,7 +124,6 @@ class RecipesSectionOverviewFragment : Fragment() {
 
             Glide.with(activity?.applicationContext)
                 .load(imageUrl)
-                .placeholder(R.drawable.food_default)
                 .centerCrop()
                 .into(viewHolder.view.recipe_image)
 
@@ -122,6 +144,32 @@ class RecipesSectionOverviewFragment : Fragment() {
                     )
                 )
                 this.activity?.startActivity(intent)
+            }
+
+            viewHolder.view.collect_button.setOnClickListener {
+
+
+
+                val realm = Realm.getInstance(activity)
+                realm.beginTransaction()
+                recipe.isCollectedd = !recipe.isCollectedd
+                Log.e(TAG, "recipe isCollected = ${recipe.isCollectedd}")
+                realm.commitTransaction()
+                realm.close()
+
+//                val sp: SharedPreferences =  getSharedPreferences("DATA", 0)
+//                val token = sp.getString("token", "")
+//
+//                RestAPIHelper.restApiService
+//                    .addRemoveFavorite(recipe.id)
+//                    .subscribeOn(Schedulers.io())
+//                    .subscribe({ json ->
+//                        // MyFavoriteRecipesResult
+//                        Log.e(TAG, "json: $json")
+//
+//                    }, { error ->
+//                        Log.e(TAG, "error $error")
+//                    })
             }
         }
 

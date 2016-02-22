@@ -18,9 +18,7 @@
         <ImageView
             android:id="@+id/recipe_image"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:duplicateParentState="true"
-            android:scaleType="centerCrop"/>
+            android:layout_height="200dp"/>
 
         <TextView
             android:id="@+id/recipe_title"

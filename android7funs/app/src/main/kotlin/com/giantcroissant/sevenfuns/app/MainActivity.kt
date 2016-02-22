@@ -42,11 +42,17 @@ class MainActivity : AppCompatActivity() {
                     supportActionBar?.title = getString(navigation_item_recipes_section)
                     current_section = R.id.navigationItemRecipesSection
                     fragment = RecipesSectionOverviewFragment()
+                    val bundle = Bundle()
+                    bundle.putString("type", "recipe")
+                    fragment.arguments = bundle
                 }
                 R.id.navigationItemPersonalSection -> {
                     supportActionBar?.title = getString(navigation_item_personal_section)
                     current_section = R.id.navigationItemPersonalSection
-                    fragment = PersonalSectionFragment.newInstance()
+                    fragment = RecipesSectionOverviewFragment()
+                    val bundle = Bundle()
+                    bundle.putString("type", "collection")
+                    fragment.arguments = bundle
                 }
                 R.id.navigationItemInstructorSection -> {
                     supportActionBar?.title = getString(navigation_item_instructor_section)
