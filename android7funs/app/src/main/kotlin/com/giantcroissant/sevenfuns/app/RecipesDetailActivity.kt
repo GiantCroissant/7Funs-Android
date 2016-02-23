@@ -1,5 +1,6 @@
 package com.giantcroissant.sevenfuns.app
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -84,6 +85,7 @@ class RecipesDetailActivity : AppCompatActivity() {
                                                  player: YouTubePlayer, wasRestored: Boolean) {
                 if (!wasRestored) {
                     player.loadVideo(videoCode);
+                    player.setShowFullscreenButton(false)
                 }
             }
 
@@ -97,5 +99,18 @@ class RecipesDetailActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         youtubeFragment.unregisterForContextMenu(youtube_container)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        when (newConfig?.orientation) {
+            Configuration.ORIENTATION_PORTRAIT -> {
+                supportActionBar?.show()
+            }
+
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                supportActionBar?.hide()
+            }
+        }
     }
 }

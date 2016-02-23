@@ -30,11 +30,17 @@ import kotlin.properties.Delegates
 class RecipesSectionOverviewFragment : Fragment() {
     val TAG = RecipesSectionOverviewFragment::class.java.name
 
-
-
     private var realm: Realm by Delegates.notNull()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        realm = Realm.getInstance(activity)
+    }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        realm.close()
+    }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.fragment_recipes_section_overview, container, false)
@@ -53,7 +59,6 @@ class RecipesSectionOverviewFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        realm = Realm.getInstance(this.context)
         val recipeAdapter = view?.recipe_recycler_view?.adapter as RecyclerAdapter
 
         var results: RealmResults<Recipes>
@@ -86,9 +91,7 @@ class RecipesSectionOverviewFragment : Fragment() {
             results = realm.where(Recipes::class.java).findAllSortedAsync("id", Sort.DESCENDING)
         }
 
-
-        results.removeChangeListener {  }
-        realm.close()
+        results.removeChangeListener { }
     }
 
     class RecyclerAdapter(
@@ -106,6 +109,7 @@ class RecipesSectionOverviewFragment : Fragment() {
 
         class ViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
             var view: View by Delegates.notNull()
+
             init {
                 view = v
             }
@@ -157,19 +161,19 @@ class RecipesSectionOverviewFragment : Fragment() {
                 realm.commitTransaction()
                 realm.close()
 
-//                val sp: SharedPreferences =  getSharedPreferences("DATA", 0)
-//                val token = sp.getString("token", "")
-//
-//                RestAPIHelper.restApiService
-//                    .addRemoveFavorite(recipe.id)
-//                    .subscribeOn(Schedulers.io())
-//                    .subscribe({ json ->
-//                        // MyFavoriteRecipesResult
-//                        Log.e(TAG, "json: $json")
-//
-//                    }, { error ->
-//                        Log.e(TAG, "error $error")
-//                    })
+                //                val sp: SharedPreferences =  getSharedPreferences("DATA", 0)
+                //                val token = sp.getString("token", "")
+                //
+                //                RestAPIHelper.restApiService
+                //                    .addRemoveFavorite(recipe.id)
+                //                    .subscribeOn(Schedulers.io())
+                //                    .subscribe({ json ->
+                //                        // MyFavoriteRecipesResult
+                //                        Log.e(TAG, "json: $json")
+                //
+                //                    }, { error ->
+                //                        Log.e(TAG, "error $error")
+                //                    })
             }
         }
 
