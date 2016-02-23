@@ -21,9 +21,13 @@ class QADetailNewCommentActivity : AppCompatActivity() {
             val newComment = qaNewCommentText?.text.toString()
             val intent = Intent()
             intent?.putExtra("comment", CommentParcelable(newComment))
-
             setResult(Activity.RESULT_OK, intent)
             finish()
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 }

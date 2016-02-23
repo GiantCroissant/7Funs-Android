@@ -108,7 +108,11 @@ class QADetailActivity : AppCompatActivity() {
             })
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (data == null) {
+            return
+        }
+
         when (requestCode) {
             WRITTEN_COMMENT -> {
                 if (resultCode == RESULT_OK) {
