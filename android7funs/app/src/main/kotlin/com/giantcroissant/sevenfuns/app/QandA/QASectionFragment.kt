@@ -1,4 +1,4 @@
-package com.giantcroissant.sevenfuns.app
+package com.giantcroissant.sevenfuns.app.QandA
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.giantcroissant.sevenfuns.app.R
 
 /**
  * Created by apprentice on 2/1/16.

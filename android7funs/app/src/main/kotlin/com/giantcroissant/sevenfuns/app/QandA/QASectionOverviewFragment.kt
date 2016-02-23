@@ -1,17 +1,26 @@
-package com.giantcroissant.sevenfuns.app
+package com.giantcroissant.sevenfuns.app.QandA
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.BitmapImageViewTarget
+import com.giantcroissant.sevenfuns.app.*
 import com.giantcroissant.sevenfuns.app.RestAPIService.RestAPIHelper
 import kotlinx.android.synthetic.main.fragment_qa_section_overview.*
 import kotlinx.android.synthetic.main.fragment_qa_section_overview.view.*
@@ -106,7 +115,7 @@ class QASectionOverviewFragment : Fragment() {
 
             } else {
                 val commentsActivity = Intent(activity, QADetailNewMessageActivity::class.java)
-                startActivityForResult(commentsActivity, QASectionOverviewFragment.WRITTEN_MESSAGE)
+                startActivityForResult(commentsActivity, Companion.WRITTEN_MESSAGE)
             }
         }
     }
@@ -179,8 +188,35 @@ class QASectionOverviewFragment : Fragment() {
 
         override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
             val question = messageList[position]
-            viewHolder.view.qaSectionOverviewTitle?.text = question.title
-            viewHolder.view.qaSectionOverviewDescription?.text = question.description
+
+            Glide.with(activity)
+                .load(R.drawable.profile)
+                .asBitmap()
+                .centerCrop()
+                .into(object : BitmapImageViewTarget(viewHolder.view.profile_image) {
+
+                    override fun setResource(resource: Bitmap?) {
+                        super.setResource(resource)
+
+                        val circular = RoundedBitmapDrawableFactory.create(activity?.resources, resource)
+                        if (circular != null) {
+                            circular.isCircular = true
+                            viewHolder.view.profile_image.setImageDrawable(circular)
+                        }
+                    }
+                })
+
+            val nameAndTitle = question.user.name + " " + question.title
+            val spanNameAndTitle = SpannableString(nameAndTitle)
+            spanNameAndTitle.setSpan(
+                ForegroundColorSpan(Color.parseColor("#E64A19")),
+                0,
+                question.user.name.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+
+            viewHolder.view.question_title?.text = spanNameAndTitle
+            viewHolder.view.question_desc?.text = question.description
             viewHolder.view.setOnClickListener {
                 Log.e("TAG", "question = $question")
                 val commentsActivity = Intent(activity, QADetailActivity::class.java)

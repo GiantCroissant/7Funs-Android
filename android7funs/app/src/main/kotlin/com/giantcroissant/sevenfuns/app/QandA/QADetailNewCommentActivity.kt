@@ -1,9 +1,11 @@
-package com.giantcroissant.sevenfuns.app
+package com.giantcroissant.sevenfuns.app.QandA
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.giantcroissant.sevenfuns.app.CommentParcelable
+import com.giantcroissant.sevenfuns.app.R
 import kotlinx.android.synthetic.main.activity_qa_detail_new_comment.*
 
 /**

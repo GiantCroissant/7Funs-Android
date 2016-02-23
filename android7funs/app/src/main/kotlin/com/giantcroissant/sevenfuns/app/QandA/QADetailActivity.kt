@@ -1,4 +1,4 @@
-package com.giantcroissant.sevenfuns.app
+package com.giantcroissant.sevenfuns.app.QandA
 
 //import kotlinx.android.synthetic.main.activity_main.*
 
@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.giantcroissant.sevenfuns.app.*
 import com.giantcroissant.sevenfuns.app.RestAPIService.RestAPIHelper
 import kotlinx.android.synthetic.main.activity_qa_detail.*
 import kotlinx.android.synthetic.main.listview_qa_detail_item.view.*

@@ -2,13 +2,13 @@ package com.giantcroissant.sevenfuns.app
 
 import android.content.Intent
 import android.net.ConnectivityManager
-import android.net.NetworkInfo
-import android.net.http.SslError
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
-import android.webkit.*
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_sponsor.*
 import kotlinx.android.synthetic.main.toolbar.*

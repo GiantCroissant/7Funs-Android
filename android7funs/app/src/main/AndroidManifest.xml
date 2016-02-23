@@ -6,7 +6,7 @@
     android:versionName="1.0">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:name=".MainApplication"
@@ -47,7 +47,7 @@
         </activity>
 
         <activity
-            android:name=".QADetailActivity"
+            android:name=".QandA.QADetailActivity"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait">
             <meta-data
@@ -56,7 +56,7 @@
         </activity>
 
         <activity
-            android:name=".QADetailNewMessageActivity"
+            android:name=".QandA.QADetailNewMessageActivity"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait">
             <meta-data
@@ -65,7 +65,7 @@
         </activity>
 
         <activity
-            android:name=".QADetailNewCommentActivity"
+            android:name=".QandA.QADetailNewCommentActivity"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait">
             <meta-data
