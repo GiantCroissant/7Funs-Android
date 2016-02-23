@@ -11,10 +11,7 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.*
 import com.giantcroissant.sevenfuns.app.RestAPIService.RestAPIHelper
-import com.google.android.youtube.player.internal.m
-import com.google.android.youtube.player.internal.v
-import com.google.android.youtube.player.internal.x
-import com.google.android.youtube.player.internal.y
+import com.google.android.youtube.player.internal.*
 import kotlinx.android.synthetic.main.fragment_qa_section_overview.*
 import kotlinx.android.synthetic.main.fragment_qa_section_overview.view.*
 import kotlinx.android.synthetic.main.listview_qa_section_overview.view.*
@@ -182,46 +179,11 @@ class QASectionOverviewFragment : Fragment() {
             }, { error ->
                 Log.e(TAG, "error = $error")
             })
-
-        //            .subscribe(object : Subscriber<List<JsonModel.MessageJsonObject>>() {
-        //                override fun onCompleted() {
-        //                }
-        //
-        //                override fun onError(e: Throwable?) {
-        //                    System.out.println(e?.message)
-        //                }
-        //
-        //                override fun onNext(x: List<JsonModel.MessageJsonObject>) {
-        //                    view?.let { v ->
-        //                        v.qaSectionOverview.adapter = RecyclerAdapter((activity as? AppCompatActivity), x.toCollection(arrayListOf<JsonModel.MessageJsonObject>()))
-        //
-        //                        v.qaSectionOverview.addOnItemTouchListener(
-        //                            RecyclerItemClickListener(v.qaSectionOverview.context, object : RecyclerItemClickListener.OnItemClickListener {
-        //                                override fun onItemClick(v: View, position: Int) {
-        //
-        //                                    System.out.println("Selected recipes id: " + v.id.toString())
-        //
-        //                                    val id = x[position].id
-        //                                    val title = x[position].title
-        //                                    val description = x[position].description
-        //
-        //                                    //v.id
-        //
-        //                                    val intent = Intent(v.context, QADetailActivity::class.java)
-        //                                    intent?.putExtra("message", MessageParcelable(id, title, description))
-        //                                    v.context.startActivity(intent)
-        //                                }
-        //                            }))
-        //                    }
-        //                }
-        //            })
     }
 
     private fun configureAddQuestionButton(view: View?) {
         view?.add_question_button?.setOnClickListener {
             val token = activity.applicationContext.getSharedPreferences("DATA", 0).getString("token", "")
-            Log.w(TAG, "token = $token")
-
             if (token.isEmpty()) {
                 val loginActivity = Intent(activity, LoginActivity::class.java)
                 startActivity(loginActivity)
@@ -280,43 +242,6 @@ class QASectionOverviewFragment : Fragment() {
         }
     }
 
-    //    class RecyclerItemClickListener(
-    //        val c: Context,
-    //        val l: OnItemClickListener
-    //    ) : RecyclerView.OnItemTouchListener {
-    //
-    //        interface OnItemClickListener {
-    //            fun onItemClick(view: View, position: Int)
-    //        }
-    //
-    //        var listener: OnItemClickListener by Delegates.notNull()
-    //        var gestureDetector: GestureDetector by Delegates.notNull()
-    //
-    //        init {
-    //            listener = l
-    //            gestureDetector = GestureDetector(c, object : GestureDetector.SimpleOnGestureListener() {
-    //                override fun onSingleTapUp(e: MotionEvent): Boolean {
-    //                    return true
-    //                }
-    //            })
-    //        }
-    //
-    //        override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
-    //        }
-    //
-    //        override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-    //            val childView = rv.qaSectionOverview.findChildViewUnder(e.x, e.y)
-    //            val callClicked = (childView != null) && (listener != null) && gestureDetector.onTouchEvent(e)
-    //            if (callClicked) {
-    //                listener.onItemClick(childView, rv.getChildAdapterPosition(childView))
-    //            }
-    //            return false
-    //        }
-    //
-    //        override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
-    //        }
-    //    }
-
     class RecyclerAdapter(
         val activity: AppCompatActivity?,
         val messageList: MutableList<JsonModel.MessageJsonObject>
@@ -333,8 +258,15 @@ class QASectionOverviewFragment : Fragment() {
 
         override fun onCreateViewHolder(viewGroup: ViewGroup, position: Int): ViewHolder {
             val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.listview_qa_section_overview, viewGroup, false)
-            view.setOnClickListener {
-                val question = messageList[position]
+            return ViewHolder(view)
+        }
+
+        override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
+            val question = messageList[position]
+            viewHolder.view.qaSectionOverviewTitle?.text = question.title
+            viewHolder.view.qaSectionOverviewDescription?.text = question.description
+            viewHolder.view.setOnClickListener {
+                Log.e("TAG", "question = $question")
                 val commentsActivity = Intent(activity, QADetailActivity::class.java)
                 commentsActivity.putExtra(
                     "message",
@@ -346,13 +278,6 @@ class QASectionOverviewFragment : Fragment() {
                 )
                 activity?.startActivity(commentsActivity)
             }
-            return ViewHolder(view)
-        }
-
-        override fun onBindViewHolder(viewHolder: ViewHolder, i: Int) {
-            val r = messageList[i]
-            viewHolder.view.qaSectionOverviewTitle?.text = r.title
-            viewHolder.view.qaSectionOverviewDescription?.text = r.description
         }
 
         override fun getItemCount(): Int {

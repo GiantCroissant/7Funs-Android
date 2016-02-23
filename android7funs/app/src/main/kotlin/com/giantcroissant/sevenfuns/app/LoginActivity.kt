@@ -11,6 +11,7 @@ import com.facebook.FacebookException
 import com.facebook.login.LoginResult
 
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.toolbar.*
 import org.jetbrains.annotations.NotNull
 import retrofit2.GsonConverterFactory
 import retrofit2.Retrofit
@@ -41,8 +42,10 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        setSupportActionBar(toolbar)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        //
         loginButton?.setOnClickListener { x ->
             val email = loginEmailText.text.toString()
             val password = loginPasswordText.text.toString()
@@ -213,6 +216,11 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 
 }

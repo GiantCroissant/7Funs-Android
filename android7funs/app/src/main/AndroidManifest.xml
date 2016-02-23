@@ -112,7 +112,7 @@
             android:enabled="true"/>
 
         <service
-            android:name=".VideoDownloadService"
+            android:name=".RestAPIService.VideoDownloadService"
             android:enabled="true"/>
 
     </application>

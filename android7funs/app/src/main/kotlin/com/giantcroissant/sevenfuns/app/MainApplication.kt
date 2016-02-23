@@ -2,9 +2,12 @@ package com.giantcroissant.sevenfuns.app
 
 import android.app.Application
 import android.content.Intent
+import android.util.Log
 import com.facebook.FacebookSdk
 import com.giantcroissant.sevenfuns.app.RestAPIService.VideoDownloadService
 import com.giantcroissant.sevenfuns.app.RestAPIService.VideoSetupService
+import com.google.android.youtube.player.YouTubeInitializationResult
+import com.google.android.youtube.player.YouTubePlayer
 import net.danlew.android.joda.JodaTimeAndroid
 import rx.Observable
 import java.util.concurrent.TimeUnit

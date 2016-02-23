@@ -7,7 +7,7 @@
     android:background="@color/primary"
     android:fitsSystemWindows="true"
     android:minHeight="?attr/actionBarSize"
-    android:elevation="3dp"
+    android:elevation="2dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <!--android:background="?attr/colorPrimaryDark"-->

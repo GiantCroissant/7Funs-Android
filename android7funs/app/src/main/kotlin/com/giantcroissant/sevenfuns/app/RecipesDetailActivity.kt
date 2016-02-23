@@ -32,16 +32,7 @@ class RecipesDetailActivity : AppCompatActivity() {
         val recipe = intent.getParcelableExtra<RecipesParcelable>("recipes")
         supportActionBar?.title = recipe.title
 
-        val realm = Realm.getInstance(this)
-        val videoCode = realm.where(Video::class.java)
-            .equalTo("recipeId", recipe.id)
-            .findFirst()?.youtubeVideoCode ?: ""
-        realm.close()
 
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.youtube_container, youtubeFragment)
-            .commit()
 
         if (recipe.ingredient.isEmpty()) {
             ingredientCardView.visibility = View.GONE
@@ -77,23 +68,44 @@ class RecipesDetailActivity : AppCompatActivity() {
             reminderCardView?.detail_content?.text = recipe.reminder
         }
 
+        configureYouTubePlayer(recipe.id)
+    }
 
-        youtubeFragment.initialize("AIzaSyAocAvXaWG5w8WszO2N8pvPewgga74QmtA",
-            object : YouTubePlayer.OnInitializedListener {
+    private fun configureYouTubePlayer(recipeId: Int) {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.youtube_container, youtubeFragment)
+            .commit()
 
-            override fun onInitializationSuccess(provider: YouTubePlayer.Provider,
-                                                 player: YouTubePlayer, wasRestored: Boolean) {
-                if (!wasRestored) {
-                    player.loadVideo(videoCode);
-                    player.setShowFullscreenButton(false)
-                }
-            }
+        val realm = Realm.getInstance(this)
+        val videoCode = realm.where(Video::class.java)
+            .equalTo("recipeId", recipeId)
+            .findFirst()?.youtubeVideoCode ?: ""
+        realm.close()
 
-            override fun onInitializationFailure(provider: YouTubePlayer.Provider,
-                                                 error: YouTubeInitializationResult) {
-                Log.e(TAG, "onInitializationFailure -> $error")
-            }
-        })
+        if (videoCode.isEmpty()) {
+            Log.e(TAG, "configureYouTubePlayer : videoCode.isEmpty()")
+            return
+
+        } else {
+            val key = "AIzaSyCGkt_vNwDOmv8jDQPybsu8u3yyn95NK7o"
+            youtubeFragment.initialize(key,
+                object : YouTubePlayer.OnInitializedListener {
+
+                    override fun onInitializationSuccess(provider: YouTubePlayer.Provider,
+                                                         player: YouTubePlayer, wasRestored: Boolean) {
+                        if (!wasRestored) {
+                            player.loadVideo(videoCode);
+                            player.setShowFullscreenButton(false)
+                        }
+                    }
+
+                    override fun onInitializationFailure(provider: YouTubePlayer.Provider,
+                                                         error: YouTubeInitializationResult) {
+                        Log.e(TAG, "onInitializationFailure -> $error")
+                    }
+                })
+        }
     }
 
     override fun onDestroy() {
@@ -110,7 +122,6 @@ class RecipesDetailActivity : AppCompatActivity() {
 
             Configuration.ORIENTATION_LANDSCAPE -> {
                 supportActionBar?.hide()
-
             }
         }
     }
