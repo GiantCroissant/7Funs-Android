@@ -110,6 +110,7 @@ class RecipesDetailActivity : AppCompatActivity() {
 
             Configuration.ORIENTATION_LANDSCAPE -> {
                 supportActionBar?.hide()
+
             }
         }
     }
