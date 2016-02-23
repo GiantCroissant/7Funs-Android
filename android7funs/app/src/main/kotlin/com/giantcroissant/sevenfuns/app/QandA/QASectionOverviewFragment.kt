@@ -225,7 +225,8 @@ class QASectionOverviewFragment : Fragment() {
                     MessageParcelable(
                         question.id,
                         question.title,
-                        question.description
+                        question.description,
+                        question.user.name
                     )
                 )
                 activity?.startActivity(commentsActivity)
