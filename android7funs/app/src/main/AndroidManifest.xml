@@ -104,7 +104,7 @@
             android:enabled="true"/>
 
         <service
-            android:name=".VideoSetupService"
+            android:name=".RestAPIService.VideoSetupService"
             android:enabled="true"/>
 
         <service

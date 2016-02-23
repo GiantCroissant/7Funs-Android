@@ -3,6 +3,8 @@ package com.giantcroissant.sevenfuns.app
 import android.app.Application
 import android.content.Intent
 import com.facebook.FacebookSdk
+import com.giantcroissant.sevenfuns.app.RestAPIService.VideoDownloadService
+import com.giantcroissant.sevenfuns.app.RestAPIService.VideoSetupService
 import net.danlew.android.joda.JodaTimeAndroid
 import rx.Observable
 import java.util.concurrent.TimeUnit
