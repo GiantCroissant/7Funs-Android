@@ -6,7 +6,7 @@ import android.os.Parcelable
 /**
  * Created by apprentice on 2/3/16.
  */
-data class MessageParcelable(val id: Int) : Parcelable {
+data class MessageParcelable(val id: Int, val title: String, val description: String) : Parcelable {
     companion object {
         @JvmField final val CREATOR: Parcelable.Creator<MessageParcelable> = object : Parcelable.Creator<MessageParcelable> {
             override fun createFromParcel(parcelIn: Parcel): MessageParcelable {
@@ -20,7 +20,9 @@ data class MessageParcelable(val id: Int) : Parcelable {
     }
 
     constructor(parcelIn: Parcel) : this(
-            parcelIn.readInt())  {
+            parcelIn.readInt(),
+            parcelIn.readString(),
+            parcelIn.readString())  {
     }
 
     override fun describeContents() : Int {
@@ -29,5 +31,7 @@ data class MessageParcelable(val id: Int) : Parcelable {
 
     override fun writeToParcel(dest: Parcel?, flags: Int) {
         dest?.writeInt(id)
+        dest?.writeString(title)
+        dest?.writeString(description)
     }
 }

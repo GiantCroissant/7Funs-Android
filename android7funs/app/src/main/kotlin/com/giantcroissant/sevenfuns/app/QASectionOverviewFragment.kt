@@ -71,7 +71,7 @@ class QASectionOverviewFragment : Fragment() {
                     .flatMap { x -> Observable.just(x) }
                     .map { x ->
                         //x.collection
-                        x.collection.sortedByDescending { y -> DateTime(y.updatedAt) }
+                        x.collection.filter { y -> !y.title.isEmpty() }.sortedByDescending { y -> DateTime(y.updatedAt) }
                     }
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
@@ -141,11 +141,13 @@ class QASectionOverviewFragment : Fragment() {
                                         System.out.println("Selected recipes id: " + v.id.toString())
 
                                         val id = x[position].id
+                                        val title = x[position].title
+                                        val description = x[position].description
 
                                         //v.id
 
                                         val intent = Intent(v.context, QADetailActivity::class.java)
-                                        intent?.putExtra("message", MessageParcelable(id))
+                                        intent?.putExtra("message", MessageParcelable(id, title, description))
                                         v.context.startActivity(intent)
                                     }
                                 }))

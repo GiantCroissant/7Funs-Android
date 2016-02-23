@@ -57,6 +57,9 @@ class QADetailActivity : AppCompatActivity() {
 
         messageId = messageParcelable.id
 
+        qaDetailOriginalTitle?.text = messageParcelable.title
+        qaDetailOriginalDescription?.text = messageParcelable.description
+
         val messageWithComment = restApiService.getSpecificMessageComment(messageParcelable.id)
         messageWithComment
             .observeOn(AndroidSchedulers.mainThread())
@@ -122,7 +125,7 @@ class QADetailActivity : AppCompatActivity() {
         commentsResponse
             .flatMap { x -> Observable.just(x) }
             .map { x ->
-                x.sortedByDescending { y -> DateTime(y.updatedAt) }
+                x.filter { y -> !y.comment.isEmpty() }.sortedByDescending { y -> DateTime(y.updatedAt) }
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
