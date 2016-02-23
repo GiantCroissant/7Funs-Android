@@ -68,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:text="Collect"
                 android:textColor="@color/accent"
-                android:theme="@style/Widget.AppCompat.Button.Borderless"/>
+                style="?android:attr/borderlessButtonStyle"/>
 
             <Button
                 android:id="@+id/detail_button"
@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:text="Detail"
                 android:textColor="@color/accent"
-                android:theme="@style/Widget.AppCompat.Button.Borderless"/>
+                style="?android:attr/borderlessButtonStyle"/>
         </LinearLayout>
     </LinearLayout>
 

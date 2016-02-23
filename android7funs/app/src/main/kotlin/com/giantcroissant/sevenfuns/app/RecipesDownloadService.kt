@@ -15,6 +15,7 @@ import retrofit2.GsonConverterFactory
 import retrofit2.Retrofit
 import retrofit2.RxJavaCallAdapterFactory
 import rx.Observable
+import rx.Subscriber
 
 class RecipesDownloadService : IntentService("RecipesDownloadService") {
     val TAG = RecipesDownloadService::class.java.name
@@ -46,6 +47,7 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
             return
         }
 
+        val self = this
         restApiService.getRecipesByIdList(recipeIds)
             .flatMap { jsonList ->
                 val recipes = jsonList.map { it.toRecipe() }
@@ -59,17 +61,37 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
                 var overviewIds = recipes.map { it.id }
                 Observable.just(overviewIds)
             }
-            .subscribe { recipeIdList ->
-                val realm = Realm.getInstance(this)
-                realm.beginTransaction()
-                recipeIdList.forEach { recipeId ->
-                    realm.where(RecipesOverview::class.java)
-                        .equalTo("id", recipeId)
-                        .findFirst()?.removeFromRealm()
+            .subscribe(object : Subscriber<List<Int>>() {
+                override fun onCompleted() {
                 }
-                realm.commitTransaction()
-                realm.close()
-            }
+
+                override fun onError(e: Throwable?) {
+                    System.out.println(e?.message)
+                }
+
+                override fun onNext(recipeIdList: List<Int>) {
+                    val realm = Realm.getInstance(self)
+                    realm.beginTransaction()
+                    recipeIdList.forEach { recipeId ->
+                        realm.where(RecipesOverview::class.java)
+                                .equalTo("id", recipeId)
+                                .findFirst()?.removeFromRealm()
+                    }
+                    realm.commitTransaction()
+                    realm.close()
+                }
+            })
+//            .subscribe { recipeIdList ->
+//                val realm = Realm.getInstance(this)
+//                realm.beginTransaction()
+//                recipeIdList.forEach { recipeId ->
+//                    realm.where(RecipesOverview::class.java)
+//                        .equalTo("id", recipeId)
+//                        .findFirst()?.removeFromRealm()
+//                }
+//                realm.commitTransaction()
+//                realm.close()
+//            }
     }
 }
 
