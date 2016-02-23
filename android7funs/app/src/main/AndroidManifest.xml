@@ -46,15 +46,8 @@
                 android:value=".MainActivity"/>
         </activity>
 
-        <activity
-            android:name=".QandA.QADetailActivity"
-            android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
-        </activity>
 
+        <!-- Q and A -->
         <activity
             android:name=".QandA.QADetailNewMessageActivity"
             android:parentActivityName=".MainActivity"
@@ -65,13 +58,24 @@
         </activity>
 
         <activity
-            android:name=".QandA.QADetailNewCommentActivity"
+            android:name=".QandA.QADetailActivity"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity"/>
         </activity>
+
+        <activity
+            android:name=".QandA.QADetailNewCommentActivity"
+            android:parentActivityName=".QandA.QADetailActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".QandA.QADetailActivity"/>
+        </activity>
+        <!-- Q and A -->
+
 
         <activity
             android:name=".LoginActivity"
