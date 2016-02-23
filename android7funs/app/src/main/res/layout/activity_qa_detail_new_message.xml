@@ -20,7 +20,7 @@
             android:layout_height="wrap_content">
 
             <EditText
-                android:id="@+id/qaNewMessageTitleText"
+                android:id="@+id/question_title_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="主題："
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content">
 
             <EditText
-                android:id="@+id/qaNewMessageDescriptionText"
+                android:id="@+id/question_desc_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="內容："
@@ -40,12 +40,10 @@
         </android.support.design.widget.TextInputLayout>
 
         <Button
-            android:id="@+id/qaNewMessageButton"
+            android:id="@+id/create_question_button"
             style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:layout_marginTop="24dp"
             android:padding="12dp"
             android:text="完成"
             android:textColor="@color/accent"

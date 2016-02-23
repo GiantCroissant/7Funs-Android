@@ -18,15 +18,15 @@ class QADetailNewMessageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_qa_detail_new_message)
+
         setSupportActionBar(toolbar)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        qaNewMessageButton.setOnClickListener { x ->
-            val newMessageTitle = qaNewMessageTitleText?.text.toString()
-            val newMessageDescription = qaNewMessageDescriptionText?.text.toString()
+        create_question_button.setOnClickListener { x ->
+            val newMessageTitle = question_title_text?.text.toString()
+            val newMessageDescription = question_desc_text?.text.toString()
 
-            // For quick comment response from this activity
             val intent = Intent()
             intent?.putExtra("message", NewMessageParcelable(newMessageTitle, newMessageDescription))
             setResult(Activity.RESULT_OK, intent)
