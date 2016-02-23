@@ -37,7 +37,7 @@ class VideoDownloadService : IntentService("VideoDownloadService") {
         realm.close()
 
         if (videoIds.isEmpty()) {
-            Log.e(TAG, "Video - nothing to pull")
+            Log.d(TAG, "Video - nothing to pull")
             return
         }
 
@@ -53,7 +53,7 @@ class VideoDownloadService : IntentService("VideoDownloadService") {
                 realm.commitTransaction()
 
                 val videoResults = realm.where(Video::class.java).findAll()
-                Log.e(TAG, "videoResults count = ${videoResults.count()}")
+                Log.d(TAG, "videoResults count = ${videoResults.count()}")
                 realm.close()
 
                 val overviewIds = videos.map { it.id }
@@ -71,7 +71,7 @@ class VideoDownloadService : IntentService("VideoDownloadService") {
                 realm.close()
 
             }, { error ->
-                Log.e(TAG, "$error")
+                Log.e(TAG, "getVideosByIdList -> $error")
             })
     }
 

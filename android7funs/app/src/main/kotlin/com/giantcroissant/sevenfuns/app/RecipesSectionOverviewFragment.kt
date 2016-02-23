@@ -59,7 +59,7 @@ class RecipesSectionOverviewFragment : Fragment() {
         var results: RealmResults<Recipes>
         if (arguments.getString("type") == "collection") {
             results = realm.where(Recipes::class.java)
-                .equalTo("isCollectedd", true)
+                .equalTo("favorite", true)
                 .findAllSortedAsync("id", Sort.DESCENDING)
 
         } else {
@@ -67,7 +67,7 @@ class RecipesSectionOverviewFragment : Fragment() {
                 .findAllSortedAsync("id", Sort.DESCENDING)
         }
         results.addChangeListener {
-            Log.e(TAG, "results.size = ${results.size}")
+            Log.d(TAG, "results.size = ${results.size}")
             recipeAdapter?.notifyDataSetChanged()
         }
         recipeAdapter?.updateList(results)
@@ -79,7 +79,7 @@ class RecipesSectionOverviewFragment : Fragment() {
 
         if (arguments.getString("type") == "collection") {
             results = realm.where(Recipes::class.java)
-                .equalTo("isCollectedd", true)
+                .equalTo("favorite", true)
                 .findAllSortedAsync("id", Sort.DESCENDING)
 
         } else {
@@ -99,7 +99,7 @@ class RecipesSectionOverviewFragment : Fragment() {
         val TAG = RecyclerAdapter::class.java.name
 
         fun updateList(recipeList: List<Recipes>) {
-            Log.e(TAG, "update list ${recipeList.size}")
+            Log.d(TAG, "update list ${recipeList.size}")
             this.recipeList = recipeList
             this.notifyDataSetChanged()
         }
@@ -129,7 +129,7 @@ class RecipesSectionOverviewFragment : Fragment() {
                 .dontAnimate()
                 .into(viewHolder.view.recipe_image)
 
-            viewHolder.view.fav_icon.visibility = if (recipe.isCollectedd) View.VISIBLE else View.INVISIBLE
+            viewHolder.view.fav_icon.visibility = if (recipe.favorite) View.VISIBLE else View.INVISIBLE
             viewHolder.view.recipe_title?.text = recipe.title
             viewHolder.view.recipe_hits_text?.text = "${recipe.collected} 人收藏，${recipe.hits} 人看過"
             viewHolder.view.detail_button?.setOnClickListener {
@@ -150,13 +150,10 @@ class RecipesSectionOverviewFragment : Fragment() {
             }
 
             viewHolder.view.collect_button.setOnClickListener {
-
-
-
                 val realm = Realm.getInstance(activity)
                 realm.beginTransaction()
-                recipe.isCollectedd = !recipe.isCollectedd
-                Log.e(TAG, "recipe isCollected = ${recipe.isCollectedd}")
+                recipe.favorite = !recipe.favorite
+                Log.d(TAG, "recipe favorite = ${recipe.favorite}")
                 realm.commitTransaction()
                 realm.close()
 

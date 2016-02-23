@@ -43,11 +43,10 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
         realm.close()
 
         if (recipeIds.size <= 0) {
-            Log.e(TAG, "nothing to pull - recipe")
+            Log.d(TAG, "nothing to pull - recipe")
             return
         }
 
-        val self = this
         restApiService.getRecipesByIdList(recipeIds)
             .flatMap { jsonList ->
                 val recipes = jsonList.map { it.toRecipe() }
@@ -61,50 +60,53 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
                 var overviewIds = recipes.map { it.id }
                 Observable.just(overviewIds)
             }
-            .subscribe(object : Subscriber<List<Int>>() {
-                override fun onCompleted() {
+            //            .subscribe(object : Subscriber<List<Int>>() {
+            //                override fun onCompleted() {
+            //                }
+            //
+            //                override fun onError(e: Throwable?) {
+            //                    System.out.println(e?.message)
+            //                }
+            //
+            //                override fun onNext(recipeIdList: List<Int>) {
+            //                    val realm = Realm.getInstance(self)
+            //                    realm.beginTransaction()
+            //                    recipeIdList.forEach { recipeId ->
+            //                        realm.where(RecipesOverview::class.java)
+            //                                .equalTo("id", recipeId)
+            //                                .findFirst()?.removeFromRealm()
+            //                    }
+            //                    realm.commitTransaction()
+            //                    realm.close()
+            //                }
+            //            })
+            .subscribe({ recipeIdList ->
+                val realm = Realm.getInstance(this)
+                realm.beginTransaction()
+                recipeIdList.forEach { recipeId ->
+                    realm.where(RecipesOverview::class.java)
+                        .equalTo("id", recipeId)
+                        .findFirst()?.removeFromRealm()
                 }
+                realm.commitTransaction()
+                realm.close()
 
-                override fun onError(e: Throwable?) {
-                    System.out.println(e?.message)
-                }
-
-                override fun onNext(recipeIdList: List<Int>) {
-                    val realm = Realm.getInstance(self)
-                    realm.beginTransaction()
-                    recipeIdList.forEach { recipeId ->
-                        realm.where(RecipesOverview::class.java)
-                                .equalTo("id", recipeId)
-                                .findFirst()?.removeFromRealm()
-                    }
-                    realm.commitTransaction()
-                    realm.close()
-                }
+            }, { error ->
+                Log.e(TAG, "getRecipesByIdList -> $error")
             })
-//            .subscribe { recipeIdList ->
-//                val realm = Realm.getInstance(this)
-//                realm.beginTransaction()
-//                recipeIdList.forEach { recipeId ->
-//                    realm.where(RecipesOverview::class.java)
-//                        .equalTo("id", recipeId)
-//                        .findFirst()?.removeFromRealm()
-//                }
-//                realm.commitTransaction()
-//                realm.close()
-//            }
     }
 }
 
 fun JsonModel.VideoJson.toVideo(): Video {
-        val data = if (videoData == null) VideoData() else VideoData(
-            videoData.title,
-            videoData.duration,
-            videoData.likeCount,
-            videoData.viewCount,
-            videoData.description,
-            videoData.publishedAt,
-            videoData.thumbnailUrl
-        )
+    val data = if (videoData == null) VideoData() else VideoData(
+        videoData.title,
+        videoData.duration,
+        videoData.likeCount,
+        videoData.viewCount,
+        videoData.description,
+        videoData.publishedAt,
+        videoData.thumbnailUrl
+    )
 
     return Video(
         id,

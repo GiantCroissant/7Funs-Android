@@ -89,7 +89,7 @@ class RecipesDetailActivity : AppCompatActivity() {
 
             override fun onInitializationFailure(provider: YouTubePlayer.Provider,
                                                  error: YouTubeInitializationResult) {
-                Log.e(TAG, "$error")
+                Log.e(TAG, "onInitializationFailure -> $error")
             }
         })
     }

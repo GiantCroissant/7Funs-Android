@@ -23,6 +23,6 @@ open class Recipes(
     open var reminder: String = "",
     open var hits: Int = 0,
     open var collected: Int = 0,
-    open var isCollectedd: Boolean = false
+    open var favorite: Boolean = false
 
 ) : RealmObject() {}
