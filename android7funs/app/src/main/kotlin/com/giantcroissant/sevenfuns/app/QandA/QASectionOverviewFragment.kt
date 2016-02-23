@@ -207,18 +207,10 @@ class QASectionOverviewFragment : Fragment() {
                 })
 
             val nameAndTitle = question.user.name + " " + question.title
-            val spanNameAndTitle = SpannableString(nameAndTitle)
-            spanNameAndTitle.setSpan(
-                ForegroundColorSpan(Color.parseColor("#E64A19")),
-                0,
-                question.user.name.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-
-            viewHolder.view.question_title?.text = spanNameAndTitle
+            val nameLength = question.user.name.length
+            viewHolder.view.question_title?.text = nameAndTitle.colorPartial("#E64A19", nameLength)
             viewHolder.view.question_desc?.text = question.description
             viewHolder.view.setOnClickListener {
-                Log.e("TAG", "question = $question")
                 val commentsActivity = Intent(activity, QADetailActivity::class.java)
                 commentsActivity.putExtra(
                     "message",

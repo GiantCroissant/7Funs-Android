@@ -11,8 +11,7 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_gravity="center_horizontal"
-        android:scaleType="centerCrop"
-        android:src="@drawable/profile"/>
+        android:scaleType="centerCrop"/>
 
     <TextView
         android:id="@+id/item_user_name"
