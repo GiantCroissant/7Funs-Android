@@ -29,9 +29,9 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-        // Clean out cached token for testing
-        val sp: SharedPreferences =  getSharedPreferences("DATA", 0)
-        sp.edit().remove("token").commit()
+//        // Clean out cached token for testing
+//        val sp: SharedPreferences =  getSharedPreferences("DATA", 0)
+//        sp.edit().remove("token").commit()
 
         //
         setSupportActionBar(toolbar)

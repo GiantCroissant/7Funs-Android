@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.SwipeRefreshLayout
+    android:id="@+id/qaSectionSwipeContainer"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.CoordinatorLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/qaSectionSwipeContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <android.support.design.widget.CoordinatorLayout
-            xmlns:tools="http://schemas.android.com/toosl"
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-    <android.support.v7.widget.RecyclerView
-            xmlns:android="http://schemas.android.com/apk/res/android"
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/qaSectionOverview"
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-    </android.support.v7.widget.RecyclerView>
+        </android.support.v7.widget.RecyclerView>
 
-    <android.support.design.widget.FloatingActionButton
-            android:id="@+id/qaSectionOverviewAddFab"
-            android:layout_height="wrap_content"
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/add_question_button"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
-            android:src="@drawable/ic_add_black_24dp"
             android:layout_margin="16dp"
-            android:clickable="true" />
+            android:clickable="true"
+            android:src="@drawable/ic_add_black_24dp"
+            android:tint="@android:color/white"/>
 
     </android.support.design.widget.CoordinatorLayout>
 

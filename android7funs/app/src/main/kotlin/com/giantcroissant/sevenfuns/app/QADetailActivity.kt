@@ -1,30 +1,26 @@
 package com.giantcroissant.sevenfuns.app
 
+//import kotlinx.android.synthetic.main.activity_main.*
+
+//import kotlinx.android.synthetic.main.fragment_qa_section_overview.view.*
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v4.widget.DrawerLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-//import kotlinx.android.synthetic.main.activity_main.*
+import com.giantcroissant.sevenfuns.app.RestAPIService.RestAPIHelper
+import kotlinx.android.synthetic.main.activity_qa_detail.*
+import kotlinx.android.synthetic.main.listview_qa_detail_item.view.*
+import kotlinx.android.synthetic.main.toolbar.*
 import org.joda.time.DateTime
-import retrofit2.GsonConverterFactory
-import retrofit2.Retrofit
-import retrofit2.RxJavaCallAdapterFactory
+import rx.Observable
 import rx.Subscriber
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
-
-import kotlinx.android.synthetic.main.activity_qa_detail.*
-import kotlinx.android.synthetic.main.fragment_qa_section_overview.view.*
-import kotlinx.android.synthetic.main.listview_qa_detail_item.view.*
-//import kotlinx.android.synthetic.main.fragment_qa_section_overview.view.*
-import kotlinx.android.synthetic.main.toolbar.*
-import rx.Observable
 
 //import kotlin.properties.Delegates
 
@@ -32,15 +28,6 @@ import rx.Observable
  * Created by apprentice on 2/2/16.
  */
 class QADetailActivity : AppCompatActivity() {
-
-    val retrofit = Retrofit
-        .Builder()
-        .baseUrl("https://www.7funs.com")
-        .addConverterFactory(GsonConverterFactory.create())
-        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-        .build()
-
-    val restApiService = retrofit.create(RestApiService::class.java)
 
     companion object {
         const val WRITTEN_COMMENT: Int = 0
@@ -52,38 +39,18 @@ class QADetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_qa_detail)
 
-        //
         val messageParcelable = intent.getParcelableExtra<MessageParcelable>("message")
-
         messageId = messageParcelable.id
-
         qaDetailOriginalTitle?.text = messageParcelable.title
         qaDetailOriginalDescription?.text = messageParcelable.description
 
-        val messageWithComment = restApiService.getSpecificMessageComment(messageParcelable.id)
-        messageWithComment
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribe(object : Subscriber<List<JsonModel.MessageWithCommentJsonObject>>() {
-                override fun onCompleted() {
-                }
-
-                override fun onError(e: Throwable?) {
-                    System.out.println(e?.message)
-                }
-
-                override fun onNext(x: List<JsonModel.MessageWithCommentJsonObject>) {
-                }
-            })
-
-        //
         setSupportActionBar(toolbar)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
-        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        drawerLayout?.setOnClickListener { x ->
-            this.onBackPressed()
-        }
+//        drawerLayout?.setOnClickListener { x ->
+//            this.onBackPressed()
+//        }
 
         //qaDetailMessageList
         qaDetailAddFab.setOnClickListener { x ->
@@ -93,9 +60,9 @@ class QADetailActivity : AppCompatActivity() {
             val token = sp.getString("token", "")
             if (token.isEmpty()) {
                 System.out.println("No cached token")
-
                 val intent = Intent(this, LoginActivity::class.java)
                 this.startActivity(intent)
+
             } else {
                 System.out.println("Have cached token: " + token)
 
@@ -112,17 +79,8 @@ class QADetailActivity : AppCompatActivity() {
         qaDetailMessageList.addItemDecoration(itemDecoration)
 
 
-        //
-        val retrofit = Retrofit
-            .Builder()
-            .baseUrl("https://www.7funs.com")
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-            .build()
-
-        val restApiService = retrofit.create(RestApiService::class.java)
-        val commentsResponse = restApiService.getSpecificMessageComment(messageParcelable.id)
-        commentsResponse
+        RestAPIHelper.restApiService
+            .getSpecificMessageComment(messageParcelable.id)
             .flatMap { x -> Observable.just(x) }
             .map { x ->
                 x.filter { y -> !y.comment.isEmpty() }.sortedByDescending { y -> DateTime(y.updatedAt) }
@@ -153,18 +111,21 @@ class QADetailActivity : AppCompatActivity() {
         when (requestCode) {
             WRITTEN_COMMENT -> {
                 if (resultCode == RESULT_OK) {
-                    //this.finish()
                     val sp: SharedPreferences =  getSharedPreferences("DATA", 0)
                     val token = sp.getString("token", "")
-
-                    //data?.putExtra("message", MessageParcelable(id))
                     val commentParcelable : CommentParcelable = data.extras.getParcelable("comment")
 
                     System.out.println(commentParcelable.comment)
-//                    restApiService.createMessageComment()
 
-                    val combinedHeaderToken = "Bearer " + token
-                    restApiService.createMessageComment(combinedHeaderToken, messageId, JsonModel.MessageCommentCreate(messageId, commentParcelable.comment))
+                    RestAPIHelper.restApiService
+                        .createMessageComment(
+                            "Bearer " + token,
+                            messageId,
+                            JsonModel.MessageCommentCreate(
+                                messageId,
+                                commentParcelable.comment
+                            )
+                        )
                         .subscribeOn(Schedulers.io())
                         .subscribe(object : Subscriber<JsonModel.MessageCommentCreateResultJsonObject>() {
                             override fun onCompleted() {
@@ -182,19 +143,22 @@ class QADetailActivity : AppCompatActivity() {
         }
     }
 
-    class RecyclerAdapter(val activity: AppCompatActivity?, val messageList: MutableList<JsonModel.MessageWithCommentJsonObject>) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
-        public class ViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
-            //public var view: View by Delegates.notNull()
-            var view: View
+    class RecyclerAdapter(
+        val activity: AppCompatActivity?,
+        val messageList: MutableList<JsonModel.MessageWithCommentJsonObject>)
 
+    : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+
+        class ViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
+            var view: View
             init {
                 view = v
             }
         }
 
         override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
-            val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.listview_qa_detail_item, viewGroup, false)
-
+            val view = LayoutInflater.from(viewGroup.context)
+                .inflate(R.layout.listview_qa_detail_item, viewGroup, false)
             return ViewHolder(view)
         }
 
@@ -203,15 +167,6 @@ class QADetailActivity : AppCompatActivity() {
 
             viewHolder.view.qaSectionDetailTitle?.text = r.title
             viewHolder.view.qaSectionDetailComment?.text = r.comment
-            //
-            //            viewHolder.view?.instructorSectionOverviewCardViewExpand?.setOnClickListener { x ->
-            //                //                (activity as? AppCompatActivity)?.let {
-            //                //                    val intent = Intent(x.context, RecipesDetailActivity::class.java)
-            //                //                    intent?.putExtra("recipes", RecipesParcelable(r.id, r.title))
-            //                //
-            //                //                    x.context.startActivity(intent)
-            //                //                }
-            //            }
         }
 
         override fun getItemCount(): Int {

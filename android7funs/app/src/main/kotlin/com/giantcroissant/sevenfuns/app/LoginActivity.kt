@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -25,11 +26,11 @@ import kotlin.properties.Delegates
 class LoginActivity : AppCompatActivity() {
 
     val retrofit = Retrofit
-            .Builder()
-            .baseUrl("https://www.7funs.com")
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-            .build()
+        .Builder()
+        .baseUrl("https://www.7funs.com")
+        .addConverterFactory(GsonConverterFactory.create())
+        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+        .build()
 
     val restApiService = retrofit.create(RestApiService::class.java)
 
@@ -46,18 +47,21 @@ class LoginActivity : AppCompatActivity() {
             val email = loginEmailText.text.toString()
             val password = loginPasswordText.text.toString()
             restApiService.login(JsonModel.LoginJsonObject(email, password))
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(object : Subscriber<JsonModel.LoginResultJsonObject>() {
-                        override fun onCompleted() {}
-                        override fun onError(e: Throwable?) {
-                            System.out.println(e?.message)
-                        }
-                        override fun onNext(loginResult: JsonModel.LoginResultJsonObject) {
-                            val sp: SharedPreferences = getSharedPreferences("DATA", 0)
-                            sp.edit().putString("token", loginResult.token).commit()
-                            finish()
-                        }
-                    })
+                .subscribeOn(Schedulers.io())
+                .subscribe(object : Subscriber<JsonModel.LoginResultJsonObject>() {
+                    override fun onCompleted() {
+                    }
+
+                    override fun onError(e: Throwable?) {
+                        System.out.println(e?.message)
+                    }
+
+                    override fun onNext(loginResult: JsonModel.LoginResultJsonObject) {
+                        val sp: SharedPreferences = getSharedPreferences("DATA", 0)
+                        sp.edit().putString("token", loginResult.token).commit()
+                        finish()
+                    }
+                })
         }
 
         callbackManager = com.facebook.CallbackManager.Factory.create()
@@ -79,8 +83,15 @@ class LoginActivity : AppCompatActivity() {
                         }
 
                         override fun onNext(x: JsonModel.LoginResultJsonObject) {
-                            val sp: SharedPreferences = getSharedPreferences("DATA", 0)
-                            sp.edit().putString("token", x.token).commit()
+                            Log.e("TAG", "x.token = ${x.token}")
+
+                            val sp: SharedPreferences = applicationContext.getSharedPreferences("DATA", 0)
+                            val result = sp.edit().putString("token", x.token).commit()
+                            Log.e("TAG", "result = $result")
+
+                            val currentToken = sp.getString("token", "DEFAULT")
+                            Log.e("TAG", "currentToken = $currentToken")
+
                             finish()
                         }
                     })
@@ -96,91 +107,91 @@ class LoginActivity : AppCompatActivity() {
         })
 
 
-//        loginFbButton?.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
-//            override fun onSuccess(loginResult: LoginResult) {
-//                val accessToken = loginResult.accessToken.token
-//
-//                System.out.println("fb access token " + accessToken)
-//
-////                restApiService.loginViaFbId(JsonModel.LoginFbJsonObject(accessToken))
-////                    .subscribeOn(Schedulers.io())
-////                    .subscribe(object : Subscriber<JsonModel.LoginResultJsonObject>() {
-////                        override fun onCompleted() {
-////                        }
-////
-////                        override fun onError(e: Throwable?) {
-////                            System.out.println(e?.message)
-////                        }
-////
-////                        override fun onNext(x: JsonModel.LoginResultJsonObject) {
-////                            val sp: SharedPreferences = getSharedPreferences("DATA", 0)
-////                            sp.edit().putString("token", x.token).commit()
-////                            finish()
-////                        }
-////                    })
-//            }
-//
-//            override fun onCancel() {
-//
-//            }
-//
-//            override fun onError(e: FacebookException) {
-//                System.out.println(e.message)
-//            }
-//        })
+        //        loginFbButton?.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+        //            override fun onSuccess(loginResult: LoginResult) {
+        //                val accessToken = loginResult.accessToken.token
+        //
+        //                System.out.println("fb access token " + accessToken)
+        //
+        ////                restApiService.loginViaFbId(JsonModel.LoginFbJsonObject(accessToken))
+        ////                    .subscribeOn(Schedulers.io())
+        ////                    .subscribe(object : Subscriber<JsonModel.LoginResultJsonObject>() {
+        ////                        override fun onCompleted() {
+        ////                        }
+        ////
+        ////                        override fun onError(e: Throwable?) {
+        ////                            System.out.println(e?.message)
+        ////                        }
+        ////
+        ////                        override fun onNext(x: JsonModel.LoginResultJsonObject) {
+        ////                            val sp: SharedPreferences = getSharedPreferences("DATA", 0)
+        ////                            sp.edit().putString("token", x.token).commit()
+        ////                            finish()
+        ////                        }
+        ////                    })
+        //            }
+        //
+        //            override fun onCancel() {
+        //
+        //            }
+        //
+        //            override fun onError(e: FacebookException) {
+        //                System.out.println(e.message)
+        //            }
+        //        })
 
-//        loginButton?.setOnClickListener { x ->
-//            val retrofit = Retrofit
-//                    .Builder()
-//                    .baseUrl("https://www.7funs.com")
-//                    .addConverterFactory(GsonConverterFactory.create())
-//                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-//                    .build()
-//
-//            val restApiService = retrofit.create(RestApiService::class.java)
-//
-//            val email = loginEmailText.text.toString()
-//            val password = loginPasswordText.text.toString()
-//
-//            System.out.println(email)
-//            System.out.println(password)
-//
-//            restApiService.login(JsonModel.LoginJsonObject(email, password))
-//                .map {x ->
-//                    System.out.println(x.token)
-//                    x.token
-//                }
-////                .observeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-////                .subscribeOn(AndroidSchedulers.mainThread())
-//                .subscribe(object : Subscriber<String>() {
-//                    override fun onCompleted() {}
-//                    override fun onError(e: Throwable?) {
-//                        System.out.println("some error occur")
-//                        System.out.println(e?.message)
-//                    }
-//                    override fun onNext(loginResult: String) {
-////                        val sp: SharedPreferences = getSharedPreferences("DATA", 0)
-////                        sp.edit().putString("token", loginResult.token).commit()
-////                        finish()
-//                    }
-//                })
-////                    .observeOn(Schedulers.io())
-////                    .observeOn(AndroidSchedulers.mainThread())
-////                    .subscribeOn(AndroidSchedulers.mainThread())
-////                    .subscribe(object : Subscriber<JsonModel.LoginResultJsonObject>() {
-////                        override fun onCompleted() {}
-////                        override fun onError(e: Throwable?) {
-////                            System.out.println("some error occur")
-////                            System.out.println(e?.message)
-////                        }
-////                        override fun onNext(loginResult: JsonModel.LoginResultJsonObject) {
-////                            val sp: SharedPreferences = getSharedPreferences("DATA", 0)
-////                            sp.edit().putString("token", loginResult.token).commit()
-////                            finish()
-////                        }
-////                    })
-//        }
+        //        loginButton?.setOnClickListener { x ->
+        //            val retrofit = Retrofit
+        //                    .Builder()
+        //                    .baseUrl("https://www.7funs.com")
+        //                    .addConverterFactory(GsonConverterFactory.create())
+        //                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+        //                    .build()
+        //
+        //            val restApiService = retrofit.create(RestApiService::class.java)
+        //
+        //            val email = loginEmailText.text.toString()
+        //            val password = loginPasswordText.text.toString()
+        //
+        //            System.out.println(email)
+        //            System.out.println(password)
+        //
+        //            restApiService.login(JsonModel.LoginJsonObject(email, password))
+        //                .map {x ->
+        //                    System.out.println(x.token)
+        //                    x.token
+        //                }
+        ////                .observeOn(Schedulers.io())
+        //                .observeOn(AndroidSchedulers.mainThread())
+        ////                .subscribeOn(AndroidSchedulers.mainThread())
+        //                .subscribe(object : Subscriber<String>() {
+        //                    override fun onCompleted() {}
+        //                    override fun onError(e: Throwable?) {
+        //                        System.out.println("some error occur")
+        //                        System.out.println(e?.message)
+        //                    }
+        //                    override fun onNext(loginResult: String) {
+        ////                        val sp: SharedPreferences = getSharedPreferences("DATA", 0)
+        ////                        sp.edit().putString("token", loginResult.token).commit()
+        ////                        finish()
+        //                    }
+        //                })
+        ////                    .observeOn(Schedulers.io())
+        ////                    .observeOn(AndroidSchedulers.mainThread())
+        ////                    .subscribeOn(AndroidSchedulers.mainThread())
+        ////                    .subscribe(object : Subscriber<JsonModel.LoginResultJsonObject>() {
+        ////                        override fun onCompleted() {}
+        ////                        override fun onError(e: Throwable?) {
+        ////                            System.out.println("some error occur")
+        ////                            System.out.println(e?.message)
+        ////                        }
+        ////                        override fun onNext(loginResult: JsonModel.LoginResultJsonObject) {
+        ////                            val sp: SharedPreferences = getSharedPreferences("DATA", 0)
+        ////                            sp.edit().putString("token", loginResult.token).commit()
+        ////                            finish()
+        ////                        }
+        ////                    })
+        //        }
 
         //
         linkToSignup?.setOnClickListener { x ->

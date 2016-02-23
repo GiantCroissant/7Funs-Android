@@ -23,7 +23,7 @@ class QADetailNewMessageActivity : AppCompatActivity() {
 
             // For quick comment response from this activity
             val intent = android.content.Intent()
-            intent?.putExtra("message", com.giantcroissant.sevenfuns.app.NewMessageParcelable(newMessageTitle, newMessageDescription))
+            intent?.putExtra("message", NewMessageParcelable(newMessageTitle, newMessageDescription))
 
             setResult(android.app.Activity.RESULT_OK, intent)
             finish()
