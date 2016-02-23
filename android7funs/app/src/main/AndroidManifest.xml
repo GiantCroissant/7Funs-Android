@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     package="com.giantcroissant.sevenfuns.app"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="1"
+    android:versionName="1.0">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -102,7 +104,7 @@
             android:enabled="true"/>
 
         <service
-            android:name=".VideoSetupService"
+            android:name=".RestAPIService.VideoSetupService"
             android:enabled="true"/>
 
         <service

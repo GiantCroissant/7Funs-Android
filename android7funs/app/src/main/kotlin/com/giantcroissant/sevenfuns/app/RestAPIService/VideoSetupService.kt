@@ -1,31 +1,20 @@
-package com.giantcroissant.sevenfuns.app
+package com.giantcroissant.sevenfuns.app.RestAPIService
 
 import android.app.IntentService
 import android.content.Intent
 import com.giantcroissant.sevenfuns.app.DbModel.VideoOverview
+import com.giantcroissant.sevenfuns.app.JsonModel
 import io.realm.Realm
-import retrofit2.GsonConverterFactory
-import retrofit2.Retrofit
-import retrofit2.RxJavaCallAdapterFactory
 
 
 class VideoSetupService : IntentService("VideoSetupService") {
-
-    val retrofit = Retrofit
-        .Builder()
-        .baseUrl("https://www.7funs.com")
-        .addConverterFactory(GsonConverterFactory.create())
-        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-        .build()
-
-    val restApiService = retrofit.create(RestApiService::class.java)
 
     override fun onHandleIntent(intent: Intent?) {
         fetchVideoOverview()
     }
 
     private fun fetchVideoOverview() {
-        restApiService
+        RestAPIHelper.restApiService
             .getVideoOverviews()
             .subscribe { videoJsonList ->
                 val realm = Realm.getInstance(this)

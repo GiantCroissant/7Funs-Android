@@ -7,6 +7,15 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
 
+    signingConfigs {
+        release {
+            storeFile file("keystores/release.jks")
+            storePassword "fescjilm"
+            keyAlias "ReleaseKey"
+            keyPassword "fescjilm"
+        }
+    }
+
     defaultConfig {
         applicationId "com.giantcroissant.sevenfuns.app"
         minSdkVersion 16
@@ -21,10 +30,16 @@ android {
     dexOptions {
         incremental true
     }
+
     buildTypes {
+        debug {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     sourceSets {

@@ -7,6 +7,7 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import com.facebook.appevents.AppEventsLogger
 import com.giantcroissant.sevenfuns.app.R.string.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.*
@@ -88,6 +89,16 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         navigationView.setCheckedItem(current_section)
         navigationView.menu.performIdentifierAction(current_section, 0)
+
+        // Logs 'install' and 'app activate' App Events.
+        AppEventsLogger.activateApp(this);
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        // Logs 'app deactivate' App Event.
+        AppEventsLogger.deactivateApp(this);
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

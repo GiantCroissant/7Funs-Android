@@ -130,7 +130,6 @@ class RecipesSectionOverviewFragment : Fragment() {
                 .load(imageUrl)
                 .placeholder(R.drawable.food_default)
                 .centerCrop()
-                .dontAnimate()
                 .into(viewHolder.view.recipe_image)
 
             viewHolder.view.fav_icon.visibility = if (recipe.favorite) View.VISIBLE else View.INVISIBLE

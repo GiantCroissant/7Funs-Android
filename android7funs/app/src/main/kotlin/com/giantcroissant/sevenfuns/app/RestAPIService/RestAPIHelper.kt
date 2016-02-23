@@ -1,10 +1,6 @@
-package com.giantcroissant.sevenfuns.app
+package com.giantcroissant.sevenfuns.app.RestAPIService
 
-import android.app.Activity
-import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.webkit.WebChromeClient
-import android.webkit.WebView
+import com.giantcroissant.sevenfuns.app.RestApiService
 import retrofit2.GsonConverterFactory
 import retrofit2.Retrofit
 import retrofit2.RxJavaCallAdapterFactory
@@ -14,17 +10,12 @@ import retrofit2.RxJavaCallAdapterFactory
  */
 object RestAPIHelper {
 
-    val retrofit = Retrofit
-        .Builder()
+    val retrofit = Retrofit.Builder()
         .baseUrl("https://www.7funs.com")
         .addConverterFactory(GsonConverterFactory.create())
         .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
         .build()
 
     val restApiService = retrofit.create(RestApiService::class.java)
-
-    fun getRestAPIService(): RestApiService {
-        return restApiService
-    }
 
 }
