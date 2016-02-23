@@ -31,9 +31,11 @@ interface RestApiService {
 
     @POST("/api/recipes/{id}/switch_favorite")
     fun addRemoveFavorite(
+            @Header("Authorization")
+            authorization: String,
             @Path("id")
             id: Int
-    ): Observable<List<JsonModel.MyFavoriteRecipesResult>>
+    ): Observable<JsonModel.MyFavoriteRecipesResult>
 
     //
     @GET("/api/categories")

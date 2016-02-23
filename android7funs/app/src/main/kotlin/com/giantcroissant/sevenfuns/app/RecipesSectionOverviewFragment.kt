@@ -161,19 +161,60 @@ class RecipesSectionOverviewFragment : Fragment() {
                 realm.commitTransaction()
                 realm.close()
 
-                //                val sp: SharedPreferences =  getSharedPreferences("DATA", 0)
-                //                val token = sp.getString("token", "")
-                //
-                //                RestAPIHelper.restApiService
-                //                    .addRemoveFavorite(recipe.id)
-                //                    .subscribeOn(Schedulers.io())
-                //                    .subscribe({ json ->
-                //                        // MyFavoriteRecipesResult
-                //                        Log.e(TAG, "json: $json")
-                //
-                //                    }, { error ->
-                //                        Log.e(TAG, "error $error")
-                //                    })
+                val retrofit = Retrofit
+                        .Builder()
+                        .baseUrl("https://www.7funs.com")
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                        .build()
+
+                val restApiService = retrofit.create(RestApiService::class.java)
+
+                (activity as? AppCompatActivity)?.let { a ->
+                    val sp: SharedPreferences =  a.getSharedPreferences("DATA", 0)
+                    val token = sp.getString("token", "")
+
+                    if (token.isEmpty()) {
+                        System.out.println("No cached token")
+
+                        val intent = Intent(a, LoginActivity::class.java)
+                        a.startActivity(intent)
+                    } else {
+                        System.out.println("Have cached token: " + token)
+
+                        // Do something with token
+                        //val intent = Intent(a.applicationContext, QADetailNewMessageActivity::class.java)
+                        //a.startActivityForResult(intent, QASectionOverviewFragment.WRITTEN_MESSAGE)
+
+
+                        val combinedHeaderToken = "Bearer " + token
+
+                        restApiService.addRemoveFavorite(combinedHeaderToken, recipe.id)
+                            .subscribeOn(Schedulers.io())
+                            .subscribe(object : Subscriber<JsonModel.MyFavoriteRecipesResult>() {
+                                override fun onCompleted() {
+                                }
+
+                                override fun onError(e: Throwable?) {
+                                    System.out.println(e?.message)
+                                }
+
+                                override fun onNext(x: JsonModel.MyFavoriteRecipesResult) {
+                                }
+                            })
+//                        RestAPIHelper.restApiService
+//                            .addRemoveFavorite(recipe.id)
+//                            .subscribeOn(Schedulers.io())
+//                            .subscribe({ json ->
+//                                // MyFavoriteRecipesResult
+//                                Log.e(TAG, "json: $json")
+//
+//                            }, { error ->
+//                                Log.e(TAG, "error $error")
+//                            })
+
+                    }
+                }
             }
         }
 
