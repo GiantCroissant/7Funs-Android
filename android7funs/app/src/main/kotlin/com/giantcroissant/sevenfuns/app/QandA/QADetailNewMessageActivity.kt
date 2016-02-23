@@ -1,9 +1,11 @@
 package com.giantcroissant.sevenfuns.app.QandA
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.inputmethod.InputMethodManager
 import com.giantcroissant.sevenfuns.app.NewMessageParcelable
 import com.giantcroissant.sevenfuns.app.R
 import kotlinx.android.synthetic.main.activity_qa_detail_new_message.*
@@ -22,6 +24,7 @@ class QADetailNewMessageActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "新增問題"
 
         create_question_button.setOnClickListener { x ->
             val newMessageTitle = question_title_text?.text.toString()
@@ -32,6 +35,9 @@ class QADetailNewMessageActivity : AppCompatActivity() {
             setResult(Activity.RESULT_OK, intent)
             finish()
         }
+
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
 
     override fun onSupportNavigateUp(): Boolean {

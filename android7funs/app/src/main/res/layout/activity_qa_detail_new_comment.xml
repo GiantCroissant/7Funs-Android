@@ -21,16 +21,19 @@
             android:layout_height="wrap_content">
 
             <EditText
-                android:id="@+id/qaNewCommentText"
+                android:id="@+id/new_comment_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="留言..."
                 android:inputType="textMultiLine"
-                android:textSize="20sp"/>
+                android:textSize="20sp">
+
+                <requestFocus/>
+            </EditText>
         </android.support.design.widget.TextInputLayout>
 
         <Button
-            android:id="@+id/qaNewCommentButton"
+            android:id="@+id/create_comment_button"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
