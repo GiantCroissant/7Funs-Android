@@ -1,7 +1,5 @@
 package com.giantcroissant.sevenfuns.app.QandA
 
-
-import android.R
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -16,7 +14,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.giantcroissant.sevenfuns.app.*
 import com.giantcroissant.sevenfuns.app.RestAPIService.RestAPIHelper
-import kotlinx.android.synthetic.main.activity_comments.*
 import kotlinx.android.synthetic.main.activity_qa_detail.*
 import kotlinx.android.synthetic.main.item_question_comment.view.*
 import kotlinx.android.synthetic.main.item_question_header_view.view.*
@@ -63,10 +60,10 @@ class QADetailActivity : AppCompatActivity() {
             }
         }
 
-        qaDetailMessageList.layoutManager = LinearLayoutManager(baseContext)
+        comment_list.layoutManager = LinearLayoutManager(baseContext)
         val itemDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST)
-        qaDetailMessageList.addItemDecoration(itemDecoration)
-        qaDetailMessageList.adapter = RecyclerAdapter(this, question)
+        comment_list.addItemDecoration(itemDecoration)
+        comment_list.adapter = RecyclerAdapter(this, question)
 
         comment_swipe_container.setOnRefreshListener {
             fetchComments() {
@@ -91,7 +88,7 @@ class QADetailActivity : AppCompatActivity() {
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ commentJsonList ->
-                val adapter = qaDetailMessageList.adapter as RecyclerAdapter
+                val adapter = comment_list.adapter as RecyclerAdapter
                 adapter.updateList(commentJsonList)
                 onFinish()
 
