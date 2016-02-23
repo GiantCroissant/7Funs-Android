@@ -1,22 +1,22 @@
 package com.giantcroissant.sevenfuns.app
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.giantcroissant.sevenfuns.app.RestAPIService.RestAPIHelper
-import com.google.android.youtube.player.internal.*
 import kotlinx.android.synthetic.main.fragment_qa_section_overview.*
 import kotlinx.android.synthetic.main.fragment_qa_section_overview.view.*
 import kotlinx.android.synthetic.main.listview_qa_section_overview.view.*
 import org.joda.time.DateTime
-import rx.Observable
 import rx.Subscriber
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -53,107 +53,19 @@ class QASectionOverviewFragment : Fragment() {
                 v.qaSectionOverview.addItemDecoration(itemDecoration)
             }
         }
-
-        view?.qaSectionSwipeContainer?.setOnRefreshListener({
-            (activity as? AppCompatActivity)?.let {
-                currentPage += 1
-
-                RestAPIHelper.restApiService
-                    .getMessageQuery(currentPage)
-                    .flatMap { x -> Observable.just(x) }
-                    .map { x ->
-                        //x.collection
-                        x.collection.filter { y -> !y.title.isEmpty() }.sortedByDescending { y -> DateTime(y.updatedAt) }
-                    }
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(object : Subscriber<List<JsonModel.MessageJsonObject>>() {
-                        override fun onCompleted() {
-                        }
-
-                        override fun onError(e: Throwable?) {
-                            System.out.println(e?.message)
-                        }
-
-                        override fun onNext(x: List<JsonModel.MessageJsonObject>) {
-                            view.let { v ->
-                                (v.qaSectionOverview.adapter as? RecyclerAdapter)?.addAll(x)
-                            }
-                        }
-                    })
-            }
-
-            view.qaSectionSwipeContainer?.isRefreshing = false
-        })
-
-        //        (activity as? AppCompatActivity)?.let {
-        //            view?.add_question_button?.setOnClickListener { x ->
-        //                val sp: SharedPreferences = it.getSharedPreferences("DATA", 0)
-        //                val token = sp.getString("token", "")
-        //                if (token.isEmpty()) {
-        //                    System.out.println("No cached token")
-        //
-        //                    val intent = Intent(it, LoginActivity::class.java)
-        //                    this.startActivity(intent)
-        //                } else {
-        //                    System.out.println("Have cached token: " + token)
-        //
-        //                    // Do something with token
-        //                    val intent = Intent(it.applicationContext, QADetailNewMessageActivity::class.java)
-        //                    startActivityForResult(intent, QASectionOverviewFragment.WRITTEN_MESSAGE)
-        //                }
-        //            }
-        //
-        //            currentPage += 1
-        //
-        //
-        //            RestAPIHelper.restApiService
-        //                .getMessageQuery(currentPage)
-        //                .map { x ->
-        //                    x.collection.sortedByDescending { y -> DateTime(y.updatedAt) }
-        //                }
-        //                .observeOn(AndroidSchedulers.mainThread())
-        //                .subscribeOn(Schedulers.io())
-        //                .subscribe(object : Subscriber<List<JsonModel.MessageJsonObject>>() {
-        //                    override fun onCompleted() {
-        //                    }
-        //
-        //                    override fun onError(e: Throwable?) {
-        //                        System.out.println(e?.message)
-        //                    }
-        //
-        //                    override fun onNext(x: List<JsonModel.MessageJsonObject>) {
-        //                        view?.let { v ->
-        //                            v.qaSectionOverview.adapter = RecyclerAdapter((activity as? AppCompatActivity), x.toCollection(arrayListOf<JsonModel.MessageJsonObject>()))
-        //
-        //                            v.qaSectionOverview.addOnItemTouchListener(
-        //                                RecyclerItemClickListener(v.qaSectionOverview.context, object : RecyclerItemClickListener.OnItemClickListener {
-        //                                    override fun onItemClick(v: View, position: Int) {
-        //
-        //                                        System.out.println("Selected recipes id: " + v.id.toString())
-        //
-        //                                        val id = x[position].id
-        //                                        val title = x[position].title
-        //                                        val description = x[position].description
-        //
-        //                                        //v.id
-        //
-        //                                        val intent = Intent(v.context, QADetailActivity::class.java)
-        //                                        intent?.putExtra("message", MessageParcelable(id, title, description))
-        //                                        v.context.startActivity(intent)
-        //                                    }
-        //                                }))
-        //                        }
-        //                    }
-        //                })
-        //        }
-
-
+        configureSwipeContainer(view)
         configureQuestionRecyclerView(view)
         configureAddQuestionButton(view)
         fetchQuestions()
-
         return view
+    }
+
+    private fun configureSwipeContainer(view: View?) {
+        view?.swipe_container?.setOnRefreshListener {
+            fetchQuestions {
+                view.swipe_container?.isRefreshing = false
+            }
+        }
     }
 
     private fun configureQuestionRecyclerView(view: View?) {
@@ -161,7 +73,7 @@ class QASectionOverviewFragment : Fragment() {
         view?.qaSectionOverview?.adapter = RecyclerAdapter(activity as AppCompatActivity?, empty)
     }
 
-    private fun fetchQuestions() {
+    private fun fetchQuestions(onComplete: () -> Unit = {}) {
         RestAPIHelper.restApiService
             .getMessageQuery(currentPage)
             .map { msgJsonList ->
@@ -175,15 +87,19 @@ class QASectionOverviewFragment : Fragment() {
             .subscribe({ jsonList ->
                 val recycler = qaSectionOverview.adapter as RecyclerAdapter
                 recycler.addAll(jsonList)
+                currentPage += 1
+                onComplete()
 
             }, { error ->
                 Log.e(TAG, "error = $error")
+                Snackbar.make(coordinator_view, "網路狀態不穩", Snackbar.LENGTH_LONG).show()
+                onComplete()
             })
     }
 
     private fun configureAddQuestionButton(view: View?) {
         view?.add_question_button?.setOnClickListener {
-            val token = activity.applicationContext.getSharedPreferences("DATA", 0).getString("token", "")
+            val token = activity.getSharedPreferences("DATA", 0).getString("token", "")
             if (token.isEmpty()) {
                 val loginActivity = Intent(activity, LoginActivity::class.java)
                 startActivity(loginActivity)
@@ -245,7 +161,6 @@ class QASectionOverviewFragment : Fragment() {
     class RecyclerAdapter(
         val activity: AppCompatActivity?,
         val messageList: MutableList<JsonModel.MessageJsonObject>
-
     ) : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 
         class ViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
@@ -257,7 +172,8 @@ class QASectionOverviewFragment : Fragment() {
         }
 
         override fun onCreateViewHolder(viewGroup: ViewGroup, position: Int): ViewHolder {
-            val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.listview_qa_section_overview, viewGroup, false)
+            val view = LayoutInflater.from(viewGroup.context)
+                .inflate(R.layout.listview_qa_section_overview, viewGroup, false)
             return ViewHolder(view)
         }
 
@@ -282,11 +198,6 @@ class QASectionOverviewFragment : Fragment() {
 
         override fun getItemCount(): Int {
             return messageList.size
-        }
-
-        fun clearAll() {
-            messageList.clear()
-            notifyDataSetChanged()
         }
 
         fun addAll(contents: List<JsonModel.MessageJsonObject>) {

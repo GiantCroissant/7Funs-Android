@@ -2,12 +2,14 @@ package com.giantcroissant.sevenfuns.app.RestAPIService
 
 import android.app.IntentService
 import android.content.Intent
+import android.util.Log
 import com.giantcroissant.sevenfuns.app.DbModel.VideoOverview
 import com.giantcroissant.sevenfuns.app.JsonModel
 import io.realm.Realm
 
 
 class VideoSetupService : IntentService("VideoSetupService") {
+    val TAG = VideoSetupService::class.java.name
 
     override fun onHandleIntent(intent: Intent?) {
         fetchVideoOverview()
@@ -16,7 +18,7 @@ class VideoSetupService : IntentService("VideoSetupService") {
     private fun fetchVideoOverview() {
         RestAPIHelper.restApiService
             .getVideoOverviews()
-            .subscribe { videoJsonList ->
+            .subscribe({ videoJsonList ->
                 val realm = Realm.getInstance(this)
                 realm.beginTransaction()
                 videoJsonList.forEach { videoJson ->
@@ -29,7 +31,10 @@ class VideoSetupService : IntentService("VideoSetupService") {
                 }
                 realm.commitTransaction()
                 realm.close()
-            }
+
+            }, { error ->
+                Log.e(TAG, "error = $error")
+            })
     }
 
 }
