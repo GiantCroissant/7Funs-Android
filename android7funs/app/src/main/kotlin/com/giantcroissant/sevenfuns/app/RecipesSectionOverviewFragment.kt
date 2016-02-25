@@ -1,16 +1,21 @@
 package com.giantcroissant.sevenfuns.app
 
+import android.app.SearchManager
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.support.design.widget.CoordinatorLayout
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.SearchView
+import android.util.AttributeSet
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.giantcroissant.sevenfuns.app.DbModel.Recipes
 import com.google.gson.Gson
@@ -18,6 +23,7 @@ import io.realm.Realm
 import io.realm.RealmResults
 import io.realm.Sort
 import kotlinx.android.synthetic.main.cardview_recipes_section_overview.view.*
+import kotlinx.android.synthetic.main.fragment_recipes_section_overview.*
 import kotlinx.android.synthetic.main.fragment_recipes_section_overview.view.*
 import retrofit2.GsonConverterFactory
 import retrofit2.Retrofit
@@ -31,9 +37,13 @@ class RecipesSectionOverviewFragment : Fragment() {
     val TAG = RecipesSectionOverviewFragment::class.java.name
 
     private var realm: Realm by Delegates.notNull()
+    private var query = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        arguments.getString("query")?.let {
+            query = it
+        }
         realm = Realm.getInstance(activity)
     }
 
@@ -54,13 +64,73 @@ class RecipesSectionOverviewFragment : Fragment() {
             activity.startService(recipeOverviews)
             view.recipe_swipe_to_refresh?.isRefreshing = false
         }
+
+        setHasOptionsMenu(true)
         return view
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.menu_main, menu)
+        val searchItem = menu?.findItem(R.id.action_search)
+        //        searchItem.isVisible = showSearch
+        val manager = activity.getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        if (searchItem != null) {
+            val searchView = searchItem.actionView as SearchView
+            searchView.setSearchableInfo(manager.getSearchableInfo(activity.componentName))
+        }
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+
     override fun onResume() {
         super.onResume()
-        val recipeAdapter = view?.recipe_recycler_view?.adapter as RecyclerAdapter
+        if (query != null && !query.isEmpty()) {
+            queryRecipesWithSearch(query)
 
+        } else {
+            queryRecipes()
+        }
+    }
+
+    private fun queryRecipesWithSearch(search: String) {
+        var results: RealmResults<Recipes>
+        if (arguments.getString("type") == "collection") {
+            results = realm.where(Recipes::class.java)
+                .equalTo("favorite", true)
+                .contains("title", search)
+                .findAllSortedAsync("id", Sort.DESCENDING)
+
+        } else {
+            results = realm.where(Recipes::class.java)
+                .contains("title", search)
+                .findAllSortedAsync("id", Sort.DESCENDING)
+        }
+
+        results.addChangeListener {
+            recipe_recycler_view?.adapter?.notifyDataSetChanged()
+        }
+
+        (recipe_recycler_view?.adapter as RecyclerAdapter).let {
+            it.updateList(results)
+        }
+
+        val bar = Snackbar.make(
+            recipe_coordinator_view,
+            "目前顯示搜尋結果：$search",
+            Snackbar.LENGTH_INDEFINITE
+        )
+        bar.setAction("返回全部") {
+            query = ""
+            (activity as? MainActivity)?.let {
+                it.query = ""
+            }
+            bar.dismiss()
+            queryRecipes()
+        }
+        bar.show()
+    }
+
+    private fun queryRecipes() {
         var results: RealmResults<Recipes>
         if (arguments.getString("type") == "collection") {
             results = realm.where(Recipes::class.java)
@@ -72,27 +142,14 @@ class RecipesSectionOverviewFragment : Fragment() {
                 .findAllSortedAsync("id", Sort.DESCENDING)
         }
         results.addChangeListener {
-            Log.d(TAG, "results.size = ${results.size}")
-            recipeAdapter?.notifyDataSetChanged()
-        }
-        recipeAdapter?.updateList(results)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        var results: RealmResults<Recipes>
-
-        if (arguments.getString("type") == "collection") {
-            results = realm.where(Recipes::class.java)
-                .equalTo("favorite", true)
-                .findAllSortedAsync("id", Sort.DESCENDING)
-
-        } else {
-            results = realm.where(Recipes::class.java).findAllSortedAsync("id", Sort.DESCENDING)
+            recipe_recycler_view?.adapter?.notifyDataSetChanged()
         }
 
-        results.removeChangeListener { }
+        (recipe_recycler_view?.adapter as RecyclerAdapter).let {
+            it.updateList(results)
+        }
     }
+
 
     class RecyclerAdapter(
         val activity: AppCompatActivity?,
@@ -161,16 +218,16 @@ class RecipesSectionOverviewFragment : Fragment() {
                 realm.close()
 
                 val retrofit = Retrofit
-                        .Builder()
-                        .baseUrl("https://www.7funs.com")
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                        .build()
+                    .Builder()
+                    .baseUrl("https://www.7funs.com")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                    .build()
 
                 val restApiService = retrofit.create(RestApiService::class.java)
 
                 (activity as? AppCompatActivity)?.let { a ->
-                    val sp: SharedPreferences =  a.getSharedPreferences("DATA", 0)
+                    val sp: SharedPreferences = a.getSharedPreferences("DATA", 0)
                     val token = sp.getString("token", "")
 
                     if (token.isEmpty()) {
@@ -201,16 +258,16 @@ class RecipesSectionOverviewFragment : Fragment() {
                                 override fun onNext(x: JsonModel.MyFavoriteRecipesResult) {
                                 }
                             })
-//                        RestAPIHelper.restApiService
-//                            .addRemoveFavorite(recipe.id)
-//                            .subscribeOn(Schedulers.io())
-//                            .subscribe({ json ->
-//                                // MyFavoriteRecipesResult
-//                                Log.e(TAG, "json: $json")
-//
-//                            }, { error ->
-//                                Log.e(TAG, "error $error")
-//                            })
+                        //                        RestAPIHelper.restApiService
+                        //                            .addRemoveFavorite(recipe.id)
+                        //                            .subscribeOn(Schedulers.io())
+                        //                            .subscribe({ json ->
+                        //                                // MyFavoriteRecipesResult
+                        //                                Log.e(TAG, "json: $json")
+                        //
+                        //                            }, { error ->
+                        //                                Log.e(TAG, "error $error")
+                        //                            })
 
                     }
                 }
@@ -264,4 +321,34 @@ class RecipesSectionOverviewFragment : Fragment() {
             }
         })
     }
+
 }
+//
+//class CustomBehavior(
+//    context: Context,
+//    attrs: AttributeSet
+//) : CoordinatorLayout.Behavior<View>(context, attrs) {
+//
+//    var height = 0f
+//
+//    override fun onDependentViewChanged(parent: CoordinatorLayout?, child: View?, dependency: View?): Boolean {
+//        Log.e("TAG", "onDependentViewChanged dependency")
+//
+//        val translationY = Math.min(0f, dependency!!.translationY - dependency.height)
+//        child!!.translationY = translationY
+//        height = translationY
+//        return true
+//    }
+//
+//    override fun onDependentViewRemoved(parent: CoordinatorLayout?, child: View?, dependency: View?) {
+////        val translationY = Math.min(0f, dependency!!.translationY - dependency.height)
+////        child!!.translationY = -height
+//        onDependentViewChanged(parent, child, dependency)
+//    }
+//
+//    override fun layoutDependsOn(parent: CoordinatorLayout?, child: View?, dependency: View?): Boolean {
+//        // we only want to trigger the change
+//        // only when the changes is from a snackbar
+//        return dependency is Snackbar.SnackbarLayout
+//    }
+//}

@@ -107,5 +107,6 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     compile 'com.balysv:material-ripple:1.0.2'
+    compile 'com.miguelcatalan:materialsearchview:1.4.0'
 
 }

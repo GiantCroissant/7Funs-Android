@@ -24,6 +24,7 @@ class SponsorSectionFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.fragment_sponsor_section, container, false)
+        setHasOptionsMenu(false)
         return view
     }
 

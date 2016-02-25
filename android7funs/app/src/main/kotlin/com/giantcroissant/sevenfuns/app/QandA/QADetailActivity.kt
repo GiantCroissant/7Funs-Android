@@ -46,6 +46,7 @@ class QADetailActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = question.title
 
         qaDetailAddFab.setOnClickListener { x ->
             val sp: SharedPreferences = getSharedPreferences("DATA", 0)
