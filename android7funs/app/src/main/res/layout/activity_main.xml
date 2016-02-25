@@ -16,7 +16,12 @@
         <include
             layout="@layout/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
+
+        <!-- android.support.v7.widget.SearchView
+                android:id="@+id/search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/ -->
 
         <!-- The main content view where fragments are loaded -->
         <FrameLayout
@@ -35,6 +40,6 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/drawer_header"
         app:menu="@menu/drawer"
-        app:theme="@style/NavigationDrawerStyle"/>
+        app:theme="@style/NavigationDrawerStyle" />
 
 </android.support.v4.widget.DrawerLayout>

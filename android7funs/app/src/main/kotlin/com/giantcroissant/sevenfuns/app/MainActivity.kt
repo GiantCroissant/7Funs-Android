@@ -1,10 +1,14 @@
 package com.giantcroissant.sevenfuns.app
 
+import android.app.SearchManager
+import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
 import com.facebook.appevents.AppEventsLogger
@@ -38,6 +42,9 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+//        val searchManager = getSystemService(Context.SEARCH_SERVICE) as? SearchManager
+//        search?.setSearchableInfo(searchManager?.getSearchableInfo(componentName))
 
         navigationView?.setNavigationItemSelectedListener {
 
@@ -105,6 +112,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
+
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as? SearchManager
+        val search = menu.findItem(R.id.action_search).actionView as? SearchView
+        search?.setSearchableInfo(searchManager?.getSearchableInfo(componentName))
+
         return true
     }
 
