@@ -1,6 +1,7 @@
 package com.giantcroissant.sevenfuns.app
 
 import android.app.SearchManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -9,8 +10,10 @@ import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SearchView
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import com.facebook.appevents.AppEventsLogger
 import com.giantcroissant.sevenfuns.app.QandA.QASectionFragment
 import com.giantcroissant.sevenfuns.app.R.string.*
@@ -21,9 +24,12 @@ import kotlinx.android.synthetic.main.toolbar.*
 class MainActivity : AppCompatActivity() {
     val CURRENT_SECTION = "CURRENT_SECTION"
     var current_section = 0
+    var query = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
 
         if (savedInstanceState != null) {
             current_section = savedInstanceState.getInt(CURRENT_SECTION);
@@ -34,9 +40,9 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-//        // Clean out cached token for testing
-//        val sp: SharedPreferences =  getSharedPreferences("DATA", 0)
-//        sp.edit().remove("token").commit()
+        //        // Clean out cached token for testing
+        //        val sp: SharedPreferences =  getSharedPreferences("DATA", 0)
+        //        sp.edit().remove("token").commit()
 
         //
         setSupportActionBar(toolbar)
@@ -47,7 +53,6 @@ class MainActivity : AppCompatActivity() {
 //        search?.setSearchableInfo(searchManager?.getSearchableInfo(componentName))
 
         navigationView?.setNavigationItemSelectedListener {
-
             it.isChecked = true
             drawerLayout?.closeDrawers()
 
@@ -59,6 +64,7 @@ class MainActivity : AppCompatActivity() {
                     fragment = RecipesSectionOverviewFragment()
                     val bundle = Bundle()
                     bundle.putString("type", "recipe")
+                    bundle.putString("query", query)
                     fragment.arguments = bundle
                 }
                 R.id.navigationItemPersonalSection -> {
@@ -67,6 +73,7 @@ class MainActivity : AppCompatActivity() {
                     fragment = RecipesSectionOverviewFragment()
                     val bundle = Bundle()
                     bundle.putString("type", "collection")
+                    bundle.putString("query", query)
                     fragment.arguments = bundle
                 }
                 R.id.navigationItemInstructorSection -> {
@@ -85,11 +92,19 @@ class MainActivity : AppCompatActivity() {
                     fragment = SponsorSectionFragment.newInstance()
                 }
             }
-
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, fragment)
                 .commit()
             true
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+
+        if (Intent.ACTION_SEARCH.equals(intent?.action)) {
+            val extras = intent?.extras
+            query = extras?.get(SearchManager.QUERY).toString()
         }
     }
 
@@ -115,9 +130,22 @@ class MainActivity : AppCompatActivity() {
 
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as? SearchManager
         val search = menu.findItem(R.id.action_search).actionView as? SearchView
-        search?.setSearchableInfo(searchManager?.getSearchableInfo(componentName))
+
+        search?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String) : Boolean {
+                return false
+            }
+
+            override  fun onQueryTextChange(newText: String) : Boolean {
+                return false
+            }
+        })
+
+        search?.setSearchableInfo(searchManager?.getSearchableInfo(ComponentName(this, SearchActivity::class.java)))
+        search?.setIconifiedByDefault(false)
 
         return true
+//        return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

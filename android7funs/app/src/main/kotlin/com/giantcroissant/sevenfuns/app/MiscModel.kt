@@ -23,6 +23,7 @@ object MiscModel {
 
     data class RecipesByTag(
         val tagId: Int,
+        val name: String,
         val recipesIds: List<Int>
     )
 }

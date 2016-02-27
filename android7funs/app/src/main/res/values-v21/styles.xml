@@ -5,6 +5,7 @@
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:colorControlHighlight">@color/accent_translucent</item>
         <item name="android:windowSharedElementsUseOverlay">false</item>
+        <item name="android:searchViewStyle">@style/MySearchViewStyle</item>
     </style>
 
 </resources>

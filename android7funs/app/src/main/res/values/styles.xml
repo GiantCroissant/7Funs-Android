@@ -11,10 +11,19 @@
         <item name="android:selectableItemBackground">@drawable/selectable_item_background</item>
         <item name="colorButtonNormal">@android:color/transparent</item>
         <item name="buttonTint">@color/accent</item>
+        <item name="searchViewStyle">@style/MySearchViewStyle</item>
+    </style>
+
+    <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="searchViewStyle">@style/MySearchViewStyle</item>
     </style>
 
     <style name="NavigationDrawerStyle">
         <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="MySearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="android:textColorHint">@color/control_hightlight</item>
     </style>
 
     <style name="Widget.CardContent" parent="android:Widget">

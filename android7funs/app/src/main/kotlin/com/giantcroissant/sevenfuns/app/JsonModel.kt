@@ -247,7 +247,7 @@ object JsonModel {
         @SerializedName("tag_id")
         val tagId: Int,
         @SerializedName("taggable_type")
-        val taggableType: Int,
+        val taggableType: String,
         @SerializedName("taggable_id")
         val taggableId: Int
     )
