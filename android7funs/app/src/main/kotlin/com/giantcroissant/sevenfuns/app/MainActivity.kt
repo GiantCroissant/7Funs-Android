@@ -142,7 +142,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         search?.setSearchableInfo(searchManager?.getSearchableInfo(ComponentName(this, SearchActivity::class.java)))
-        search?.setIconifiedByDefault(false)
+        //search?.setIconifiedByDefault(false)
 
         return true
 //        return super.onCreateOptionsMenu(menu)

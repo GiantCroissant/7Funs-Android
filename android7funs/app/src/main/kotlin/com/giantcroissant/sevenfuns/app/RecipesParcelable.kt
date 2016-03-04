@@ -8,6 +8,7 @@ import android.os.Parcelable
  */
 data class RecipesParcelable(
     val id: Int,
+    val image: String,
     val title: String,
     val ingredient: String,
     val seasoning: String,
@@ -30,6 +31,7 @@ data class RecipesParcelable(
     constructor(parcelIn: Parcel) : this(
         parcelIn.readInt(),
         parcelIn.readString(),
+            parcelIn.readString(),
         parcelIn.readString(),
         parcelIn.readString(),
         parcelIn.createStringArrayList(),
@@ -42,6 +44,7 @@ data class RecipesParcelable(
 
     override fun writeToParcel(dest: Parcel?, flags: Int) {
         dest?.writeInt(id)
+        dest?.writeString(image)
         dest?.writeString(title)
         dest?.writeString(ingredient)
         dest?.writeString(seasoning)

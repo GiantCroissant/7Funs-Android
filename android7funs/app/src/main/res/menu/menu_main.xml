@@ -9,6 +9,21 @@
     <!--app:showAsAction="never"/>-->
 
     <item
+        android:id="@+id/action_order"
+        android:orderInCategory="100"
+        android:title="@string/menu_item_order"
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/action_order_latest"
+                android:title="@string/menu_item_order_latest" />
+            <item
+                    android:id="@+id/action_order_popular"
+                    android:title="@string/menu_item_order_most_popular" />
+        </menu>
+    </item>
+
+    <item
         android:id="@+id/action_search"
         android:icon="@android:drawable/ic_menu_search"
         android:title="Search"

@@ -14,4 +14,13 @@
     <string name="navigation_item_qa_section">美食問與答</string>
     <string name="navigation_item_sponsor_section">吃飯好朋友</string>
 
+    <string name="menu_item_order">呈現順序調整</string>
+    <string name="menu_item_order_latest">最新</string>
+    <string name="menu_item_order_most_popular">熱門</string>
+
+    <string name="recipes_card_item_collect">收藏</string>
+    <string name="recipes_card_item_detail">內容</string>
+
+    <string name="recipe_detail_method">做法</string>
+
 </resources>

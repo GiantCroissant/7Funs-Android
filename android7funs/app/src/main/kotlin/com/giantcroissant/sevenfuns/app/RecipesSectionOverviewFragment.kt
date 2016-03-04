@@ -70,14 +70,21 @@ class RecipesSectionOverviewFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.menu_main, menu)
-        val searchItem = menu?.findItem(R.id.action_search)
-        //        searchItem.isVisible = showSearch
-        val manager = activity.getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        if (searchItem != null) {
-            val searchView = searchItem.actionView as SearchView
-            searchView.setSearchableInfo(manager.getSearchableInfo(activity.componentName))
-        }
+//        inflater?.inflate(R.menu.menu_main, menu)
+//        val searchItem = menu?.findItem(R.id.action_search)
+//        //        searchItem.isVisible = showSearch
+//        val manager = activity.getSystemService(Context.SEARCH_SERVICE) as SearchManager
+//        if (searchItem != null) {
+//            val searchView = searchItem.actionView as SearchView
+//            searchView.setSearchableInfo(manager.getSearchableInfo(activity.componentName))
+//        }
+
+        val orderItem = menu?.findItem(R.id.action_order)
+        val latestItem = orderItem?.subMenu?.findItem(R.id.action_order_latest)
+//        latestItem?.setOnMenuItemClickListener { x ->
+//            //recipe_recycler_view?.adapter?
+//        }
+        val popularItem = orderItem?.subMenu?.findItem(R.id.action_order_popular)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -191,6 +198,7 @@ class RecipesSectionOverviewFragment : Fragment() {
 
             viewHolder.view.fav_icon.visibility = if (recipe.favorite) View.VISIBLE else View.INVISIBLE
             viewHolder.view.recipe_title?.text = recipe.title
+            viewHolder.view.recipeInstructorText?.text = recipe.chefName
             viewHolder.view.recipe_hits_text?.text = "${recipe.collected} 人收藏，${recipe.hits} 人看過"
             viewHolder.view.detail_button?.setOnClickListener {
                 val descList = recipe.methods.map { md -> md.desc }
@@ -199,6 +207,7 @@ class RecipesSectionOverviewFragment : Fragment() {
                     "recipes",
                     RecipesParcelable(
                         recipe.id,
+                        recipe.image,
                         recipe.title,
                         recipe.ingredient,
                         recipe.seasoning,

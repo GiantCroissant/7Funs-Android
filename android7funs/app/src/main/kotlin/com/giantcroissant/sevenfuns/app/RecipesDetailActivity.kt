@@ -5,12 +5,14 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import com.bumptech.glide.Glide
 import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerSupportFragment
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_recipes_detail.*
 import kotlinx.android.synthetic.main.cardview_recipes_detail.view.*
+import kotlinx.android.synthetic.main.cardview_recipes_section_overview.view.*
 import kotlinx.android.synthetic.main.toolbar.*
 
 /**
@@ -32,8 +34,6 @@ class RecipesDetailActivity : AppCompatActivity() {
         val recipe = intent.getParcelableExtra<RecipesParcelable>("recipes")
         supportActionBar?.title = recipe.title
 
-
-
         if (recipe.ingredient.isEmpty()) {
             ingredientCardView.visibility = View.GONE
 
@@ -54,7 +54,7 @@ class RecipesDetailActivity : AppCompatActivity() {
             methodCardView.visibility = View.GONE
 
         } else {
-            methodCardView?.detail_title?.text = "做法"
+            methodCardView?.detail_title?.text = getString(R.string.recipe_detail_method)
             val adjustedContent = recipe.methods.reduce { acc, s -> acc + s + "\n\n" }
             val methods = adjustedContent.substring(0, adjustedContent.length - 4)
             methodCardView?.detail_content?.text = methods
@@ -68,15 +68,11 @@ class RecipesDetailActivity : AppCompatActivity() {
             reminderCardView?.detail_content?.text = recipe.reminder
         }
 
-        configureYouTubePlayer(recipe.id)
+
+        configureYouTubePlayer(recipe.image, recipe.id)
     }
 
-    private fun configureYouTubePlayer(recipeId: Int) {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.youtube_container, youtubeFragment)
-            .commit()
-
+    private fun configureYouTubePlayer(recipeImage: String, recipeId: Int) {
         val realm = Realm.getInstance(this)
         val videoCode = realm.where(Video::class.java)
             .equalTo("recipeId", recipeId)
@@ -84,10 +80,25 @@ class RecipesDetailActivity : AppCompatActivity() {
         realm.close()
 
         if (videoCode.isEmpty()) {
+            // No vide code found, use image instead
             Log.e(TAG, "configureYouTubePlayer : videoCode.isEmpty()")
-            return
 
+            val baseUrl = "https://commondatastorage.googleapis.com/funs7-1/uploads/recipe/image/"
+            val imageUrl = baseUrl + recipeId + "/" + recipeImage
+
+            Glide.with(applicationContext)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.food_default)
+                    .centerCrop()
+                    .into(recipe_image)
+
+            return
         } else {
+            supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.youtube_container, youtubeFragment)
+                    .commit()
+
             val key = "AIzaSyCGkt_vNwDOmv8jDQPybsu8u3yyn95NK7o"
             youtubeFragment.initialize(key,
                 object : YouTubePlayer.OnInitializedListener {

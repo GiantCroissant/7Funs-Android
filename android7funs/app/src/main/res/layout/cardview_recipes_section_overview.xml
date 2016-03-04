@@ -48,13 +48,22 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/recipe_hits_text"
+            android:id="@+id/recipeInstructorText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
             android:layout_marginStart="20dp"
             android:text="XD"
             android:textSize="16sp"/>
+
+        <TextView
+                android:id="@+id/recipe_hits_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
+                android:text="XD"
+                android:textSize="16sp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -66,7 +75,7 @@
                 android:id="@+id/collect_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Collect"
+                android:text="@string/recipes_card_item_collect"
                 android:textColor="@color/accent"
                 style="?android:attr/borderlessButtonStyle"/>
 
@@ -74,7 +83,7 @@
                 android:id="@+id/detail_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Detail"
+                android:text="@string/recipes_card_item_detail"
                 android:textColor="@color/accent"
                 style="?android:attr/borderlessButtonStyle"/>
         </LinearLayout>

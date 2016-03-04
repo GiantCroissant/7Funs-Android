@@ -251,6 +251,7 @@ class SearchActivity : AppCompatActivity() {
                         "recipes",
                         RecipesParcelable(
                                 recipe.id,
+                                recipe.image,
                                 recipe.title,
                                 recipe.ingredient,
                                 recipe.seasoning,
