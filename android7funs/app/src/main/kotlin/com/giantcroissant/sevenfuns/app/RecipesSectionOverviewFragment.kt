@@ -81,10 +81,38 @@ class RecipesSectionOverviewFragment : Fragment() {
 
         val orderItem = menu?.findItem(R.id.action_order)
         val latestItem = orderItem?.subMenu?.findItem(R.id.action_order_latest)
-//        latestItem?.setOnMenuItemClickListener { x ->
-//            //recipe_recycler_view?.adapter?
-//        }
+        latestItem?.setOnMenuItemClickListener { x ->
+            var results: RealmResults<Recipes>
+
+            results = realm.where(Recipes::class.java)
+                    .findAllSortedAsync("updatedAt", Sort.DESCENDING)
+            results.addChangeListener {
+                recipe_recycler_view?.adapter?.notifyDataSetChanged()
+            }
+
+            (recipe_recycler_view?.adapter as RecyclerAdapter).let {
+                it.updateList(results)
+            }
+
+            true
+        }
         val popularItem = orderItem?.subMenu?.findItem(R.id.action_order_popular)
+        popularItem?.setOnMenuItemClickListener { x ->
+            var results: RealmResults<Recipes>
+
+            results = realm.where(Recipes::class.java)
+                    .findAllSortedAsync("hits", Sort.DESCENDING)
+            results.addChangeListener {
+                recipe_recycler_view?.adapter?.notifyDataSetChanged()
+            }
+
+            (recipe_recycler_view?.adapter as RecyclerAdapter).let {
+                it.updateList(results)
+            }
+
+            true
+        }
+
         super.onCreateOptionsMenu(menu, inflater)
     }
 
