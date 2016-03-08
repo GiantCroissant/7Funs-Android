@@ -44,9 +44,17 @@ class RecipesSetupService : IntentService("RecipesSetupService") {
         // This returns a pair of need-to-update-list and need-to-remove-list according to the rule
         updateRemovePair()
             .map { pair ->
+
+                System.out.println("map pair")
+//                System.out.println(pair)
+
                 val needToUpdateRecipesOverviews = pair.first.map { intermediateOverview ->
                     RecipesOverview(intermediateOverview.id, intermediateOverview.updatedAt)
                 }
+
+//                System.out.println("Recipes overview to update: " + needToUpdateRecipesOverviews.toString())
+//                System.out.println(needToUpdateRecipesOverviews)
+
                 val query = realm.where(Recipes::class.java)
                 val accQuery = pair.second.fold(query, { acc, intermediateOverview ->
                     acc.equalTo("id", intermediateOverview.id).or()
@@ -63,6 +71,9 @@ class RecipesSetupService : IntentService("RecipesSetupService") {
                 }
 
                 override fun onNext(pair: Pair<List<RecipesOverview>, RealmResults<Recipes>>) {
+
+                    System.out.println(pair.first)
+
                     //                        val realm = Realm.getInstance(config)
                     // New or update for the first list, delete all for the second
                     realm.beginTransaction()
@@ -84,6 +95,7 @@ class RecipesSetupService : IntentService("RecipesSetupService") {
         val remoteDataStream = restApiService.getRecipesOverview()
             .flatMap { jos -> Observable.from(jos) }
             .flatMap { jo ->
+                //System.out.println(jo.id.toString())
                 Observable.just(
                     MiscModel.IntermediateOverview(
                         jo.id,
@@ -98,14 +110,14 @@ class RecipesSetupService : IntentService("RecipesSetupService") {
         val query = realm.where(Recipes::class.java).findAll()
 
         val combinedStreams = if (query.count() == 0) {
-            //System.out.println("use only remote stream")
+            System.out.println("use only remote stream")
 
             remoteDataStream
         } else {
-            //System.out.println("define local stream")
+            System.out.println("define local stream")
 
-            val localDataStream = query.asObservable()
-                .filter { rs -> rs.isLoaded }
+            val localDataStream = Observable.just(realm.copyFromRealm(query))//query.asObservable()
+                //.filter { rs -> rs.isLoaded }
                 .flatMap { rs -> Observable.from(rs) }
                 .flatMap { r ->
                     Observable.just(MiscModel.IntermediateOverview(
@@ -120,8 +132,12 @@ class RecipesSetupService : IntentService("RecipesSetupService") {
 
             //System.out.println("remote concat with local")
 
+            System.out.println("concat remote with local stream")
+
             remoteDataStream.concatWith(localDataStream)
         }
+
+        System.out.println("combined count: " + combinedStreams.count())
 
         //
         //System.out.println("have combined stream")
@@ -135,6 +151,10 @@ class RecipesSetupService : IntentService("RecipesSetupService") {
             // aro should have one action of None, Update, or Remove
             val aro: MiscModel.IntermediateOverview = if (sameIdInList == null) {
                 if (intermediateOverview.locationType == MiscModel.LocationType.Remote) {
+                    //if (intermediateOverview.id == 2863) {
+                    //    System.out.println("id 2863 is found in remote")
+                    //}
+                    //System.out.println("Need to add: " + intermediateOverview.id.toString())
                     // Local recipes needs to add this for later retrieval
                     MiscModel.IntermediateOverview(intermediateOverview.id, intermediateOverview.updatedAt, intermediateOverview.locationType, MiscModel.OverviewActionResultType.Update)
                 } else if (intermediateOverview.locationType == MiscModel.LocationType.Local) {
@@ -143,10 +163,12 @@ class RecipesSetupService : IntentService("RecipesSetupService") {
                 } else {
                     // Although in this case, this should never be hit, the type of action, None
                     // is still required later
+                    System.out.println("Hit the case never should be for id: " + intermediateOverview.id.toString())
                     MiscModel.IntermediateOverview(intermediateOverview.id, intermediateOverview.updatedAt, intermediateOverview.locationType, MiscModel.OverviewActionResultType.None)
                 }
             } else {
                 // Both found, need to compare which one is the latest
+                //System.out.println("local has id: " + sameIdInList.id)
 
                 // First make remote and local in a pair form, where remote comes first then local second
                 val remoteLocalPair = if (sameIdInList.locationType == MiscModel.LocationType.Remote) {
@@ -181,6 +203,7 @@ class RecipesSetupService : IntentService("RecipesSetupService") {
             result
         }
 
+        System.out.println("returning reduced pair")
         return combinedStreams.reduce(initialPair, categorizeToPairList)
     }
 }

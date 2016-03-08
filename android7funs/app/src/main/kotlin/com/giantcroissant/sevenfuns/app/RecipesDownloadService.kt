@@ -32,6 +32,7 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
     val restApiService = retrofit.create(RestApiService::class.java)
 
     override fun onHandleIntent(intent: Intent) {
+        //System.out.println("RecipesDownloadService - onHandleIntent")
         fetchRecipes()
     }
 
@@ -58,6 +59,7 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
                 realm.close()
 
                 var overviewIds = recipes.map { it.id }
+
                 Observable.just(overviewIds)
             }
             //            .subscribe(object : Subscriber<List<Int>>() {
@@ -81,6 +83,9 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
             //                }
             //            })
             .subscribe({ recipeIdList ->
+                Log.d(TAG, recipeIdList.toString())
+
+
                 val realm = Realm.getInstance(this)
                 realm.beginTransaction()
                 recipeIdList.forEach { recipeId ->
@@ -93,6 +98,8 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
 
             }, { error ->
                 Log.e(TAG, "getRecipesByIdList -> $error")
+            }, {
+                Log.d(TAG, "completed")
             })
     }
 }

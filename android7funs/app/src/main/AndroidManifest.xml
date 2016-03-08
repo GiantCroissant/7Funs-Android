@@ -140,6 +140,10 @@
             android:enabled="true"/>
 
         <service
+                android:name=".RecipesSetupServiceEx"
+                android:enabled="true"/>
+
+        <service
             android:name=".RestAPIService.VideoSetupService"
             android:enabled="true"/>
 

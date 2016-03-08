@@ -24,6 +24,8 @@ class MainApplication : Application() {
         FacebookSdk.sdkInitialize(applicationContext)
         JodaTimeAndroid.init(this)
 
+//        startService(Intent(this, RecipesSetupServiceEx::class.java))
+
         startService(Intent(this, RecipesSetupService::class.java))
         startService(Intent(this, VideoSetupService::class.java))
 
