@@ -1,29 +1,22 @@
 package com.giantcroissant.sevenfuns.app
 
-import android.app.SearchManager
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.SearchView
-import android.util.AttributeSet
 import android.util.Log
 import android.view.*
-import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.giantcroissant.sevenfuns.app.DbModel.Recipes
-import com.google.gson.Gson
+
 import io.realm.Realm
 import io.realm.RealmResults
 import io.realm.Sort
 import kotlinx.android.synthetic.main.cardview_recipes_section_overview.view.*
-import kotlinx.android.synthetic.main.fragment_recipes_section_overview.*
 import kotlinx.android.synthetic.main.fragment_recipes_section_overview.view.*
 import retrofit2.GsonConverterFactory
 import retrofit2.Retrofit
@@ -49,23 +42,26 @@ class RecipesSectionOverviewFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.e(TAG, "onDestroy")
         realm.close()
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.fragment_recipes_section_overview, container, false)
-        view?.recipe_recycler_view?.let {
+        view?.recipe_fragment_recycler_view?.let {
             it.layoutManager = LinearLayoutManager(it.context)
             it.adapter = RecyclerAdapter((activity as? AppCompatActivity), listOf<Recipes>())
         }
 
-        view?.recipe_swipe_to_refresh?.setOnRefreshListener {
+        view?.recipe_fragment_swipe_to_refresh?.setOnRefreshListener {
             val recipeOverviews = Intent(activity, RecipesSetupService::class.java)
             activity.startService(recipeOverviews)
-            view.recipe_swipe_to_refresh?.isRefreshing = false
+            view.recipe_fragment_swipe_to_refresh?.isRefreshing = false
         }
 
         setHasOptionsMenu(true)
+
+
         return view
     }
 
@@ -87,10 +83,10 @@ class RecipesSectionOverviewFragment : Fragment() {
             results = realm.where(Recipes::class.java)
                     .findAllSortedAsync("updatedAt", Sort.DESCENDING)
             results.addChangeListener {
-                recipe_recycler_view?.adapter?.notifyDataSetChanged()
+                view?.recipe_fragment_recycler_view?.adapter?.notifyDataSetChanged()
             }
 
-            (recipe_recycler_view?.adapter as RecyclerAdapter).let {
+            (view?.recipe_fragment_recycler_view?.adapter as RecyclerAdapter).let {
                 it.updateList(results)
             }
 
@@ -103,10 +99,10 @@ class RecipesSectionOverviewFragment : Fragment() {
             results = realm.where(Recipes::class.java)
                     .findAllSortedAsync("hits", Sort.DESCENDING)
             results.addChangeListener {
-                recipe_recycler_view?.adapter?.notifyDataSetChanged()
+                view?.recipe_fragment_recycler_view?.adapter?.notifyDataSetChanged()
             }
 
-            (recipe_recycler_view?.adapter as RecyclerAdapter).let {
+            (view?.recipe_fragment_recycler_view?.adapter as RecyclerAdapter).let {
                 it.updateList(results)
             }
 
@@ -116,17 +112,6 @@ class RecipesSectionOverviewFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-
-    override fun onResume() {
-        super.onResume()
-        if (query != null && !query.isEmpty()) {
-            queryRecipesWithSearch(query)
-
-        } else {
-            queryRecipes()
-        }
-    }
-
     private fun queryRecipesWithSearch(search: String) {
         var results: RealmResults<Recipes>
         if (arguments.getString("type") == "collection") {
@@ -134,7 +119,6 @@ class RecipesSectionOverviewFragment : Fragment() {
                 .equalTo("favorite", true)
                 .contains("title", search)
                 .findAllSortedAsync("id", Sort.DESCENDING)
-
         } else {
             results = realm.where(Recipes::class.java)
                 .contains("title", search)
@@ -142,27 +126,26 @@ class RecipesSectionOverviewFragment : Fragment() {
         }
 
         results.addChangeListener {
-            recipe_recycler_view?.adapter?.notifyDataSetChanged()
+            view?.recipe_fragment_recycler_view?.adapter?.notifyDataSetChanged()
         }
 
-        (recipe_recycler_view?.adapter as RecyclerAdapter).let {
+        (view?.recipe_fragment_recycler_view?.adapter as RecyclerAdapter).let {
             it.updateList(results)
         }
 
-        val bar = Snackbar.make(
-            recipe_coordinator_view,
-            "目前顯示搜尋結果：$search",
-            Snackbar.LENGTH_INDEFINITE
-        )
-        bar.setAction("返回全部") {
-            query = ""
-            (activity as? MainActivity)?.let {
-                it.query = ""
+        val snackView = view?.recipe_fragment_coordinator_view
+        if (snackView != null) {
+            val bar = Snackbar.make(snackView, "目前顯示搜尋結果：$search", Snackbar.LENGTH_INDEFINITE)
+            bar.setAction("返回全部") {
+                query = ""
+                (activity as? MainActivity)?.let {
+                    it.query = ""
+                }
+                bar.dismiss()
+                queryRecipes()
             }
-            bar.dismiss()
-            queryRecipes()
+            bar.show()
         }
-        bar.show()
     }
 
     private fun queryRecipes() {
@@ -177,14 +160,28 @@ class RecipesSectionOverviewFragment : Fragment() {
                 .findAllSortedAsync("id", Sort.DESCENDING)
         }
         results.addChangeListener {
-            recipe_recycler_view?.adapter?.notifyDataSetChanged()
+            view?.recipe_fragment_recycler_view?.adapter?.notifyDataSetChanged()
         }
 
-        (recipe_recycler_view?.adapter as RecyclerAdapter).let {
+        (view?.recipe_fragment_recycler_view?.adapter as RecyclerAdapter).let {
             it.updateList(results)
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.w(TAG, "onDestroyView")
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (query != null && !query.isEmpty()) {
+            queryRecipesWithSearch(query)
+
+        } else {
+            queryRecipes()
+        }
+    }
 
     class RecyclerAdapter(
         val activity: AppCompatActivity?,
@@ -360,7 +357,7 @@ class RecipesSectionOverviewFragment : Fragment() {
     }
 
 }
-//
+
 //class CustomBehavior(
 //    context: Context,
 //    attrs: AttributeSet
