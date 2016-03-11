@@ -66,22 +66,13 @@ class RecipesSectionOverviewFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-//        inflater?.inflate(R.menu.menu_main, menu)
-//        val searchItem = menu?.findItem(R.id.action_search)
-//        //        searchItem.isVisible = showSearch
-//        val manager = activity.getSystemService(Context.SEARCH_SERVICE) as SearchManager
-//        if (searchItem != null) {
-//            val searchView = searchItem.actionView as SearchView
-//            searchView.setSearchableInfo(manager.getSearchableInfo(activity.componentName))
-//        }
-
         val orderItem = menu?.findItem(R.id.action_order)
         val latestItem = orderItem?.subMenu?.findItem(R.id.action_order_latest)
         latestItem?.setOnMenuItemClickListener { x ->
             var results: RealmResults<Recipes>
 
             results = realm.where(Recipes::class.java)
-                    .findAllSortedAsync("updatedAt", Sort.DESCENDING)
+                .findAllSortedAsync("updatedAt", Sort.DESCENDING)
             results.addChangeListener {
                 view?.recipe_fragment_recycler_view?.adapter?.notifyDataSetChanged()
             }
@@ -97,7 +88,7 @@ class RecipesSectionOverviewFragment : Fragment() {
             var results: RealmResults<Recipes>
 
             results = realm.where(Recipes::class.java)
-                    .findAllSortedAsync("hits", Sort.DESCENDING)
+                .findAllSortedAsync("hits", Sort.DESCENDING)
             results.addChangeListener {
                 view?.recipe_fragment_recycler_view?.adapter?.notifyDataSetChanged()
             }
