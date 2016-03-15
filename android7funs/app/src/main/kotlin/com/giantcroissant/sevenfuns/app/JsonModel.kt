@@ -261,6 +261,14 @@ object JsonModel {
         val categoryId: Int,
         val taggings: List<TaggingJsonObject>)
 
+    data class SubCategoryTagJsonObject(
+            val id: Int,
+            val name: String,
+            @SerializedName("taggings_count")
+            val taggingCount: Int,
+            @SerializedName("category_id")
+            val categoryId: Int)
+
     data class SubCategoryJsonObject(
         val id: Int,
         val title: String,
@@ -269,7 +277,8 @@ object JsonModel {
         @SerializedName("created_at")
         val createdAt: String,
         @SerializedName("updated_at")
-        val updatedAt: String)
+        val updatedAt: String,
+        val tags: List<SubCategoryTagJsonObject>)
 
     data class CategoryJsonObject(
         val id: String,
@@ -282,6 +291,16 @@ object JsonModel {
         val updatedAt: String,
         val subCategories: List<SubCategoryJsonObject>)
 
+//    data class SubCategoryJsonObject(
+//            val id: String,
+//            val title: String,
+//            @SerializedName("parent_id")
+//            val parentId: Int?,
+//            @SerializedName("created_at")
+//            val createdAt: String,
+//            @SerializedName("updated_at")
+//            val updatedAt: String,
+//            val tags: List<TagJsonObject>)
 
     data class InstructorJsonObject(
         val name: String,

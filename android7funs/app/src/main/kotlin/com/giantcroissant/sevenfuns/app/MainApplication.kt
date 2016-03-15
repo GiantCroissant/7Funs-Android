@@ -33,8 +33,8 @@ class MainApplication : Application() {
             val downloadRecipes = Intent(this, RecipesDownloadService::class.java)
             startService(downloadRecipes)
 
-            val downloadVideos = Intent(this, VideoDownloadService::class.java)
-            startService(downloadVideos)
+//            val downloadVideos = Intent(this, VideoDownloadService::class.java)
+//            startService(downloadVideos)
         }
     }
 

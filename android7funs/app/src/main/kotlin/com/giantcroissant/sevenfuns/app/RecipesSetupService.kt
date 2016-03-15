@@ -72,7 +72,7 @@ class RecipesSetupService : IntentService("RecipesSetupService") {
 
                 override fun onNext(pair: Pair<List<RecipesOverview>, RealmResults<Recipes>>) {
 
-                    System.out.println(pair.first)
+                    //System.out.println(pair.first)
 
                     //                        val realm = Realm.getInstance(config)
                     // New or update for the first list, delete all for the second

@@ -62,9 +62,37 @@ open class RecipesSearchSuggestionProvider : ContentProvider() {
                     .flatMap { x -> Observable.from(x) }
                     .flatMap { x -> Observable.just(x) }
                     .flatMap { x ->
+                        restApiService.getSubCategoryById(x)
+                    }
+                    .map { x ->
+                        x.tags.map { sc ->
+                            sc.id
+                        }
+                    }
+//                    .map { x ->
+//                        x.tags.map { sc ->
+//                            sc.id
+//                        }
+//                        ids
+//                    }
+//                    .map { x ->
+//                        restApiService.getSubCategoryById(x)
+//                    }
+//                    .map { x ->
+//                        x.flatMap { c ->
+//                            val ids = c.tags.map { sc ->
+//                                sc.id
+//                            }
+//                            ids
+//                        }
+//                    }
+                    .flatMap { x -> Observable.from(x) }
+                    .flatMap { x -> Observable.just(x) }
+                    .flatMap { x ->
                         System.out.println("tag id to get: " + x.toString())
                         restApiService.getTagById(x)
                     }
+                    .filter { x -> x != null }
                     //.filter { x -> x == null }
                     .map { x ->
                         val recipesIds = x.taggings.map { t -> t.taggableId }

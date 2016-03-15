@@ -20,7 +20,7 @@ import rx.Subscriber
 class RecipesDownloadService : IntentService("RecipesDownloadService") {
     val TAG = RecipesDownloadService::class.java.name
 
-    val maxDownloadAmount = 100
+    val maxDownloadAmount = 5
 
     val retrofit = Retrofit
         .Builder()
@@ -41,6 +41,8 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
         val ro = realm.where(RecipesOverview::class.java).findAllSorted("id", Sort.DESCENDING)
         val maxIndex = if (ro.size < maxDownloadAmount) ro.size else maxDownloadAmount
         val recipeIds = ro.subList(0, maxIndex).map { it.id }
+        System.out.println("recipes overview size(starting): " + ro.size.toString())
+        System.out.println(recipeIds)
         realm.close()
 
         if (recipeIds.size <= 0) {
@@ -50,6 +52,7 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
 
         restApiService.getRecipesByIdList(recipeIds)
             .flatMap { jsonList ->
+                //System.out.println(jsonList)
                 val recipes = jsonList.map { it.toRecipe() }
 
                 val realm = Realm.getInstance(this)
@@ -94,6 +97,10 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
                         .findFirst()?.removeFromRealm()
                 }
                 realm.commitTransaction()
+
+                val ro1 = realm.where(RecipesOverview::class.java).findAllSorted("id", Sort.DESCENDING)
+                System.out.println("recipes overview size: " + ro1.size.toString())
+
                 realm.close()
 
             }, { error ->
@@ -154,9 +161,12 @@ fun JsonModel.RecipesJsonModel.toRecipe(): Recipes {
     var methods = RealmList<MethodDesc>()
     this.method.forEach { methods.add(MethodDesc(it)) }
 
+    val image : String = if (this.image.isNullOrEmpty()) "" else this.image?.toString()
+
     val recipe = Recipes(
         this.id,
-        this.image ?: "",
+        image,
+        //this.image ?: "",
         this.updatedAt,
         this.chefName,
         this.title,
