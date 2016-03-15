@@ -4,16 +4,13 @@ import android.app.SearchManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SearchView
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import com.facebook.appevents.AppEventsLogger
 import com.giantcroissant.sevenfuns.app.QandA.QASectionFragment
 import com.giantcroissant.sevenfuns.app.R.string.*
@@ -28,15 +25,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
-
         if (savedInstanceState != null) {
             current_section = savedInstanceState.getInt(CURRENT_SECTION);
 
         } else {
             current_section = R.id.navigationItemRecipesSection
+
         }
+
 
         setContentView(R.layout.activity_main)
 
@@ -97,6 +93,9 @@ class MainActivity : AppCompatActivity() {
                 .commit()
             true
         }
+
+        navigationView?.setCheckedItem(current_section)
+        navigationView?.menu?.performIdentifierAction(current_section, 0)
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -110,8 +109,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        navigationView.setCheckedItem(current_section)
-        navigationView.menu.performIdentifierAction(current_section, 0)
+
 
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
