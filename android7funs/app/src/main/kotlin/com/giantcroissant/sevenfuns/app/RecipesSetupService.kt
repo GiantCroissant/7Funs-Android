@@ -38,6 +38,14 @@ class RecipesSetupService : IntentService("RecipesSetupService") {
         realm = Realm.getInstance(config)
 
         System.out.println("RecipesSetupService - onHandleIntent")
+
+        // Quick fix for removing old recipes overview to not stuck at retrieving recipes
+        val q = realm.where(RecipesOverview::class.java).findAll()
+        realm.beginTransaction()
+        q.clear()
+        realm.commitTransaction()
+        //realm.close()
+
         prepareRecipesFetchingSetup()
     }
 

@@ -47,7 +47,7 @@ interface RestApiService {
             id: Int
     ): Observable<JsonModel.CategoryJsonObject>
 
-    @GET("/api/categories/{id}")
+    @GET("/api/subcategories/{id}")
     fun getSubCategoryById(
             @Path("id")
             id: Int

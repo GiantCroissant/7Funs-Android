@@ -20,7 +20,7 @@ import rx.Subscriber
 class RecipesDownloadService : IntentService("RecipesDownloadService") {
     val TAG = RecipesDownloadService::class.java.name
 
-    val maxDownloadAmount = 5
+    val maxDownloadAmount = 100
 
     val retrofit = Retrofit
         .Builder()
