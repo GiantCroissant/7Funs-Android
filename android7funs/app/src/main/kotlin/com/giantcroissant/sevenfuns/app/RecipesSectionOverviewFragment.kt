@@ -163,8 +163,6 @@ class RecyclerAdapter(
             .centerCrop()
             .into(viewHolder.view.recipe_image)
 
-        Log.e(TAG, "recipe = " + recipe)
-
         viewHolder.view.fav_icon.visibility = if (recipe.favorite) View.VISIBLE else View.INVISIBLE
         viewHolder.view.recipe_title?.text = recipe.title
         viewHolder.view.recipeInstructorText?.text = recipe.chefName
@@ -192,7 +190,6 @@ class RecyclerAdapter(
             val realm = Realm.getDefaultInstance()
             realm.beginTransaction()
             recipe.favorite = !recipe.favorite
-            Log.d(TAG, "recipe favorite = ${recipe.favorite}")
             realm.commitTransaction()
             realm.close()
 

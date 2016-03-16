@@ -94,10 +94,13 @@ class RecipesSetupService : IntentService("RecipesSetupService") {
                 override fun onNext(pair: Pair<List<RecipesOverview>, MiscModel.ClearRecipeContext>) {
                     realm.beginTransaction()
 
+                    Log.e(TAG, "pair.first count = " + pair.first.count())
+
                     // Update or create for Recipes Overview
                     pair.first.forEach { ro -> realm.copyToRealmOrUpdate(ro) }
                     // Clear Recipes
                     if (pair.second.shouldClear) {
+                        Log.e(TAG, "result count = " + pair.second.result.count())
                         pair.second.result.clear()
                     }
                     realm.commitTransaction()
