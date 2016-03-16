@@ -32,12 +32,11 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
     val restApiService = retrofit.create(RestApiService::class.java)
 
     override fun onHandleIntent(intent: Intent) {
-        //System.out.println("RecipesDownloadService - onHandleIntent")
         fetchRecipes()
     }
 
     private fun fetchRecipes() {
-        val realm = Realm.getInstance(this)
+        val realm = Realm.getDefaultInstance()
         val ro = realm.where(RecipesOverview::class.java).findAllSorted("id", Sort.DESCENDING)
         val maxIndex = if (ro.size < maxDownloadAmount) ro.size else maxDownloadAmount
         val recipeIds = ro.subList(0, maxIndex).map { it.id }

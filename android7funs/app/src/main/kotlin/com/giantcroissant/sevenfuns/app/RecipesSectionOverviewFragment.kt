@@ -163,6 +163,8 @@ class RecyclerAdapter(
             .centerCrop()
             .into(viewHolder.view.recipe_image)
 
+        Log.e(TAG, "recipe = " + recipe)
+
         viewHolder.view.fav_icon.visibility = if (recipe.favorite) View.VISIBLE else View.INVISIBLE
         viewHolder.view.recipe_title?.text = recipe.title
         viewHolder.view.recipeInstructorText?.text = recipe.chefName
