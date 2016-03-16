@@ -12,7 +12,7 @@ object MiscModel {
     }
 
     enum class OverviewActionResultType {
-        None, Update, Remove
+        None, Update, Remove, MayNeedToUpdate
     }
 
     data class IntermediateOverview(
@@ -33,5 +33,11 @@ object MiscModel {
     data class ClearRecipeContext(
         val result: RealmResults<Recipes>,
         val shouldClear: Boolean
+    )
+
+    data class IntermediateContext(
+        val mayNeedToUpdate: List<IntermediateOverview>,
+        val needToUpdate: List<IntermediateOverview>,
+        val needToRemove: List<IntermediateOverview>
     )
 }
