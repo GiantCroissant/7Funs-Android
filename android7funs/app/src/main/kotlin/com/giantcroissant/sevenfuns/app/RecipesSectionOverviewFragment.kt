@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.*
 import com.bumptech.glide.Glide
 import com.giantcroissant.sevenfuns.app.DbModel.Recipes
+import com.giantcroissant.sevenfuns.app.RestAPIService.RestAPIHelper
 import io.realm.Realm
 import io.realm.RealmResults
 import io.realm.Sort
@@ -185,6 +186,7 @@ class RecyclerAdapter(
         }
 
         viewHolder.view.collect_button.setOnClickListener {
+
             val realm = Realm.getDefaultInstance()
             realm.beginTransaction()
             recipe.favorite = !recipe.favorite
@@ -192,60 +194,37 @@ class RecyclerAdapter(
             realm.commitTransaction()
             realm.close()
 
-                        val retrofit = Retrofit
-                            .Builder()
-                            .baseUrl("https://www.7funs.com")
-                            .addConverterFactory(GsonConverterFactory.create())
-                            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                            .build()
+            (activity as? AppCompatActivity)?.let {
+                val sp: SharedPreferences = it.getSharedPreferences("DATA", 0)
+                val token = sp.getString("token", "")
+                if (token.isEmpty()) {
+                    val intent = Intent(it, LoginActivity::class.java)
+                    it.startActivity(intent)
 
-                        val restApiService = retrofit.create(RestApiService::class.java)
-                        (activity as? AppCompatActivity)?.let { a ->
-                            val sp: SharedPreferences = a.getSharedPreferences("DATA", 0)
-                            val token = sp.getString("token", "")
-
-                            if (token.isEmpty()) {
-                                System.out.println("No cached token")
-
-                                val intent = Intent(a, LoginActivity::class.java)
-                                a.startActivity(intent)
-                            } else {
-                                System.out.println("Have cached token: " + token)
-
-                                // Do something with token
-                                //val intent = Intent(a.applicationContext, QADetailNewMessageActivity::class.java)
-                                //a.startActivityForResult(intent, QASectionOverviewFragment.WRITTEN_MESSAGE)
-
-
-                                val combinedHeaderToken = "Bearer " + token
-
-                                restApiService.addRemoveFavorite(combinedHeaderToken, recipe.id)
-                                    .subscribeOn(Schedulers.io())
-                                    .subscribe(object : Subscriber<JsonModel.MyFavoriteRecipesResult>() {
-                                        override fun onCompleted() {
-                                        }
-
-                                        override fun onError(e: Throwable?) {
-                                            System.out.println(e?.message)
-                                        }
-
-                                        override fun onNext(x: JsonModel.MyFavoriteRecipesResult) {
-                                        }
-                                    })
-                                //                        RestAPIHelper.restApiService
-                                //                            .addRemoveFavorite(recipe.id)
-                                //                            .subscribeOn(Schedulers.io())
-                                //                            .subscribe({ json ->
-                                //                                // MyFavoriteRecipesResult
-                                //                                Log.e(TAG, "json: $json")
-                                //
-                                //                            }, { error ->
-                                //                                Log.e(TAG, "error $error")
-                                //                            })
-
-                            }
-                        }
+                } else {
+                    val combinedHeaderToken = "Bearer " + token
+                    postCollectRecipeActionToServer(combinedHeaderToken, recipe)
+                }
+            }
         }
+    }
+
+    private fun postCollectRecipeActionToServer(header: String, recipe: Recipes) {
+        RestAPIHelper.restApiService
+            .addRemoveFavorite(header, recipe.id)
+            .subscribeOn(Schedulers.io())
+            .subscribe(object : Subscriber<JsonModel.MyFavoriteRecipesResult>() {
+                override fun onCompleted() {
+                }
+
+                override fun onError(e: Throwable?) {
+                    System.out.println(e?.message)
+                }
+
+                override fun onNext(x: JsonModel.MyFavoriteRecipesResult) {
+                    Log.e(TAG, "x = " + x)
+                }
+            })
     }
 
     override fun getItemCount(): Int {
