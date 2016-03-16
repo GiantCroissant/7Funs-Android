@@ -65,13 +65,20 @@ class RecipesSetupService : IntentService("RecipesSetupService") {
 //                System.out.println(needToUpdateRecipesOverviews)
 
                 val query = realm.where(Recipes::class.java)
-                val accQuery = pair.second.fold(query, { acc, intermediateOverview ->
-                    acc.equalTo("id", intermediateOverview.id).or()
-                })
-                val needToRemovedRecipes = accQuery.findAll()
-                Pair(needToUpdateRecipesOverviews, needToRemovedRecipes)
+                System.out.println("second pair size: " + pair.second.size.toString())
+                val clearRecipeContext = if (pair.second.size > 0) {
+                    val accQuery = pair.second.fold(query, { acc, intermediateOverview ->
+                        acc.equalTo("id", intermediateOverview.id).or()
+                    })
+                    val needToRemovedRecipes = accQuery.findAll()
+                    MiscModel.ClearRecipeContext(needToRemovedRecipes, true)
+                } else {
+                    val needToRemovedRecipes = query.findAll()
+                    MiscModel.ClearRecipeContext(needToRemovedRecipes, false)
+                }
+                Pair(needToUpdateRecipesOverviews, clearRecipeContext)
             }
-            .subscribe(object : Subscriber<Pair<List<RecipesOverview>, RealmResults<Recipes>>>() {
+            .subscribe(object : Subscriber<Pair<List<RecipesOverview>, MiscModel.ClearRecipeContext>>() {
                 override fun onCompleted() {
                 }
 
@@ -79,13 +86,15 @@ class RecipesSetupService : IntentService("RecipesSetupService") {
                     System.out.println(e?.message)
                 }
 
-                override fun onNext(pair: Pair<List<RecipesOverview>, RealmResults<Recipes>>) {
+                override fun onNext(pair: Pair<List<RecipesOverview>, MiscModel.ClearRecipeContext>) {
                     realm.beginTransaction()
 
                     // Update or create for Recipes Overview
                     pair.first.forEach { ro -> realm.copyToRealmOrUpdate(ro) }
                     // Clear Recipes
-                    pair.second.clear()
+                    if (pair.second.shouldClear) {
+                        pair.second.result.clear()
+                    }
 
                     realm.commitTransaction()
                 }

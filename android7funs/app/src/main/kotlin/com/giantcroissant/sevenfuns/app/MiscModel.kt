@@ -1,5 +1,8 @@
 package com.giantcroissant.sevenfuns.app
 
+import com.giantcroissant.sevenfuns.app.DbModel.Recipes
+import io.realm.RealmResults
+
 /**
  * Created by apprentice on 1/26/16.
  */
@@ -25,5 +28,10 @@ object MiscModel {
         val tagId: Int,
         val name: String,
         val recipesIds: List<Int>
+    )
+
+    data class ClearRecipeContext(
+        val result: RealmResults<Recipes>,
+        val shouldClear: Boolean
     )
 }
