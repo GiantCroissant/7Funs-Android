@@ -2,9 +2,7 @@ package com.giantcroissant.sevenfuns.app
 
 import android.app.SearchManager
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -16,16 +14,10 @@ import com.bumptech.glide.Glide
 import com.giantcroissant.sevenfuns.app.DbModel.Recipes
 import com.giantcroissant.sevenfuns.app.RestAPIService.RestAPIHelper
 import io.realm.Realm
-import io.realm.RealmResults
 import io.realm.Sort
-import kotlinx.android.synthetic.main.cardview_recipes_section_overview.view.*
 import kotlinx.android.synthetic.main.activity_search.*
-import kotlinx.android.synthetic.main.fragment_recipes_section_overview.view.*
+import kotlinx.android.synthetic.main.cardview_recipes_section_overview.view.*
 import kotlinx.android.synthetic.main.toolbar.*
-import retrofit2.GsonConverterFactory
-import retrofit2.Retrofit
-import retrofit2.RxJavaCallAdapterFactory
-import rx.Subscriber
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import kotlin.properties.Delegates
@@ -35,8 +27,10 @@ import kotlin.properties.Delegates
  */
 class SearchActivity : AppCompatActivity() {
 
+    companion object {
+        val TAG = SearchActivity::class.java.name
+    }
     private var realm: Realm by Delegates.notNull()
-//    private var query = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +40,7 @@ class SearchActivity : AppCompatActivity() {
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        realm = Realm.getInstance(this)
+        realm = Realm.getDefaultInstance()
 
         System.out.println("SearchActivity - onCreate")
 
@@ -54,6 +48,10 @@ class SearchActivity : AppCompatActivity() {
             it.layoutManager = LinearLayoutManager(it.context)
             it.adapter = RecyclerAdapter(this, listOf<Recipes>())
         }
+
+        val query = intent.getStringExtra(SearchManager.QUERY)
+        Log.e(TAG, "query = " + query)
+        supportActionBar?.title = query
 
         if (Intent.ACTION_SEARCH.equals(intent.action)) {
             val query = intent.getStringExtra(SearchManager.QUERY)
@@ -75,6 +73,7 @@ class SearchActivity : AppCompatActivity() {
                 it.updateList(results)
             }
 
+
             //realm.close()
             //doMySearch(query);
         } else if (Intent.ACTION_VIEW.equals(intent.action)) {
@@ -86,6 +85,7 @@ class SearchActivity : AppCompatActivity() {
 
             val queryPair = uri.split('/')
             val tagId = queryPair.last()
+            supportActionBar?.title = queryPair.first()
 
             RestAPIHelper.restApiService.getTagById(tagId.toInt())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -125,8 +125,6 @@ class SearchActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-//        realm.close()
-
         finish()
         return true
     }
@@ -239,7 +237,7 @@ class SearchActivity : AppCompatActivity() {
                     .centerCrop()
                     .into(viewHolder.view.recipe_image)
 
-
+            viewHolder.view.recipeInstructorText?.text = recipe.chefName
             viewHolder.view.recipe_title?.text = recipe.title
             viewHolder.view.fav_icon.visibility = if (recipe.favorite) View.VISIBLE else View.INVISIBLE
             viewHolder.view.recipe_title?.text = recipe.title
