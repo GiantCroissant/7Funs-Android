@@ -2,6 +2,7 @@ package com.giantcroissant.sevenfuns.app
 
 import android.app.IntentService
 import android.content.Intent
+import android.util.Log
 import com.giantcroissant.sevenfuns.app.DbModel.Recipes
 import com.giantcroissant.sevenfuns.app.DbModel.RecipesOverview
 import io.realm.Realm
@@ -20,6 +21,10 @@ import kotlin.properties.Delegates
  * Created by apprentice on 2/1/16.
  */
 class RecipesSetupService : IntentService("RecipesSetupService") {
+
+    companion object {
+        val TAG = RecipesSetupService::class.java.name
+    }
 
     val retrofit = Retrofit
         .Builder()
@@ -111,13 +116,15 @@ class RecipesSetupService : IntentService("RecipesSetupService") {
                 override fun onNext(pair: Pair<List<RecipesOverview>, MiscModel.ClearRecipeContext>) {
                     realm.beginTransaction()
 
+                    Log.e(TAG, "pair.first count = " + pair.first.count())
+
                     // Update or create for Recipes Overview
                     pair.first.forEach { ro -> realm.copyToRealmOrUpdate(ro) }
                     // Clear Recipes
                     if (pair.second.shouldClear) {
+                        Log.e(TAG, "result count = " + pair.second.result.count())
                         pair.second.result.clear()
                     }
-
                     realm.commitTransaction()
                 }
             })

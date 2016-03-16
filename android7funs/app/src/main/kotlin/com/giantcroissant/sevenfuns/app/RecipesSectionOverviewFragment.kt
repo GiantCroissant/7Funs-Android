@@ -190,7 +190,6 @@ class RecyclerAdapter(
             val realm = Realm.getDefaultInstance()
             realm.beginTransaction()
             recipe.favorite = !recipe.favorite
-            Log.d(TAG, "recipe favorite = ${recipe.favorite}")
             realm.commitTransaction()
             realm.close()
 
