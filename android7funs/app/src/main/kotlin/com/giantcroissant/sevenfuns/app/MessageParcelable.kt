@@ -10,7 +10,9 @@ data class MessageParcelable(
     val id: Int,
     val title: String,
     val description: String,
-    val userName: String
+    val userName: String,
+    val hasImageUrl: Int,
+    val imageUrl: String
 ) : Parcelable {
 
     companion object {
@@ -29,6 +31,8 @@ data class MessageParcelable(
         parcelIn.readInt(),
         parcelIn.readString(),
         parcelIn.readString(),
+        parcelIn.readString(),
+        parcelIn.readInt(),
         parcelIn.readString()
     ) {}
 
@@ -41,5 +45,7 @@ data class MessageParcelable(
         dest?.writeString(title)
         dest?.writeString(description)
         dest?.writeString(userName)
+        dest?.writeInt(hasImageUrl)
+        dest?.writeString(imageUrl)
     }
 }

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -186,25 +187,80 @@ class QASectionOverviewFragment : Fragment() {
             return ViewHolder(view)
         }
 
+        // Return a pair of boolean and string, false stands for local, true is cloud
+//        fun GetImageContextPair(question: JsonModel.MessageJsonObject) : Pair<Boolean, String> {
+//            val pair = if (question.user.isAdmin != null && question.user.isAdmin == true) {
+//                return Pair(false, "")
+//            } else if (!question.user.image.isNullOrBlank()) {
+//                val combinedPath = "https://storage.googleapis.com/funs7-1/uploads/user/image/" + question.user.id.toString() + "/square_" + question.user.image
+//                return Pair(true, combinedPath)
+//            } else if (!question.user.fbId.isNullOrBlank()) {
+//                val combinedPath = "https://graph.facebook.com/${question.user.fbId}/picture?type=square&height=80&width=80"
+//                return Pair(true, combinedPath)
+//            } else {
+//                Pair(false, "")
+//            }
+//
+//            return pair
+//        }
+
         override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
             val question = messageList[position]
 
-            Glide.with(activity)
-                .load(R.drawable.profile)
-                .asBitmap()
-                .centerCrop()
-                .into(object : BitmapImageViewTarget(viewHolder.view.profile_image) {
+            val pair = GlideHelper.getImageContextPair(question.user)
 
-                    override fun setResource(resource: Bitmap?) {
-                        super.setResource(resource)
+            if (pair.first) {
+                Glide.with(activity)
+                        .load(Uri.parse(pair.second))
+                        .asBitmap()
+                        .centerCrop()
+                        .into(object : BitmapImageViewTarget(viewHolder.view.profile_image) {
 
-                        val circular = RoundedBitmapDrawableFactory.create(activity?.resources, resource)
-                        if (circular != null) {
-                            circular.isCircular = true
-                            viewHolder.view.profile_image.setImageDrawable(circular)
+                            override fun setResource(resource: Bitmap?) {
+                                super.setResource(resource)
+
+                                val circular = RoundedBitmapDrawableFactory.create(activity?.resources, resource)
+                                if (circular != null) {
+                                    circular.isCircular = true
+                                    viewHolder.view.profile_image.setImageDrawable(circular)
+                                }
+                            }
+                        })
+            } else {
+                Glide.with(activity)
+                    .load(R.drawable.profile)
+                    .asBitmap()
+                    .centerCrop()
+                    .into(object : BitmapImageViewTarget(viewHolder.view.profile_image) {
+
+                        override fun setResource(resource: Bitmap?) {
+                            super.setResource(resource)
+
+                            val circular = RoundedBitmapDrawableFactory.create(activity?.resources, resource)
+                            if (circular != null) {
+                                circular.isCircular = true
+                                viewHolder.view.profile_image.setImageDrawable(circular)
+                            }
                         }
-                    }
-                })
+                    })
+            }
+
+//            Glide.with(activity)
+//                .load(R.drawable.profile)
+//                .asBitmap()
+//                .centerCrop()
+//                .into(object : BitmapImageViewTarget(viewHolder.view.profile_image) {
+//
+//                    override fun setResource(resource: Bitmap?) {
+//                        super.setResource(resource)
+//
+//                        val circular = RoundedBitmapDrawableFactory.create(activity?.resources, resource)
+//                        if (circular != null) {
+//                            circular.isCircular = true
+//                            viewHolder.view.profile_image.setImageDrawable(circular)
+//                        }
+//                    }
+//                })
 
             val nameAndTitle = question.user.name + " " + question.title
             val nameLength = question.user.name.length
@@ -212,13 +268,17 @@ class QASectionOverviewFragment : Fragment() {
             viewHolder.view.question_desc?.text = question.description
             viewHolder.view.setOnClickListener {
                 val commentsActivity = Intent(activity, QADetailActivity::class.java)
+                val hasImageUrl = if (pair.first == true) 1 else 0
                 commentsActivity.putExtra(
                     "message",
                     MessageParcelable(
                         question.id,
                         question.title,
                         question.description,
-                        question.user.name
+                        question.user.name,
+                        hasImageUrl,
+                        pair.second
+
                     )
                 )
                 activity?.startActivity(commentsActivity)

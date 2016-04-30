@@ -86,9 +86,22 @@ object JsonModel {
     //
     data class UserJsonObject(
         val id: Int,
+        val email: String?,
+        @SerializedName("commensign_in_counttable_id")
+        val signInCount: Int?,
+        @SerializedName("current_sign_in_at")
+        val currentSignInAt: String?,
+        @SerializedName("last_sign_in_at")
+        val lastSignInAt: String?,
+        @SerializedName("created_at")
+        val createdAt: String?,
+        @SerializedName("updated_at")
+        val updatedAt: String?,
         val name: String,
         @SerializedName("fb_id")
         val fbId: String?,
+        @SerializedName("is_admin")
+        val isAdmin: Boolean?,
         val image: String?
     )
 
@@ -190,6 +203,55 @@ object JsonModel {
 
     data class MessageQueryJsonObject(
         val collection: List<MessageJsonObject>,
+        @SerializedName("pagination")
+        val paginationDetail: PaginationDetailJsonObject
+    )
+
+    data class SponsorVideoData(
+        val title: String,
+        val duration: Int,
+        @SerializedName("like_count")
+        val likeCount: Int,
+        @SerializedName("view_count")
+        val viewCount: Int,
+        val description: String,
+        @SerializedName("published_at")
+        val publishedAt: String,
+        @SerializedName("thumbnail_url")
+        val thumbnailUrl: String
+    )
+
+    data class SponsorVideoDetail(
+        val id: Int,
+        @SerializedName("sponsor_id")
+        val sponsorId: String,
+        @SerializedName("youtube_video_code")
+        val youtubeVideoCode: String,
+        @SerializedName("video_data")
+        val videoData: SponsorVideoData,
+        @SerializedName("created_at")
+        val createdAt: String,
+        @SerializedName("updated_at")
+        val updatedAt: String,
+        val number: Int
+    )
+
+    data class SponsorDetailJsonObject(
+        val id: Int,
+        val name: String,
+        val url: String,
+        val image: String,
+        val description: String,
+        @SerializedName("created_at")
+        val createdAt: String,
+        @SerializedName("updated_at")
+        val updatedAt: String,
+        @SerializedName("spnosor_videos")
+        val spnosorVideos: List<SponsorVideoDetail>
+    )
+
+    data class SponsorQueryJsonObject(
+        val collection: List<SponsorDetailJsonObject>,
         @SerializedName("pagination")
         val paginationDetail: PaginationDetailJsonObject
     )

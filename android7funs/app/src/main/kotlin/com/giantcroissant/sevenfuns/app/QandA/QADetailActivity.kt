@@ -185,23 +185,38 @@ class QADetailActivity : AppCompatActivity() {
         override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
             if (position == 0) {
                 val header = viewHolder as HeaderView
+                //val pair = GlideHelper.getImageContextPair()
+                if (question.hasImageUrl == 1) {
+                    GlideHelper.setCircularImageFromUrl(context, question.imageUrl, viewHolder.view.item_user_image)
+                } else {
+                    GlideHelper.setCircularImage(context, R.drawable.profile, viewHolder.view.item_user_image)
+                }
                 displayHeader(header.view)
 
             } else {
                 val comment = comments[position - 1] // headerView
+                val pair = GlideHelper.getImageContextPair(comment.user)
+                if (pair.first) {
+                    GlideHelper.setCircularImageFromUrl(context, pair.second, viewHolder.view.item_comment_user_image)
+                } else {
+                    GlideHelper.setCircularImage(context, R.drawable.profile, viewHolder.view.item_comment_user_image)
+                }
+//                val combine = comment.user.name + " " + comment.comment
+//                val length = comment.user.name.length
+//                viewHolder.view.item_comment_title.text = combine.colorPartial("#E64A19", length)
                 displayComment(viewHolder.view, comment)
             }
         }
 
         private fun displayComment(view: View, comment: JsonModel.MessageWithCommentJsonObject) {
-            GlideHelper.setCircularImage(context, R.drawable.profile, view.item_comment_user_image)
+            //GlideHelper.setCircularImage(context, R.drawable.profile, view.item_comment_user_image)
             val combine = comment.user.name + " " + comment.comment
             val length = comment.user.name.length
             view.item_comment_title.text = combine.colorPartial("#E64A19", length)
         }
 
         private fun displayHeader(view: View) {
-            GlideHelper.setCircularImage(context, R.drawable.profile, view.item_user_image)
+            //GlideHelper.setCircularImage(context, R.drawable.profile, view.item_user_image)
             view.item_user_name.text = question.userName
             view.item_question_title?.text = question.title
             view.item_question_desc?.text = question.description

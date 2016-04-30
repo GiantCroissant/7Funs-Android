@@ -63,6 +63,8 @@ class SearchActivity : AppCompatActivity() {
             val results = realm.where(Recipes::class.java)
                     //.equalTo("favorite", true)
                     .contains("title", query)
+                    .or()
+                    .contains("chefName", query)
                     .findAllSortedAsync("id", Sort.DESCENDING)
 
             results.addChangeListener {

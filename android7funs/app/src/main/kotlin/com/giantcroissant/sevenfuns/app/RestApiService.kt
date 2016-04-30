@@ -112,6 +112,14 @@ interface RestApiService {
             ids: List<Int>
     ): Observable<List<JsonModel.VideoJson>>
 
+    //
+    @GET("/api/sponsors")
+    fun getSponsorQuery(
+        @Query("page")
+        page: Int
+    ): Observable<JsonModel.SponsorQueryJsonObject>
+
+    //
     @POST("/api/login")
     fun login(
             @Body
