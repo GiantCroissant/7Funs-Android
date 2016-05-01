@@ -87,7 +87,7 @@ object JsonModel {
     data class UserJsonObject(
         val id: Int,
         val email: String?,
-        @SerializedName("commensign_in_counttable_id")
+        @SerializedName("sign_in_count")
         val signInCount: Int?,
         @SerializedName("current_sign_in_at")
         val currentSignInAt: String?,
