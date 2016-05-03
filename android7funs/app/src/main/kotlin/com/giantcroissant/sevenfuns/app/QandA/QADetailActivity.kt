@@ -3,6 +3,7 @@ package com.giantcroissant.sevenfuns.app.QandA
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -111,13 +112,16 @@ class QADetailActivity : AppCompatActivity() {
                     val sp: SharedPreferences = getSharedPreferences("DATA", 0)
                     val token = sp.getString("token", "")
                     val commentParcelable: CommentParcelable = data.extras.getParcelable("comment")
+
+                    val remark = "android " + Build.VERSION.RELEASE + " ; version = " + packageManager.getPackageInfo(packageName, 0).versionName
                     RestAPIHelper.restApiService
                         .createMessageComment(
                             "Bearer " + token,
                             messageId,
                             JsonModel.MessageCommentCreate(
                                 messageId,
-                                commentParcelable.comment
+                                commentParcelable.comment,
+                                remark
                             )
                         )
                         .subscribeOn(Schedulers.io())
@@ -185,7 +189,6 @@ class QADetailActivity : AppCompatActivity() {
         override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
             if (position == 0) {
                 val header = viewHolder as HeaderView
-                //val pair = GlideHelper.getImageContextPair()
                 if (question.hasImageUrl == 1) {
                     GlideHelper.setCircularImageFromUrl(context, question.imageUrl, viewHolder.view.item_user_image)
                 } else {
@@ -201,22 +204,17 @@ class QADetailActivity : AppCompatActivity() {
                 } else {
                     GlideHelper.setCircularImage(context, R.drawable.profile, viewHolder.view.item_comment_user_image)
                 }
-//                val combine = comment.user.name + " " + comment.comment
-//                val length = comment.user.name.length
-//                viewHolder.view.item_comment_title.text = combine.colorPartial("#E64A19", length)
                 displayComment(viewHolder.view, comment)
             }
         }
 
         private fun displayComment(view: View, comment: JsonModel.MessageWithCommentJsonObject) {
-            //GlideHelper.setCircularImage(context, R.drawable.profile, view.item_comment_user_image)
             val combine = comment.user.name + " " + comment.comment
             val length = comment.user.name.length
             view.item_comment_title.text = combine.colorPartial("#E64A19", length)
         }
 
         private fun displayHeader(view: View) {
-            //GlideHelper.setCircularImage(context, R.drawable.profile, view.item_user_image)
             view.item_user_name.text = question.userName
             view.item_question_title?.text = question.title
             view.item_question_desc?.text = question.description

@@ -15,7 +15,6 @@ import retrofit2.GsonConverterFactory
 import retrofit2.Retrofit
 import retrofit2.RxJavaCallAdapterFactory
 import rx.Observable
-import rx.Subscriber
 
 class RecipesDownloadService : IntentService("RecipesDownloadService") {
     val TAG = RecipesDownloadService::class.java.name
@@ -40,18 +39,14 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
         val ro = realm.where(RecipesOverview::class.java).findAllSorted("id", Sort.DESCENDING)
         val maxIndex = if (ro.size < maxDownloadAmount) ro.size else maxDownloadAmount
         val recipeIds = ro.subList(0, maxIndex).map { it.id }
-        System.out.println("recipes overview size(starting): " + ro.size.toString())
-        System.out.println(recipeIds)
         realm.close()
 
         if (recipeIds.size <= 0) {
-            Log.d(TAG, "nothing to pull - recipe")
             return
         }
 
         restApiService.getRecipesByIdList(recipeIds)
             .flatMap { jsonList ->
-                //System.out.println(jsonList)
                 val recipes = jsonList.map { it.toRecipe() }
 
                 val realm = Realm.getInstance(this)
@@ -61,33 +56,9 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
                 realm.close()
 
                 var overviewIds = recipes.map { it.id }
-
                 Observable.just(overviewIds)
             }
-            //            .subscribe(object : Subscriber<List<Int>>() {
-            //                override fun onCompleted() {
-            //                }
-            //
-            //                override fun onError(e: Throwable?) {
-            //                    System.out.println(e?.message)
-            //                }
-            //
-            //                override fun onNext(recipeIdList: List<Int>) {
-            //                    val realm = Realm.getInstance(self)
-            //                    realm.beginTransaction()
-            //                    recipeIdList.forEach { recipeId ->
-            //                        realm.where(RecipesOverview::class.java)
-            //                                .equalTo("id", recipeId)
-            //                                .findFirst()?.removeFromRealm()
-            //                    }
-            //                    realm.commitTransaction()
-            //                    realm.close()
-            //                }
-            //            })
             .subscribe({ recipeIdList ->
-                Log.d(TAG, recipeIdList.toString())
-
-
                 val realm = Realm.getInstance(this)
                 realm.beginTransaction()
                 recipeIdList.forEach { recipeId ->
@@ -96,16 +67,12 @@ class RecipesDownloadService : IntentService("RecipesDownloadService") {
                         .findFirst()?.removeFromRealm()
                 }
                 realm.commitTransaction()
-
-                val ro1 = realm.where(RecipesOverview::class.java).findAllSorted("id", Sort.DESCENDING)
-                System.out.println("recipes overview size: " + ro1.size.toString())
-
                 realm.close()
 
             }, { error ->
                 Log.e(TAG, "getRecipesByIdList -> $error")
             }, {
-                Log.d(TAG, "completed")
+//                Log.d(TAG, "completed")
             })
     }
 }

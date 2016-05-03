@@ -1,6 +1,5 @@
 package com.giantcroissant.sevenfuns.app
 
-import android.nfc.Tag
 import com.google.gson.annotations.SerializedName
 
 /**
@@ -155,7 +154,8 @@ object JsonModel {
 
     data class MessageCreate(
         val title: String,
-        val description: String
+        val description: String,
+        val remark: String
     )
 
     data class MessageCreateResultJsonObject(
@@ -172,7 +172,8 @@ object JsonModel {
 
     data class MessageCommentCreate(
         val messageId: Int,
-        val comment: String
+        val comment: String,
+        val remark: String
     )
 
     data class MessageCommentCreateResultJsonObject(

@@ -42,29 +42,22 @@ class SearchActivity : AppCompatActivity() {
 
         realm = Realm.getDefaultInstance()
 
-        System.out.println("SearchActivity - onCreate")
-
         recipe_recycler_view?.let {
             it.layoutManager = LinearLayoutManager(it.context)
             it.adapter = RecyclerAdapter(this, listOf<Recipes>())
         }
 
         val query = intent.getStringExtra(SearchManager.QUERY)
-        Log.e(TAG, "query = " + query)
         supportActionBar?.title = query
 
         if (Intent.ACTION_SEARCH.equals(intent.action)) {
             val query = intent.getStringExtra(SearchManager.QUERY)
-
-            //val realm = Realm.getInstance(this)
-
-            System.out.println(query)
-
             val results = realm.where(Recipes::class.java)
-                    //.equalTo("favorite", true)
                     .contains("title", query)
                     .or()
                     .contains("chefName", query)
+                    .or()
+                    .contains("ingredient", query)
                     .findAllSortedAsync("id", Sort.DESCENDING)
 
             results.addChangeListener {

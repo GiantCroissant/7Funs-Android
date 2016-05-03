@@ -3,6 +3,7 @@ package com.giantcroissant.sevenfuns.app.QandA
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -31,12 +32,16 @@ class QADetailNewMessageActivity : AppCompatActivity() {
             if (question_title_text?.text.isNullOrBlank() || question_desc_text?.text.isNullOrBlank()) {
                 Snackbar.make(new_message_coordinator_view, "主題和內容都要填寫", Snackbar.LENGTH_LONG).show()
             } else {
-                val platformNote = "from Android"
                 val newMessageTitle = question_title_text?.text.toString()
-                val newMessageDescription = question_desc_text?.text.toString() + "/n" + platformNote
+                val newMessageDescription = question_desc_text?.text.toString()// + "/n" + platformNote
+                val remark = "android " + Build.VERSION.RELEASE + " ; version = " + packageManager.getPackageInfo(packageName, 0).versionName
 
                 val intent = Intent()
-                intent?.putExtra("message", NewMessageParcelable(newMessageTitle, newMessageDescription))
+                intent?.putExtra("message", NewMessageParcelable(
+                    newMessageTitle,
+                    newMessageDescription,
+                    remark)
+                )
                 setResult(Activity.RESULT_OK, intent)
                 finish()
             }
