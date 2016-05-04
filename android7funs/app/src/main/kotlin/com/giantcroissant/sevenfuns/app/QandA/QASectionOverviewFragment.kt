@@ -353,6 +353,7 @@ class QASectionOverviewFragment : Fragment() {
 
         fun clearAll() {
             messageList.clear()
+            notifyDataSetChanged()
         }
     }
 
