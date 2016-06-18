@@ -125,8 +125,6 @@ class QASectionOverviewFragment : Fragment() {
 
 
     private fun fetchQuestions(onComplete: () -> Unit = {}) {
-        Log.e("...", "fetchQuestions page = " + currentPage);
-
         RestAPIHelper.restApiService
             .getMessageQuery(currentPage)
             .map { msgJsonList ->
