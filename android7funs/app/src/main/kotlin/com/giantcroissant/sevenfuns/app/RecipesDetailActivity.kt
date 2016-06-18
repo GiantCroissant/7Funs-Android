@@ -12,7 +12,6 @@ import com.google.android.youtube.player.YouTubePlayerSupportFragment
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_recipes_detail.*
 import kotlinx.android.synthetic.main.cardview_recipes_detail.view.*
-import kotlinx.android.synthetic.main.cardview_recipes_section_overview.view.*
 import kotlinx.android.synthetic.main.toolbar.*
 
 /**
@@ -55,8 +54,8 @@ class RecipesDetailActivity : AppCompatActivity() {
 
         } else {
             methodCardView?.detail_title?.text = getString(R.string.recipe_detail_method)
-            val adjustedContent = recipe.methods.reduce { acc, s -> acc + s + "\n\n" }
-            val methods = adjustedContent.substring(0, adjustedContent.length - 4)
+            val adjustedContent = recipe.methods.reduce { acc, s -> acc + "\n\n" + s }
+            val methods = adjustedContent.substring(0, adjustedContent.length)
             methodCardView?.detail_content?.text = methods
         }
 
