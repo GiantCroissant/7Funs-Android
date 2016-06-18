@@ -17,9 +17,6 @@ import io.realm.RealmResults
 import io.realm.Sort
 import kotlinx.android.synthetic.main.cardview_recipes_section_overview.view.*
 import kotlinx.android.synthetic.main.fragment_recipes_section_overview.view.*
-import retrofit2.GsonConverterFactory
-import retrofit2.Retrofit
-import retrofit2.RxJavaCallAdapterFactory
 import rx.Subscriber
 import rx.schedulers.Schedulers
 import kotlin.properties.Delegates

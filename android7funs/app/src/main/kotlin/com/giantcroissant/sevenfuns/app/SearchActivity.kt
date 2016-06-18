@@ -2,6 +2,7 @@ package com.giantcroissant.sevenfuns.app
 
 import android.app.SearchManager
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -18,6 +19,7 @@ import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.cardview_recipes_section_overview.view.*
 import kotlinx.android.synthetic.main.toolbar.*
+import rx.Subscriber
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import kotlin.properties.Delegates
@@ -254,9 +256,50 @@ class SearchActivity : AppCompatActivity() {
                 )
                 this.activity?.startActivity(intent)
             }
+
+            viewHolder.view.collect_button.setOnClickListener {
+
+                val realm = Realm.getDefaultInstance()
+                realm.beginTransaction()
+                recipe.favorite = !recipe.favorite
+                realm.commitTransaction()
+                realm.close()
+
+                (activity as? AppCompatActivity)?.let {
+                    val sp: SharedPreferences = it.getSharedPreferences("DATA", 0)
+                    val token = sp.getString("token", "")
+                    if (token.isEmpty()) {
+                        val intent = Intent(it, LoginActivity::class.java)
+                        it.startActivity(intent)
+
+                    } else {
+                        val combinedHeaderToken = "Bearer " + token
+                        postCollectRecipeActionToServer(combinedHeaderToken, recipe)
+                    }
+                }
+            }
         }
 
-        override fun getItemCount(): Int {
+    private fun postCollectRecipeActionToServer(header: String, recipe: Recipes) {
+        RestAPIHelper.restApiService
+            .addRemoveFavorite(header, recipe.id)
+            .subscribeOn(Schedulers.io())
+            .subscribe(object : Subscriber<JsonModel.MyFavoriteRecipesResult>() {
+                override fun onCompleted() {
+                }
+
+                override fun onError(e: Throwable?) {
+                    System.out.println(e?.message)
+                }
+
+                override fun onNext(x: JsonModel.MyFavoriteRecipesResult) {
+                    Log.e(TAG, "x = " + x)
+                }
+            })
+    }
+
+
+    override fun getItemCount(): Int {
             return recipeList.size
         }
 
