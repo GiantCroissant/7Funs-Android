@@ -191,7 +191,7 @@ object JsonModel {
     )
 
     data class PaginationDetailJsonObject(
-        val items: List<Int>,
+        //val items: List<Int>,
         val currentPage: Int,
         val base: String,
         val isFirstPage: Boolean,
