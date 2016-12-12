@@ -127,7 +127,7 @@ fun JsonModel.RecipesJsonModel.toRecipe(): Recipes {
     var methods = RealmList<MethodDesc>()
     this.method.forEach { methods.add(MethodDesc(it)) }
 
-    val image : String = if (this.image.isNullOrEmpty()) "" else this.image?.toString()
+    val image : String = if (this.image.isNullOrEmpty()) "" else this.image.toString()
 
     val recipe = Recipes(
         this.id,
